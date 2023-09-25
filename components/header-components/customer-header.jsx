@@ -2,7 +2,7 @@ import Image from 'next/image'
 import React, { useState } from 'react'
 import { BiSolidUser } from 'react-icons/bi'
 import { GiHamburgerMenu } from 'react-icons/gi'
-
+import { useRouter } from 'next/router'
 import { FaSearch, FaShoppingCart } from 'react-icons/fa'
 import TextInput from '../input-components/text-input'
 import { Button } from 'flowbite-react'
@@ -17,6 +17,8 @@ const CustomerHeader = props => {
     { name: 'faqs', link: '/faqs' },
     { name: 'about us', link: '/about' },
   ]
+  const router = useRouter();
+  console.log(router.pathname)
   return (
     <div className='z-50 sticky top-0'>
       <div className=' bg-slate-900 p-4 gap-4 flex flex-col'>
@@ -56,7 +58,7 @@ const CustomerHeader = props => {
         </div>
       </div>
       <div
-        className={`bg-slate-900 lg:bg-white -z-10 lg:border-0 border-b absolute lg:static w-full lg:transition-none transition-transform mx-auto ${
+        className={`bg-slate-900 lg:bg-white -z-10 lg:border-0 border-b absolute lg:static w-full mx-auto ${
           menuBar ? 'translate-y-0 ' : '-translate-y-[20rem]'
         } lg:translate-y-0`}
       >
@@ -64,7 +66,7 @@ const CustomerHeader = props => {
           {links.map((item, key) => (
             <Link
               href={item?.link}
-              className='text-white lg:text-slate-900 whitespace-nowrap h-full block w-full flex-grow-0 lg:text-center text-left gap-4 cursor-pointer transition-colors delay-75 border-b border-transparent hover:border-white lg:hover:border-black p-4 uppercase font-extrabold'
+              className={`text-lg text-white lg:text-slate-900 whitespace-nowrap h-full block w-full flex-grow-0 lg:text-center text-left gap-4 cursor-pointer transition-colors delay-75 border-b-2 border-transparent hover:border-white lg:hover:border-slate-500 p-4 uppercase font-bold ${router.pathname == item?.link && "border-white lg:border-black"}`}
               key={key}
             >
               {item?.name}

@@ -67,7 +67,7 @@ const Home = () => {
           <div className='grid grid-cols-2 lg:grid-cols-4 gap-10 '>
             {
               PROJECT_DATA.map((item, key) => (
-                <div {...key}>
+                <div key={`project-${key}`}>
                   <img src='/images/hero.png' className='w-full aspect-square rounded-3xl' />
                   <div className='p-2'>
                     <p className='font-extrabold text-lg text-center'>{item?.title}</p>
@@ -100,7 +100,8 @@ const Home = () => {
         <div className='my-16 grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-10'>
           {
             ARTIST_DATA.map((item, key) => (
-              <div {...key} className='my-10 flex flex-col pb-4 font-semibold text-md text-center uppercase justify-end relative text-white rounded-3xl w-full aspect-square bg-gradient-to-tl from-red-700 via-red-900 to-red-700'>
+              <div key={`artist-${key}`}
+                className='my-10 flex flex-col pb-4 font-semibold text-md text-center uppercase justify-end relative text-white rounded-3xl w-full aspect-square bg-gradient-to-tl from-red-700 via-red-900 to-red-700'>
                 <img src='images/hero.png' className=' aspect-square w-full scale-75 absolute rounded-3xl -top-20' />
                 <p>{item?.artist_name}</p>
                 <p className='uppercase'>ARTIST</p>
