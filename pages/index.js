@@ -48,7 +48,7 @@ const Home = () => {
           <div className='flex flex-col gap-4'>
             <h2 className='font-extrabold text-4xl uppercase'>Sample Title</h2>
             <h3 className='font-bold text-2xl uppercase'>Sample Subtitle here</h3>
-            <p className='text-xl '>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis varius arcu convallis, ullamcorper ligula vel, placerat risus. Nunc luctus, ex at tempus vehicula, mauris augue ullamcorper magna, non lobortis libero dui non mi. Mauris nec faucibus metus, non tincidunt ligula. Aliquam erat volutpat. Vivamus ullamcorper quam sit amet vehicula venenatis. Aliquam erat volutpat. Pellentesque et magna non est consectetur varius. Praesent ac ultricies lorem. Donec nunc ex, aliquam at bibendum ut, sodales ut urna</p>
+            <p className='lg:text-xl text-md'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis varius arcu convallis, ullamcorper ligula vel, placerat risus. Nunc luctus, ex at tempus vehicula, mauris augue ullamcorper magna, non lobortis libero dui non mi. Mauris nec faucibus metus, non tincidunt ligula. Aliquam erat volutpat. Vivamus ullamcorper quam sit amet vehicula venenatis. Aliquam erat volutpat. Pellentesque et magna non est consectetur varius. Praesent ac ultricies lorem. Donec nunc ex, aliquam at bibendum ut, sodales ut urna</p>
             <div>
               <Button color="failure" size="lg" className='uppercase font-bold'>
                 Shop Now
@@ -67,7 +67,7 @@ const Home = () => {
           <div className='grid grid-cols-2 lg:grid-cols-4 gap-10 '>
             {
               PROJECT_DATA.map((item, key) => (
-                <div>
+                <div {...key}>
                   <img src='/images/hero.png' className='w-full aspect-square rounded-3xl' />
                   <div className='p-2'>
                     <p className='font-extrabold text-lg text-center'>{item?.title}</p>
@@ -86,7 +86,7 @@ const Home = () => {
         <div className='flex flex-col-reverse lg:flex-row items-center gap-10 my-4'>
           <div className='flex flex-col gap-4'>
             <h2 className='font-extrabold text-4xl uppercase'>Heading</h2>
-            <p className='lg:text-2xl text-xl'>{DUMMY_TEXT} </p>
+            <p className='lg:text-xl text-md'>{DUMMY_TEXT} </p>
             <div>
               <Button color="dark" className='font-extrabold' size="lg" outline>TRY NOW</Button>
             </div>
@@ -113,7 +113,7 @@ const Home = () => {
       <CustomerWrapper containerClass="bottom-0 text-white p-6 lg:p-16 bg-slate-900">
         <div className='flex flex-col gap-4 my-4'>
           <h2 className='font-extrabold text-3xl'>BULK ORDERS?</h2>
-          <p className='lg:text-2xl text-xl'>{DUMMY_TEXT} </p>
+          <p className='lg:text-xl text-md'>{DUMMY_TEXT} </p>
           <div className='mr-auto'>
             <Button color="failure" className='uppercase mx-auto' size="lg">CONTACT US</Button>
           </div>
