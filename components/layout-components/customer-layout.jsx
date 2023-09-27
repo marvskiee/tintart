@@ -1,11 +1,15 @@
 import React from 'react'
+import FooterLayout from './footer-layout'
+import CustomerHeader from '../header-components/customer-header'
 
-const CustomerWrapper = ({ children, containerClass }) => {
+const CustomerLayout = ({ children }) => {
   return (
-    <div className={containerClass}>
-      <div className='max-w-[80rem] mx-auto'>{children}</div>
-    </div>
+    <>
+      <CustomerHeader />
+      <div className='min-h-[60vh] 2xl:min-h-[100vh] '>{children}</div>
+      <FooterLayout />
+    </>
   )
 }
 
-export default CustomerWrapper
+export default CustomerLayout

@@ -3,6 +3,7 @@ import { CustomerHeader, CustomerWrapper } from '../components'
 import { Button } from 'flowbite-react'
 import { BiShoppingBag } from 'react-icons/bi'
 import Image from 'next/image'
+import CustomerLayout from '../components/layout-components/customer-layout'
 
 const Home = () => {
   const DUMMY_TEXT = `
@@ -41,8 +42,7 @@ const Home = () => {
     }
   ]
   return (
-    <>
-      <CustomerHeader />
+    <CustomerLayout>
       <CustomerWrapper containerClass="p-6 lg:p-16 bg-slate-100">
         <div className='flex flex-col-reverse lg:flex-row gap-10 items-center my-4'>
           <div className='flex flex-col gap-4'>
@@ -111,7 +111,7 @@ const Home = () => {
           }
         </div>
       </CustomerWrapper>
-      <CustomerWrapper containerClass="bottom-0 text-white p-6 lg:p-16 bg-slate-900">
+      <CustomerWrapper containerClass="bottom-0 text-slate-900 p-6 lg:p-16 bg-slate-100">
         <div className='flex flex-col gap-4 my-4'>
           <h2 className='font-extrabold text-3xl'>BULK ORDERS?</h2>
           <p className='lg:text-xl text-md'>{DUMMY_TEXT} </p>
@@ -120,7 +120,7 @@ const Home = () => {
           </div>
         </div>
       </CustomerWrapper>
-    </>
+    </CustomerLayout>
   )
 }
 

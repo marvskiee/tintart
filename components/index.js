@@ -1,5 +1,5 @@
 export { default as CustomerHeader } from './header-components/customer-header'
-
-export { default as CustomerWrapper } from './layout-components/customer-layout'
-
+export { default as FooterLayout } from './layout-components/footer-layout'
+export { default as CustomerLayout } from './layout-components/customer-layout'
+export { default as CustomerWrapper } from './layout-components/customer-wrapper'
 export { default as TextInput } from './input-components/text-input'
