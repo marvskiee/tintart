@@ -65,7 +65,7 @@ const CustomerHeader = props => {
           {DATA.FOOTER.LINKS.map((item, key) => (
             <Link
               href={item?.link}
-              className={`text-lg text-white lg:text-slate-900 whitespace-nowrap h-full block w-full flex-grow-0 lg:text-center text-left gap-4 cursor-pointer transition-colors delay-75 border-b-2 border-transparent hover:border-white lg:hover:border-slate-500 p-4 uppercase font-bold ${
+              className={` text-white lg:text-slate-900 whitespace-nowrap h-full block w-full flex-grow-0 lg:text-center text-left gap-4 cursor-pointer transition-colors delay-75 border-b-2 border-transparent hover:border-white lg:hover:border-slate-500 p-4 uppercase font-bold ${
                 router.pathname == item?.link && 'border-white lg:border-black'
               }`}
               key={key}

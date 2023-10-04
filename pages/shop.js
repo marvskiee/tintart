@@ -3,33 +3,10 @@ import { AiOutlineHeart } from "react-icons/ai"
 import { CustomerHeader, CustomerWrapper } from '../components'
 import { Accordion, Button } from 'flowbite-react'
 import CustomerLayout from '../components/layout-components/customer-layout'
+import DATA from '../utils/DATA'
 
 const Shop = () => {
-  const PRODUCT_DATA = [
-    {
-      name: "Luffy Nika",
-      price: 2000
-    },
-    {
-      name: "Luffy Nika",
-      price: 2000
-    },
-    {
-      name: "Luffy Nika",
-      price: 2000
-    },
-    {
-      name: "Luffy Nika",
-      price: 2000
-    }, {
-      name: "Luffy Nika",
-      price: 2000
-    },
-    {
-      name: "Luffy Nika",
-      price: 2000
-    },
-  ]
+ 
   return <CustomerLayout>
     <CustomerWrapper containerClass="p-4">
       <h2 className='font-bold text-3xl p-4'>All Products</h2>
@@ -57,12 +34,12 @@ const Shop = () => {
         </div>
         {/* main content */}
         <div className='grid grid-cols-1 gap-4 lg:grid-cols-3 mb-10'>
-          {PRODUCT_DATA.map((item, key) => (
+          {DATA.SAMPLE_PRODUCT.map((item, key) => (
             <div className='relative' key={key}>
               <Button color="light" size="xs" className='bg-black/50 border-0 absolute top-5 right-5 aspect-square'>
                 <AiOutlineHeart color='red' className='text-2xl' />
               </Button>
-              <img alt='luffy' src="./images/hero.png" className='rounded-2xl w-full aspect-square object-cover' />
+              <img alt='luffy' src={`./images/sample-products/sp (${key}).jpg`} className='rounded-2xl w-full aspect-square object-cover' />
               <p className="p-2 font-semibold text-md">{item?.name}</p>
               <p className="p-2 font-semibold text-xl">PHP {item?.price}</p>
             </div>

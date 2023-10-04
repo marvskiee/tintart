@@ -4,29 +4,13 @@ import { Button } from 'flowbite-react'
 import { BiShoppingBag } from 'react-icons/bi'
 import Image from 'next/image'
 import CustomerLayout from '../components/layout-components/customer-layout'
+import DATA from '../utils/DATA'
 
 const Home = () => {
   const DUMMY_TEXT = `
   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis varius arcu convallis, ullamcorper ligula vel, placerat risus. Nunc luctus, ex at tempus vehicula, mauris augue ullamcorper magna, non lobortis libero dui non mi. Mauris nec faucibus metus, non tincidunt ligula. Aliquam erat volutpat. Vivamus ullamcorper quam sit amet vehicula venenatis. Aliquam erat volutpat.
   `
-  const PROJECT_DATA = [
-    {
-      title: "Luffy Nika",
-      price: 2000
-    },
-    {
-      title: "Luffy Nika",
-      price: 2000
-    },
-    {
-      title: "Luffy Nika",
-      price: 2000
-    },
-    {
-      title: "Luffy Nika",
-      price: 2000
-    }
-  ]
+
   const ARTIST_DATA = [
     {
       artist_name: "Oda",
@@ -66,9 +50,9 @@ const Home = () => {
           <h2 className='font-extrabold text-center w-full uppercase text-4xl'>Featured Products</h2>
           <div className='grid grid-cols-2 lg:grid-cols-4 gap-10 '>
             {
-              PROJECT_DATA.map((item, key) => (
+              DATA.FEATURED_PROJECT.map((item, key) => (
                 <div key={`project-${key}`}>
-                  <img src='/images/hero.png' className='w-full aspect-square rounded-3xl' />
+                  <img src={item.image} className='w-full aspect-square rounded-3xl' />
                   <div className='p-2'>
                     <p className='font-extrabold text-lg text-center'>{item?.title}</p>
                     <p className='font-semibold text-lg text-center'>PHP {item?.price}</p>
