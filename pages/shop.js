@@ -39,7 +39,7 @@ const Shop = () => {
               <Button color="light" size="xs" className='bg-black/50 border-0 absolute top-5 right-5 aspect-square'>
                 <AiOutlineHeart color='red' className='text-2xl' />
               </Button>
-              <img alt='luffy' src={`./images/sample-products/sp (${key}).jpg`} className='rounded-2xl w-full aspect-square object-cover' />
+              <img alt='luffy' src={`./images/sample-products/SP (${key}).jpg`} className='rounded-2xl w-full aspect-square object-cover' />
               <p className="p-2 font-semibold text-md">{item?.name}</p>
               <p className="p-2 font-semibold text-xl">PHP {item?.price}</p>
             </div>
