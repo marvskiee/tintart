@@ -13,7 +13,7 @@ const DATA = {
         SETTING_LINKS: [
             { name: 'shop settings', link: '/admin/settings/shop' },
             { name: 'edit profile', link: '/admin/settings/profile' },
-            { name: 'password', link: '/admin/settings/password' },
+            { name: 'change password', link: '/admin/settings/password' },
         ]
     },
     FOOTER:

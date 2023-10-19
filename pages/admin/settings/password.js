@@ -5,13 +5,13 @@ import { Button, FileInput, Label, TextInput } from 'flowbite-react'
 const ChangePassword = () => {
   const fields = [
     {
-      label: "Old Password", span: "col-span-2"
+      label: "Old Password",
     },
     {
-      label: "New Password", span: "col-span-2"
+      label: "New Password",
     },
     {
-      label: "Repeat Password", span: "col-span-2"
+      label: "Repeat Password",
     }
   ]
   const submitHandler = () => {
@@ -19,10 +19,10 @@ const ChangePassword = () => {
   return (
     <AdminLayout>
       <SettingLayout>
-        <div className='grid grid-cols-1 lg:grid-cols-2'>
-          <p className='text-xl font-semibold mb-2'>Change Password</p>
+        <div className='grid grid-cols-1 gap-4'>
+          <p className='text-xl font-semibold mb-2 '>Change Password</p>
           {fields.map((item, key) => (
-            <div className={`my-2 ${item.span}`}>
+            <div key={"password-" + key}>
               <Label className='capitalize mb-2 block'>{item.label}</Label>
               <input
                 type='text'
