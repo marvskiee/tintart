@@ -1,7 +1,7 @@
 import { sign } from 'jsonwebtoken'
 import { serialize } from 'cookie'
 import dbConnect from '../../../utils/dbConnect'
-import Student from '../../../models/Student'
+import User from '../../../models/User'
 import bcrypt from 'bcrypt'
 import { response } from '../../../services/response'
 
@@ -23,7 +23,7 @@ export default async (req, res) => {
   } else {
     let result = null
     try {
-      const user = await Student.findOne({
+      const user = await User.findOne({
         lrn,
         status: true,
       })

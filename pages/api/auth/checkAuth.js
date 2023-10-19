@@ -1,6 +1,6 @@
 import dbConnect from '../../../utils/dbConnect'
 import { verify } from 'jsonwebtoken'
-import Student from '../../../models/Student'
+import User from '../../../models/User'
 
 dbConnect()
 
@@ -12,8 +12,8 @@ export default async (req, res) => {
     if (!jwt) {
       return res.json({ success: false, message: 'no token' })
     }
-    const student = verify(jwt, secret)
-    const user_data = await Student.findById(student.id).select(['-password', '-__v'])
+    const user = verify(jwt, secret)
+    const user_data = await User.findById(user.id).select(['-password', '-__v'])
     if (user_data) {
       return res.json({ success: true, data: user_data })
     }

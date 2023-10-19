@@ -6,13 +6,13 @@ import { getStorage } from 'firebase/storage'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: 'AIzaSyAjRbwXeqb4yRCyV7InzRBEI24qpQ6XkvA',
-  authDomain: 'malinta-96042.firebaseapp.com',
-  projectId: 'malinta-96042',
-  storageBucket: 'malinta-96042.appspot.com',
-  messagingSenderId: '626100295559',
-  appId: '1:626100295559:web:73e189da3e1c222d5da522',
-}
+  apiKey: "AIzaSyBGITk_E5LgWujQinjxWLYYSAwavFuK-rQ",
+  authDomain: "tintart-eec2e.firebaseapp.com",
+  projectId: "tintart-eec2e",
+  storageBucket: "tintart-eec2e.appspot.com",
+  messagingSenderId: "342440309375",
+  appId: "1:342440309375:web:2421730923d3a0a4dc454a"
+};
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)

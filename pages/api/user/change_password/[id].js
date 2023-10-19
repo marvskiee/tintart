@@ -1,5 +1,5 @@
 import dbConnect from '../../../../utils/dbConnect'
-import Student from '../../../../models/Student'
+import User from '../../../../models/User'
 import { response } from '../../../../services/response'
 import bcrypt from 'bcrypt'
 dbConnect()
@@ -41,12 +41,12 @@ export default async (req, res) => {
         })
       } else {
         try {
-          const old = await Student.findById(id)
+          const old = await User.findById(id)
           const decryptPassword = await bcrypt.compare(oldPassword, old.password)
           const salt = await bcrypt.genSalt(Number(process.env.SALT))
           const hashPassword = await bcrypt.hash(newPassword, salt)
           if (decryptPassword) {
-            const student = await Student.findByIdAndUpdate(
+            const user = await User.findByIdAndUpdate(
               { _id: id },
               {
                 password: hashPassword,
@@ -56,7 +56,7 @@ export default async (req, res) => {
                 runValidators: true,
               }
             )
-            if (student) {
+            if (user) {
               return res.status(200).json({ success: true })
             }
           }

@@ -1,5 +1,21 @@
 const DATA = {
     PESO: "₱",
+    ADMIN: {
+        HEADER_LINKS: [
+            { name: 'dashboard', link: '/admin/dashboard' },
+            { name: 'properties', link: '/admin/properties' },
+            { name: 'categories', link: '/admin/categories' },
+            { name: 'products', link: '/admin/products' },
+            { name: 'orders', link: '/admin/orders' },
+            { name: 'admins', link: '/admin/admins' },
+            { name: 'settings', link: '/admin/settings/shop' },
+        ],
+        SETTING_LINKS: [
+            { name: 'shop settings', link: '/admin/settings/shop' },
+            { name: 'edit profile', link: '/admin/settings/profile' },
+            { name: 'password', link: '/admin/settings/password' },
+        ]
+    },
     FOOTER:
     {
         ADDRESS: "37 Magiliw St.Lena Subdivision, Dalandanan, Valenzuela City",
@@ -343,8 +359,80 @@ const DATA = {
             category: "Lyrical",
             images: []
         }
-    ]
+    ],
+    ABOUT: [
+        {
+            role: "Artist",
+            first_name: "Lorem",
+            last_name: "Ipsum",
+            social_media_links: [
+                "/",
+                "/",
+                "/"
+            ], image: "../images/hero.png"
 
+        },
+        {
+            role: "Merchant",
+            first_name: "Lorem",
+            last_name: "Ipsum",
+            social_media_links: [
+                "/",
+                "/",
+                "/"
+            ], image: "../images/hero.png"
+        },
+        {
+            role: "Artist",
+            first_name: "Lorem",
+            last_name: "Ipsum",
+            social_media_links: [
+                "/",
+                "/",
+                "/"
+            ], image: "../images/hero.png"
+
+        },
+
+    ],
+    TABLE_HEADERS: {
+        PROPERTIES: [
+            { label: "Merchandise", name: "merchandise" },
+            { label: "Values", name: "values" },
+            { label: "Date Added", name: "created_at" }],
+        ADMINS: [
+            { label: "Name", name: "name" },
+            { label: "Email", name: "email" },
+            { label: "Date Added", name: "created_at" }],
+        CATEGORIES: [
+            { label: "Categories", name: "category" },
+            { label: "Date Added", name: "created_at" }],
+        ORDERS: [
+            { label: "Order ID", name: "order_id" },
+            { label: "Name", name: "name" },
+            { label: "Contact No.", name: "contact_no" },
+            { label: "Address", name: "address" },
+            { label: "Total Price", name: "total_price" },
+            { label: "Paid", name: "is_paid" },
+            { label: "Status", name: "status" },
+        ],
+        PRODUCTS: [
+            { label: "Name", name: "product_name" },
+            { label: "Featured", name: "is_featured" },
+            { label: "Archived", name: "is_archived" },
+            { label: "Sold Out", name: "is_sold_out" },
+            { label: "Price", name: "price" },
+            { label: "Merchandise", name: "category" },
+            { label: "Size", name: "sizes" },
+            { label: "Color", name: "colors" },
+            { label: "Date Added", name: "created_at" }
+        ],
+
+
+
+
+
+    }
 }
 
 export default DATA;
