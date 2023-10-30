@@ -17,6 +17,71 @@ const DATA = {
             { name: 'change password', link: '/admin/settings/password' },
         ]
     },
+    SAMPLE_PRODUCT: [
+        {
+            name: "Demon Slayer – Tanjiro",
+            description: "Tanjiro from anime Demon Slayer",
+            price: 150,
+            color: "White",
+            size: ["S", "M", "L", "XL", "XXL"],
+            category: "Demon Slayer",
+            images: []
+        },
+        {
+            name: "Demon Slayer",
+            description: "Demon Slayer logo from its self-entitled anime",
+            price: 150,
+            color: "White",
+            size: ["S", "M", "L", "XL", "XXL"],
+            category: "Demon Slayer",
+            images: []
+        },
+        {
+            name: "Demon Slayer – Nezuko",
+            description: "Nezuko from anime Demon Slayer",
+            price: 150,
+            color: "White",
+            size: ["S", "M", "L", "XL", "XXL"],
+            category: "Demon Slayer",
+            images: []
+        },
+        {
+            name: "Demon Slayer – Rengoku",
+            description: "Rengoku from anime Demon Slayer",
+            price: 150,
+            color: "White",
+            size: ["S", "M", "L", "XL", "XXL"],
+            category: "Demon Slayer",
+            images: []
+        },
+        {
+            name: "Demon Slayer – Akaza",
+            description: "Akaza from anime Demon Slayer",
+            price: 150,
+            color: "White",
+            size: ["S", "M", "L", "XL", "XXL"],
+            category: "Demon Slayer",
+            images: []
+        },
+        {
+            name: "Demon Slayer – Tanjuro",
+            description: "Tanjuro from anime Demon Slayer",
+            price: 150,
+            color: "White",
+            size: ["S", "M", "L", "XL", "XXL"],
+            category: "Demon Slayer",
+            images: []
+        },
+        {
+            name: "Demon Slayer – Tanjiro 2",
+            description: "Tanjiro from anime Demon Slayer",
+            price: 150,
+            color: "White",
+            size: ["S", "M", "L", "XL", "XXL"],
+            category: "Demon Slayer",
+            images: []
+        },
+    ],
     FOOTER:
     {
         ADDRESS: "37 Magiliw St.Lena Subdivision, Dalandanan, Valenzuela City",

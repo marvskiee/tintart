@@ -34,7 +34,7 @@ const Shop = () => {
         </div>
         {/* main content */}
         <div className='grid grid-cols-1 gap-4 lg:grid-cols-3 mb-10'>
-          {DATA.SAMPLE_PRODUCT.map((item, key) => (
+          {DATA.SAMPLE_PRODUCT?.map((item, key) => (
             <div className='relative' key={key}>
               <Button color="light" size="xs" className='bg-black/50 border-0 absolute top-5 right-5 aspect-square'>
                 <AiOutlineHeart color='red' className='text-2xl' />
