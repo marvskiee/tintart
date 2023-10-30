@@ -1,10 +1,6 @@
 const mongoose = require('mongoose')
 
 const ProductSchema = new mongoose.Schema({
-    shop_name: {
-        type: String,
-        required: [true, 'Shop Name must not be empty'],
-    },
     images: {
         type: [{
             type: String,
@@ -23,9 +19,12 @@ const ProductSchema = new mongoose.Schema({
         required: [true, 'Price must not be empty'],
     },
     category: {
-        type: [{
-            type: String,
-        }],
+        type: String,
+        required: [true, 'Category must not be empty'],
+    },
+    merchandise: {
+        type: String,
+        required: [true, 'Merchandise must not be empty'],
     },
     colors: {
         type: [{
@@ -38,13 +37,13 @@ const ProductSchema = new mongoose.Schema({
         }],
     },
     is_featured: {
-        type: String,
+        type: Boolean,
     },
     is_archived: {
-        type: String,
+        type: Boolean,
     },
     is_sold_out: {
-        type: String,
+        type: Boolean,
     },
     created_at: {
         type: Date,

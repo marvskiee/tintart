@@ -1,5 +1,5 @@
 import dbConnect from '../../../../utils/dbConnect'
-import User from '../../../../models/User'
+import Gallery from '../../../../models/Gallery'
 import { response } from '../../../../services/response'
 
 dbConnect()
@@ -9,11 +9,11 @@ export default async (req, res) => {
         case 'PUT':
             let newError
             try {
-                const admin = await User.findByIdAndUpdate(req.query.id, req.body, {
+                const gallery = await Gallery.findByIdAndUpdate(req.query.id, req.body, {
                     new: true,
                     runValidators: true,
                 })
-                if (!admin) {
+                if (!gallery) {
                     return response({
                         res,
                         status_code: 400,
@@ -25,7 +25,7 @@ export default async (req, res) => {
                         res,
                         status_code: 200,
                         success: true,
-                        data: admin,
+                        data: gallery,
                     })
                 }
             } catch (error) {

@@ -7,7 +7,7 @@ const SettingLayout = ({ children }) => {
       <div className='lg:col-span-1'>
         <SettingHeader />
       </div>
-      <div className='lg:col-span-3 rounded-md border p-8'>{children}</div>
+      <div className='lg:col-span-3 rounded-md border lg:p-8 p-4'>{children}</div>
     </div>
   )
 }

@@ -25,11 +25,10 @@ const CustomerHeader = props => {
     )
   }
   const router = useRouter()
-  console.log(router.pathname)
   return (
     <>
       <div className='z-50 sticky top-0'>
-        <div className=' bg-slate-900 p-4 gap-4 lg:gap-0 flex flex-col'>
+        <div className=' bg-zinc-900 p-4 gap-4 lg:gap-0 flex flex-col'>
           <div className='flex md:items-center items-center gap-4 justify-between max-w-[80rem] w-full mx-auto'>
             <div className=' items-center gap-4 flex'>
               <Button
@@ -40,7 +39,7 @@ const CustomerHeader = props => {
               >
                 <GiHamburgerMenu color='white' />
               </Button>
-              <Image src={'/images/logo.png'} alt='logo' width={100} height={100} className='' />
+              <img src={'/images/logo.png'} alt='logo' width={100} height={100} className='' />
             </div>
             <SearchComponents className='hidden lg:flex' />
             <div className='order-2 md:order-3 flex gap-3 items-center'>
@@ -63,7 +62,7 @@ const CustomerHeader = props => {
           </div>
         </div>
         <div
-          className={`bg-slate-900 lg:bg-white -z-10 lg:border-0 border-b absolute lg:static w-full mx-auto ${
+          className={`bg-zinc-900 lg:bg-white -z-10 lg:border-0 border-b absolute lg:static w-full mx-auto ${
             menuBar ? 'block' : 'hidden'
           } lg:block`}
         >
@@ -71,7 +70,7 @@ const CustomerHeader = props => {
             {DATA.FOOTER.LINKS.map((item, key) => (
               <Link
                 href={item?.link}
-                className={` text-white lg:text-slate-900 whitespace-nowrap h-full block w-full flex-grow-0 lg:text-center text-left gap-4 cursor-pointer transition-colors delay-75 border-b-2 border-transparent hover:border-white lg:hover:border-slate-500 p-4 uppercase font-bold ${
+                className={` text-white lg:text-zinc-900 whitespace-nowrap h-full block w-full flex-grow-0 lg:text-center text-left cursor-pointer transition-colors delay-75 border-b-2 border-transparent hover:border-white lg:hover:border-zinc-500 p-2 px-4 uppercase font-semibold ${
                   router.pathname == item?.link && 'border-white lg:border-black'
                 }`}
                 key={key}

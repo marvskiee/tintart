@@ -1,5 +1,5 @@
 import React from 'react'
-import { AdminLayout } from '../../../components'
+import { AdminLayout } from '../../../../components'
 
 const ViewProduct = () => {
   return (

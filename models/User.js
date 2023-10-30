@@ -25,7 +25,8 @@ const UserSchema = new mongoose.Schema({
     type: String,
   },
   // 0 = customer
-  // 1 = admin
+  // 1 = artist
+  // 2 = admin
   role: {
     type: Number,
     required: [true, 'Role must not be empty'],

@@ -6,10 +6,13 @@ import { AiOutlineEdit } from 'react-icons/ai'
 import moment from 'moment/moment'
 import toast from 'react-hot-toast'
 import { toastOptions } from '../../styles/modalOption'
+import { FiMoreHorizontal } from 'react-icons/fi'
+import { useRouter } from 'next/router'
 
 const TableLayout = ({
   title,
   refs,
+  nextPage,
   validationHandler,
   loadRequest,
   postRequest,
@@ -17,6 +20,7 @@ const TableLayout = ({
   deleteRequest,
   header,
 }) => {
+  const router = useRouter()
   const [search, setSearch] = useState('')
   const [modal, setModal] = useState(false)
   const [modalType, setModalType] = useState('')
@@ -88,7 +92,7 @@ const TableLayout = ({
   const RowTemplate = ({ label }) => {
     return (
       <Table.Row>
-        <Table.Cell colSpan={header.length} className='text-center'>
+        <Table.Cell colSpan={header.length + 1} className='text-center'>
           {label}
         </Table.Cell>
       </Table.Row>
@@ -97,7 +101,7 @@ const TableLayout = ({
 
   return (
     <>
-      {modal && (
+      {(refs && modal) && (
         <Modal dismissible show={modal === 'dismissible'} onClose={() => setModal(undefined)}>
           <Modal.Header>
             {modalType} {title.replace('ie', 'y').slice(0, -1)}
@@ -155,6 +159,9 @@ const TableLayout = ({
           <Button
             gradientDuoTone='cyanToBlue'
             onClick={() => {
+              if (nextPage != null) {
+                return nextPage.addHandler()
+              }
               targetRef.current = null
               setModalType('Add')
               setModal('dismissible')
@@ -183,30 +190,51 @@ const TableLayout = ({
                     <Table.Cell key={`children-${title.toLowerCase()}-${childKey}`}>
                       {childItem == 'created_at'
                         ? moment(parentItem[childItem]).format('MMMM DD, yyyy hh:mm A')
-                        : parentItem[childItem]}
+                        : childItem == 'role'
+                        ? `${parentItem['role'] == 2 ? 'Admin' : 'Artist'}`
+                        : childItem == 'name'
+                        ? `${parentItem['first_name']} ${parentItem['last_name']}`
+                        : childItem == 'colors' ? 
+                          parentItem['colors'].join(', ')
+                        : ["is_featured","is_sold_out","is_archived"].indexOf(childItem) > -1  ?
+                          parentItem[childItem].toString().toUpperCase()
+                        :parentItem[childItem]}
                     </Table.Cell>
                   ))}
                   <Table.Cell className='flex flex-row gap-4 items-center justify-end'>
-                    <Button
-                      gradientDuoTone='greenToBlue'
-                      onClick={() => {
-                        targetRef.current = parentItem
-                        setModalType('Edit')
-                        setModal('dismissible')
-                      }}
-                    >
-                      <AiOutlineEdit />
-                    </Button>
-                    <Button
-                      gradientDuoTone='pinkToOrange'
-                      onClick={() => {
-                        targetRef.current = parentItem
-                        setModalType('Delete')
-                        setModal('dismissible')
-                      }}
-                    >
-                      <RiDeleteBin6Line />
-                    </Button>
+                    {nextPage == null ? (
+                      <>
+                        <Button
+                          gradientDuoTone='greenToBlue'
+                          onClick={() => {
+                            targetRef.current = parentItem
+                            setModalType('Edit')
+                            setModal('dismissible')
+                          }}
+                        >
+                          <AiOutlineEdit />
+                        </Button>
+                        <Button
+                          gradientDuoTone='pinkToOrange'
+                          onClick={() => {
+                            targetRef.current = parentItem
+                            setModalType('Delete')
+                            setModal('dismissible')
+                          }}
+                        >
+                          <RiDeleteBin6Line />
+                        </Button>
+                      </>
+                    ) : (
+                      <Button
+                        gradientDuoTone='cyanToBlue'
+                        onClick={() => {
+                          router.push(title.toLowerCase() + '/edit/' + parentItem?._id)
+                        }}
+                      >
+                        <FiMoreHorizontal />
+                      </Button>
+                    )}
                   </Table.Cell>
                 </Table.Row>
               ))

@@ -79,7 +79,7 @@ const Cart = () => {
                     {/* sidebar  */}
                     <div className=' w-full'>
                         <h1 className='mb-10 text-4xl font-extrabold'>Your Cart</h1>
-                        <Table className='text-slate-900'>
+                        <Table className='text-zinc-900'>
                             <Table.Head>
                                 <Table.HeadCell align='center'>
                                     Select

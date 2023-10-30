@@ -17,8 +17,8 @@ const FooterLayout = () => {
     )
   }
   return (
-    <CustomerWrapper containerClass='bg-slate-900 p-4'>
-      <div className='text-slate-100  bg-slate-900'>
+    <CustomerWrapper containerClass='bg-zinc-900 p-4'>
+      <div className='text-zinc-100  bg-zinc-900'>
         <div className=' flex justify-between flex-col gap-10 lg:flex-row py-10'>
           <div className='flex flex-col gap-4 w-full'>
             <img alt='logo' src='./images/logo.png' className='w-[20rem]  object-cover' />

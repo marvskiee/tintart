@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { GiHamburgerMenu } from 'react-icons/gi'
+import { TbLogout } from 'react-icons/tb'
 import { useRouter } from 'next/router'
 import { Button } from 'flowbite-react'
 import Link from 'next/link'
@@ -9,7 +10,6 @@ const AdminHeader = props => {
   const [menuBar, setMenuBar] = useState(false)
 
   const router = useRouter()
-  console.log(router.pathname.split("/")[2])
   return (
     <>
       <div className='z-50 sticky top-0'>
@@ -32,7 +32,7 @@ const AdminHeader = props => {
             {DATA.ADMIN.HEADER_LINKS.map((item, key) => (
               <Link
                 href={item?.link}
-                className={`text-slate-900 whitespace-nowrap h-full block w-full flex-grow-0 lg:text-center text-left gap-4 cursor-pointer transition-colors delay-75 border-transparent text-sm hover:border-white lg:hover:border-slate-500 p-4 capitalize font-semibold ${
+                className={`text-zinc-900 whitespace-nowrap h-full block w-full flex-grow-0 lg:text-center text-left gap-4 cursor-pointer transition-colors delay-75 border-transparent text-sm hover:border-white lg:hover:border-zinc-500 p-4 capitalize font-semibold ${
                   router.pathname.split('/')[2] == item?.link.split('/')[2] &&
                   'font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600'
                 }`}
@@ -44,13 +44,16 @@ const AdminHeader = props => {
           </div>
           <div className='flex flex-row gap-2 items-center'>
             <img
-              src='../../images/about1.png'
+              src='/images/about1.png'
               className='w-[2.5rem] h-[2.5rem] object-cover rounded-full'
             />
             <div className='flex-col flex'>
               <p className='font-semibold'>John doe</p>
               <p className='text-xs'>johndoe@gmail.com</p>
             </div>
+            <Button color='light' size='sm'>
+              <TbLogout />
+            </Button>
           </div>
         </div>
       </div>
