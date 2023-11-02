@@ -13,7 +13,7 @@ import { getUser } from '../../services/auth.services'
 import { getAllProduct } from '../../services/product.services'
 
 const CustomerHeader = props => {
-  const [search, setSearch] = useState('de')
+  const [search, setSearch] = useState('')
   const [menuBar, setMenuBar] = useState(false)
   const [data, setData] = useState([])
   const router = useRouter()
