@@ -10,22 +10,21 @@ dbConnect()
 const secret = process.env.SECRET
 
 export default async (req, res) => {
-  const { lrn, password } = req.body
+  const { email, password } = req.body
   let newError = {}
-  if (lrn?.trim() == '' || lrn == undefined) {
-    newError = { ...newError, lrnError: 'Please enter lrn!' }
+  if (email?.trim() == '' || email == undefined) {
+    newError = { ...newError, emailError: 'Please enter email!' }
   }
   if (password?.trim() == '' || password == undefined) {
     newError = { ...newError, passwordError: 'Please enter password!' }
   }
-  if (newError.hasOwnProperty('lrnError') || newError.hasOwnProperty('passwordError')) {
+  if (newError.hasOwnProperty('emailError') || newError.hasOwnProperty('passwordError')) {
     return response({ res, status_code: 400, success: false, error: newError })
   } else {
     let result = null
     try {
       const user = await User.findOne({
-        lrn,
-        status: true,
+        email
       })
       const decryptPassword = await bcrypt.compare(password, user.password)
       if (decryptPassword) {
@@ -33,8 +32,8 @@ export default async (req, res) => {
       } else {
         result = null
       }
-    } catch (error) {}
-
+    } catch (error) { }
+    console.log(result)
     if (result) {
       const token = sign(
         {
@@ -56,7 +55,7 @@ export default async (req, res) => {
     } else {
       res.json({
         success: false,
-        errors: { lrnError: 'Wrong password or lrn!' },
+        errors: { emailError: 'Wrong password or email!' },
       })
     }
   }

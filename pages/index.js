@@ -1,17 +1,37 @@
-import React from 'react'
-import { CustomerHeader, CustomerWrapper } from '../components'
+import React, { useEffect, useState } from 'react'
+import { CustomerHeader, CustomerWrapper, LoadingLayout } from '../components'
 import { Button } from 'flowbite-react'
 import { BiShoppingBag } from 'react-icons/bi'
 import Image from 'next/image'
 import CustomerLayout from '../components/layout-components/customer-layout'
 import DATA from '../utils/DATA'
 import { FaArrowRight } from 'react-icons/fa'
+import { getAllGallery } from '../services/gallery.services'
+import { getAllProduct } from '../services/product.services'
+import { useRouter } from 'next/router'
 
 const Home = () => {
-  const DUMMY_TEXT = `
-  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis varius arcu convallis, ullamcorper ligula vel, placerat risus. Nunc luctus, ex at tempus vehicula, mauris augue ullamcorper magna, non lobortis libero dui non mi. Mauris nec faucibus metus, non tincidunt ligula. Aliquam erat volutpat. Vivamus ullamcorper quam sit amet vehicula venenatis. Aliquam erat volutpat.
-  `
+  const [galleryData, setGalleryData] = useState([])
+  const [productData, setProductData] = useState([])
 
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
+  const loadHandler = async () => {
+    setIsLoading(true)
+    // fetch agllery
+    const gallery_result = await getAllGallery()
+    if (gallery_result.success)
+      setGalleryData(gallery_result?.data)
+    // fetch products
+    const products_result = await getAllProduct()
+    if (products_result.success)
+      setProductData(products_result?.data)
+    setIsLoading(false)
+    
+  }
+  useEffect(() => {
+    loadHandler()
+  }, [])
   return (
     <CustomerLayout>
       <CustomerWrapper containerClass="p-6 lg:p-16 bg-zinc-100">
@@ -36,45 +56,48 @@ const Home = () => {
       <CustomerWrapper containerClass="p-6 lg:p-16">
         <div className='flex flex-col gap-10 min-h-[40rem] items-center justify-center my-4'>
           <h2 className='font-semibold text-center w-full uppercase text-4xl'>Featured Products</h2>
-          <div className='grid grid-cols-1 lg:grid-cols-4 gap-10 '>
-            {
-              DATA.FEATURED_PROJECT.slice(0, 4).map((item, key) => (
-                <div key={`project-${key}`}>
-                  <img src={item.image} className='w-full aspect-square rounded-xl' />
-                  <div className='p-2'>
-                    <p className='font-semibold text-lg text-center'>{item?.title}</p>
-                    <p className=' text-lg text-center'>PHP {item?.price}</p>
+          <LoadingLayout message="There is no product listed!" loadingState={isLoading} hasContent={productData?.slice(0, 4)?.length > 0}>
+            <div className='flex items-center justify-center gap-10 place-items-center '>
+              {
+                productData?.slice(0, 4).map((item, key) => (
+                  <div key={`project-${key}`}>
+                    <img src={item.images[0]} className='max-w-[20rem] shadow-md w-full aspect-square rounded-xl object-cover' />
+                    <div className='p-2'>
+                      <p className='font-semibold text-lg text-center'>{item?.title}</p>
+                      <p className=' text-lg text-center'>PHP {item?.price}</p>
+                    </div>
                   </div>
+                ))
+              }
+            </div>
+          </LoadingLayout>
+          <div className='w-full'>
+            <Button color="failure" className='mx-auto' size="lg" onClick={() => router.push("/shop")}>View All Products</Button>
+          </div>
+        </div>
+      </CustomerWrapper>
+      <CustomerWrapper containerClass="bottom-0 text-white p-6 lg:p-16 bg-gradient-to-t from-red-700 to-red-600">
+        <div className='flex flex-col gap-8 my-4 items-center justify-center'>
+          <h2 className='font-semibold text-3xl'>BULK ORDERS?</h2>
+          <p className='lg:text-xl'>Streamline Your Wholesale Shopping Experience - Hassle-Free Bulk Orders Await!</p>
+          <Button color="failure" className=' mx-auto border border-white' size="lg">Contact Us</Button>
+        </div>
+      </CustomerWrapper>
+      <CustomerWrapper containerClass="p-6 lg:p-16">
+        <LoadingLayout message="Gallery is Empty." loadingState={isLoading} hasContent={galleryData?.slice(0, 5)?.length > 0}>
+          <div className='my-16 flex items-center justify-center gap-4 lg:gap-10'>
+            {
+              galleryData?.slice(0, 5).map((item, key) => (
+                <div key={`artist-${key}`} className="max-w-[20rem]">
+                  <img src={item.image} className='shadow-md w-full aspect-square rounded-xl object-cover' />
+
                 </div>
               ))
             }
           </div>
-          <div className='w-full'>
-            <Button color="failure" className='mx-auto' size="lg">View All Products</Button>
-          </div>
-        </div>
-      </CustomerWrapper>
-      <CustomerWrapper containerClass="bottom-0 text-white p-6 lg:p-16 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-red-500 to-red-800">
-        <div className='flex flex-col gap-4 my-4'>
-          <h2 className='font-semibold text-3xl'>BULK ORDERS?</h2>
-          <p className='lg:text-lg'>{DUMMY_TEXT} </p>
-          <div className='mr-auto'>
-            <Button color="failure" className=' mx-auto border border-white' size="lg">Contact Us</Button>
-          </div>
-        </div>
-      </CustomerWrapper>
-      <CustomerWrapper containerClass="p-6 lg:p-16">
-        <div className='my-16 grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-10'>
-          {
-            DATA.FEATURED_PROJECT.slice(0, 5).map((item, key) => (
-              <div key={`artist-${key}`} className="">
-                <img src={item?.image} className={`rounded-xl ${key == 2 && " lg:scale-125"}`} />
-              </div>
-            ))
-          }
-        </div>
+        </LoadingLayout>
         <div className='mx-auto'>
-          <Button color="failure" className=' mx-auto' size="lg">View Gallery</Button>
+          <Button color="failure" className=' mx-auto' size="lg" onClick={() => router.push("/gallery")}>View Gallery</Button>
         </div>
       </CustomerWrapper>
     </CustomerLayout>

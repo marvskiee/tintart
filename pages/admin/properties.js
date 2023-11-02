@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { AdminLayout, TableLayout } from '../../components'
 import DATA from '../../utils/DATA'
 import { addColor, deleteColor, getAllColor, updateColor } from '../../services/color.services'
@@ -6,8 +6,60 @@ import { addSize, deleteSize, getAllSize, updateSize } from '../../services/size
 import { hasBlankValue } from '../../services/tools'
 
 const Properties = () => {
-  const colorInputRef = Array.from({ length: 2 }, () => useRef());
-  const sizeInputRef = Array.from({ length: 2 }, () => useRef());
+
+  const initialColorData = {
+    merchandise: "T-Shirt",
+    values: ""
+  }
+  const [colorData, setColorData] = useState(initialColorData)
+
+  const colorfieldInputs = [
+    {
+      label: 'Merchandise',
+      name: 'merchandise',
+      value: colorData?.merchandise,
+      setValue: e => setColorData({ ...colorData, merchandise: e }),
+    },
+    {
+      label: 'Values',
+      name: 'values',
+      value: colorData?.values,
+      setValue: e => setColorData({ ...colorData, values: e.target.value }),
+    },
+    {
+      label: 'Date Created',
+      name: 'created_at',
+      value: colorData?.created_at,
+    },
+  ]
+
+  const initialSizeData = {
+    merchandise: "T-Shirt",
+    values: ""
+  }
+  const [sizeData, setSizeData] = useState(initialSizeData)
+
+
+  const sizeFieldInputs = [
+    {
+      label: 'Merchandise',
+      name: 'merchandise',
+      value: sizeData?.merchandise,
+      setValue: e => setSizeData({ ...sizeData, merchandise: e }),
+    },
+    {
+      label: 'Values',
+      name: 'values',
+      value: sizeData?.values,
+      setValue: e => setSizeData({ ...sizeData, values: e.target.value }),
+    },
+    {
+      label: 'Date Created',
+      name: 'created_at',
+      value: sizeData?.created_at,
+    },
+  ]
+
 
   const colorValidationHandler = (data) => {
     const hasBlank = hasBlankValue(Object.values(data));
@@ -29,24 +81,28 @@ const Properties = () => {
         {/* COLORS  */}
         <TableLayout
           title="Colors"
-          refs={colorInputRef}
+          data={colorData}
+          initialData={initialColorData}
+          setData={setColorData}
           validationHandler={colorValidationHandler}
           loadRequest={getAllColor}
           postRequest={addColor}
           updateRequest={updateColor}
           deleteRequest={deleteColor}
-          header={DATA.TABLE_HEADERS.PROPERTIES} />
+          fieldInputs={colorfieldInputs} />
 
         {/* SIZES */}
         <TableLayout
           title="Sizes"
-          refs={sizeInputRef}
+          data={sizeData}
+          initialData={initialSizeData}
+          setData={setSizeData}
           validationHandler={sizeValidationHandler}
           loadRequest={getAllSize}
           postRequest={addSize}
           updateRequest={updateSize}
           deleteRequest={deleteSize}
-          header={DATA.TABLE_HEADERS.PROPERTIES} />
+          fieldInputs={sizeFieldInputs} />
       </div>
     </AdminLayout>
   )

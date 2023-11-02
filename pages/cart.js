@@ -73,7 +73,7 @@ const Cart = () => {
         return accumulator + (product.price * product.quantity)
     }, 0)
     return (
-        <CustomerLayout>
+        <CustomerLayout hasFetch={true}>
             <CustomerWrapper>
                 <div className='flex px-4 py-10 flex-col lg:flex-row gap-4'>
                     {/* sidebar  */}

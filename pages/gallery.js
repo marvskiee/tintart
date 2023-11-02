@@ -1,11 +1,37 @@
-import React, { useEffect, useState } from 'react'
-import { CustomerLayout, CustomerWrapper, DynamicFetchLayout } from '../components'
-import { Button } from 'flowbite-react'
-import { getAllGallery } from '../services/gallery.services'
+import React, { useEffect, useRef, useState } from 'react'
+import { CustomerLayout, CustomerWrapper, DeleteModalLayout, DynamicFetchLayout, LoadingLayout, ModalLayout, TextInput } from '../components'
+import { Button, FileInput, Label, Modal } from 'flowbite-react'
+import { addGallery, deleteGallery, getAllGallery } from '../services/gallery.services'
+import { useAppContext } from '../context/AppContext'
+import toast from 'react-hot-toast'
+import { toastOptions } from '../styles/modalOption'
+import { imageUploader } from '../services/tools'
+import Link from 'next/link'
+import { FaFacebook, FaInstagram, FaTwitter } from 'react-icons/fa'
+import { RiDeleteBin6Line } from 'react-icons/ri'
 
 const Gallery = () => {
   const [isLoading, setIsLoading] = useState(true)
+  const { state, dispatch } = useAppContext();
+  const initialData = {
+    name: "",
+    artwork_title: "",
+    facebook_link: "",
+    instagram_link: "",
+    tiktok_link: ""
+  }
+  const [formData, setFormData] = useState(initialData)
   const [data, setData] = useState([])
+  const [modal, setModal] = useState(null)
+  const [deleteModal, setDeleteModal] = useState(null)
+
+  const targetRef = useRef()
+
+  const [hoverActive, setHoverActive] = useState();
+  const getLinks = (id) => {
+    setHoverActive(id);
+  };
+
   const loadHandler = async () => {
     const result = await getAllGallery();
     if (result.success) {
@@ -13,36 +39,191 @@ const Gallery = () => {
     }
     setIsLoading(false)
   }
+
   useEffect(() => {
     loadHandler()
   }, [])
+  const [imageUpload, setImageUpload] = useState(null)
+
+  const fieldInputs = [
+    {
+      label: 'Artist Name',
+      name: 'name',
+      value: formData?.name,
+      setValue: e => setFormData({ ...formData, name: e.target.value }),
+    },
+    {
+      label: 'Artwork Title',
+      name: 'artwork_title',
+      value: formData?.artwork_title,
+      setValue: e => setFormData({ ...formData, artwork_title: e.target.value }),
+    },
+    {
+      label: 'Facebook Link',
+      name: 'facebook_link',
+      value: formData?.facebook_link,
+      setValue: e => setFormData({ ...formData, facebook_link: e.target.value }),
+    },
+    {
+      label: 'Instagram Link',
+      name: 'instagram_link',
+      value: formData?.instagram_link,
+      setValue: e => setFormData({ ...formData, instagram_link: e.target.value }),
+    },
+    {
+      label: 'Tiktok Link',
+      name: 'tiktok_link',
+      value: formData?.tiktok_link,
+      setValue: e => setFormData({ ...formData, tiktok_link: e.target.value }),
+    },
+  ]
+  const addHandler = async () => {
+    setIsLoading(true)
+    await imageUploader([imageUpload], async (postImage) => {
+      const newData = {
+        ...formData, user_id: state?.user?._id, image: postImage
+      }
+
+      const result = await addGallery(newData)
+      if (await result?.success) {
+        toast.success(`Uploaded successfuly!`, toastOptions)
+        setFormData(initialData)
+        setImageUpload(null)
+        setModal(null)
+      } else {
+        toast.error('Something went wrong!', toastOptions)
+      }
+      console.log(newData)
+      loadHandler()
+      setIsLoading(false)
+    })
+
+  }
+
   return (
-    <CustomerLayout>
-      <CustomerWrapper>
-        <div className='flex flex-col lg:flex-row px-4 py-10'>
-          <div className='w-full flex items-center justify-between'>
-            <h2 className='text-3xl font-semibold'>TintArt Gallery</h2>
-            <Button color="dark">Upload</Button>
-          </div>
-        </div>
-        {isLoading ?
-          <p className='text-center py-10'>Please wait while we load the data.</p>
-          :
-          data?.length > 0 ?
-            <div className='grid grid-cols-4 gap-4'>
-              {
-                data.map((item, key) => (
-                  <div key={"gallery-item-" + key} className='flex flex-col gap-4'>
-                    <img src={item?.image} className='aspect-square w-full ' />
-                    <p className='font-semibold'>{item?.artist}</p>
+    <>
+      <DeleteModalLayout
+        title='Gallery'
+        modal={deleteModal}
+        setModal={setDeleteModal}
+        id={targetRef?.current?._id}
+        itemName={`${targetRef.current?.name}`}
+        handler={deleteGallery}
+        preHandler={() => { setDeleteModal(null); loadHandler(); }}
+      />
+      {modal && (
+        <Modal show={modal === 'dismissible'} onClose={() => setModal(undefined)}>
+          <Modal.Header>
+            Upload Image
+          </Modal.Header>
+          <Modal.Body>
+            <div className='gap-4 grid lg:grid-cols-2 grid-cols-1'>
+              <>
+                <div className='lg:col-span-2'>
+                  <img
+                    src={imageUpload?.url || '/images/camera.png'}
+                    className='object-cover w-32 aspect-square border rounded-md'
+                  />
+                </div>
+                <div className={``}>
+                  <Label className='capitalize mb-2 block'>Image</Label>
+                  <div className='flex items-center gap-4'>
+                    <FileInput className='w-full' disabled={isLoading}
+                      onChange={e => {
+                        try {
+                          setImageUpload({
+                            url: URL?.createObjectURL(e.target?.files[0]),
+                            file: e.target?.files[0],
+                            size: e.target?.files[0].size,
+                          })
+                          if (e.target?.files[0].size > 2000000)
+                            toast.error('File must be less than 2mb.', toastOptions)
+                        } catch (e) { }
+                      }}
+                      accept='image/*'
+                    />
                   </div>
-                ))
+                </div>
+                {fieldInputs?.map((item, key) => (
+                  <div key={`${key}-gallery-input`}>
+                    <Label className='capitalize mb-2 block'>{item?.label}</Label>
+                    <TextInput
+                      disabled={isLoading}
+                      value={item?.value}
+                      onChange={e => item?.setValue(e)}
+                      type='text'
+                    />
+                  </div>
+                ))}
+              </>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              disabled={isLoading}
+              gradientDuoTone={'cyanToBlue'}
+              onClick={addHandler}
+            >
+              Submit
+            </Button>
+            <Button
+              disabled={isLoading}
+              color='gray' onClick={() => setModal(undefined)}>
+              Cancel
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
+      <CustomerLayout>
+        <CustomerWrapper>
+          <div className='flex flex-col lg:flex-row p-4 pb-0'>
+            <div className='w-full flex items-center justify-between'>
+              <p className='text-2xl font-semibold my-4'>Gallery</p>
+              {state?.user?.role == 1 &&
+                <Button color="dark" onClick={() => { setModal("dismissible"); setFormData(initialData) }}>Upload your Artwork</Button>
               }
             </div>
-            : <p className='text-center py-10'>There's no picture in our gallery.</p>
-        }
-      </CustomerWrapper>
-    </CustomerLayout>
+          </div>
+          <LoadingLayout message="Gallery is Empty." loadingState={isLoading} hasContent={data?.length > 0}>
+            <div className='p-4 grid grid-cols-2  lg:grid-cols-4 gap-4'>
+              {data.map((item, key) => (
+                <div
+                  key={"gallery-item-" + key}
+                  className='relative overflow-hidden flex flex-col gap-4 aspect-square'
+                  onClick={() => getLinks(item?._id)}
+                  onMouseEnter={() => getLinks(item?._id)}
+                  onMouseLeave={() => getLinks(false)}>
+                  {state?.user?._id == item?.user_id &&
+                    <Button className='absolute top-5 right-5 z-20' color="failure" onClick={() => { targetRef.current = item; setDeleteModal("dismissible") }}>
+                      <RiDeleteBin6Line />
+                    </Button>}
+
+                  <img src={item?.image} className={` aspect-square w-full object-cover h-full ${hoverActive === item?._id ? "scale-150" : ""
+                    } transition-transform overflow-hidden`} />
+                  <div
+                    className={`
+                ${hoverActive === item?._id
+                        ? -"translate-y-1000"
+                        : "-translate-y-full "
+                      }
+                  flex items-center justify-center p-4 gap-2 z-0 h-full absolute w-full object-cover flex-col -top-0 left-0 bg-black/70 transition-transform
+                    }`}
+                  >
+                    <p className=' left-0 bottom-10 truncate w-full text-center text-xl font-semibold text-white'>{item?.artwork_title}</p>
+                    <div className='flex gap-4 my-4'>
+                      <Link target='_blank' className='p-2 rounded-full bg-zinc-500 text-white' href={item?.facebook_link}><FaInstagram /></Link>
+                      <Link target='_blank' className='p-2 rounded-full bg-zinc-500 text-white' href={item?.instagram_link}><FaTwitter /></Link>
+                      <Link target='_blank' className='p-2 rounded-full bg-zinc-500 text-white' href={item?.tiktok_link}><FaFacebook /></Link>
+                    </div>
+                    <p className=' left-0 bottom-10 truncate w-full text-center text-white'>Artist: {item?.name}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </LoadingLayout>
+        </CustomerWrapper>
+      </CustomerLayout>
+    </>
   )
 }
 

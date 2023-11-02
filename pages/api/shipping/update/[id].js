@@ -1,5 +1,5 @@
 import dbConnect from '../../../../utils/dbConnect'
-import Size from '../../../../models/Size'
+import Shipping from '../../../../models/Shipping'
 import { response } from '../../../../services/response'
 
 dbConnect()
@@ -9,12 +9,11 @@ export default async (req, res) => {
         case 'PUT':
             let newError
             try {
-                const { merchandise, values } = req.body
-                const size = await Size.findByIdAndUpdate(req.query.id, { merchandise, values }, {
+                const shipping = await Shipping.findByIdAndUpdate(req.query.id, req.body, {
                     new: true,
                     runValidators: true,
                 })
-                if (!size) {
+                if (!shipping) {
                     return response({
                         res,
                         status_code: 400,
@@ -26,7 +25,7 @@ export default async (req, res) => {
                         res,
                         status_code: 200,
                         success: true,
-                        data: size,
+                        data: shipping,
                     })
                 }
             } catch (error) {

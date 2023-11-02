@@ -6,13 +6,14 @@ import { useRouter } from 'next/router'
 
 const Products = () => {
   const router = useRouter()
+
   return (
     <AdminLayout>
       <TableLayout
         title="Products"
         nextPage={{ addHandler: () => router.push('/admin/products/add') }}
         loadRequest={getAllProduct}
-        header={DATA.TABLE_HEADERS.PRODUCTS} />
+        fieldInputs={DATA.TABLE_HEADERS.PRODUCTS} />
     </AdminLayout>
   )
 }

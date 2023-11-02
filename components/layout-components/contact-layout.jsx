@@ -4,19 +4,20 @@ import { sendMessage } from '../../services/email.services'
 import toast from 'react-hot-toast'
 import { toastOptions } from '../../styles/modalOption'
 import { hasBlankValue } from '../../services/tools'
+import TextInput from '../input-components/text-input'
 
 const ContactLayout = ({ title }) => {
   const [isLoading, setIsLoading] = useState(false)
-  const field = {
+  const initialData = {
     first_name: '',
     last_name: '',
     email: '',
     subject: '',
     body: '',
   }
-  const [data, setData] = useState(field)
+  const [data, setData] = useState(initialData)
 
-  const fields = [
+  const inputFields = [
     {
       label: 'First Name',
       name: 'first_name',
@@ -47,7 +48,7 @@ const ContactLayout = ({ title }) => {
     const result = await sendMessage(data)
     if (await result?.success) {
       toast.success(`Email has been sent!`, toastOptions)
-      setData(field)
+      setData(initialData)
     } else {
       toast.error('Something went wrong!', toastOptions)
     }
@@ -57,18 +58,16 @@ const ContactLayout = ({ title }) => {
 
   return (
     <>
-      <p className='font-bold text-2xl my-4'>{title}</p>
+      <p className='font-bold text-2xl my-4 text-center'>{title}</p>
       <div className='rounded-md border grid grid-cols-1 gap-4 lg:grid-cols-2 p-4'>
-        {fields.map((item, key) => (
+        {inputFields.map((item, key) => (
           <div>
             <Label>{item?.label}</Label>
-            <input
+            <TextInput
               disabled={isLoading}
               value={item?.value}
               onChange={e => item?.setValue(e)}
               type='text'
-              className='
-              bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 undefined'
             />
           </div>
         ))}

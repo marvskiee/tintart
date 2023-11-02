@@ -13,7 +13,7 @@ const Users = () => {
         title="Users"
         nextPage={{ addHandler: () => router.push('/admin/users/add') }}
         loadRequest={getAllUser}
-        header={DATA.TABLE_HEADERS.USERS} />
+        fieldInputs={DATA.TABLE_HEADERS.USERS} />
     </AdminLayout>
   )
 }

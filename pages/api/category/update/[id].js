@@ -5,15 +5,18 @@ import { response } from '../../../../services/response'
 dbConnect()
 
 export default async (req, res) => {
+
     switch (req.method) {
         case 'PUT':
             let newError
             try {
-                const category = await Category.findByIdAndUpdate(req.query.id, req.body, {
+                const { category } = req.body
+
+                const categorys = await Category.findByIdAndUpdate(req.query.id, { category }, {
                     new: true,
                     runValidators: true,
                 })
-                if (!category) {
+                if (!categorys) {
                     return response({
                         res,
                         status_code: 400,

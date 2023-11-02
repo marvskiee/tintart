@@ -11,6 +11,7 @@ const UserSchema = new mongoose.Schema({
   },
   email: {
     type: String,
+    unique: true,
     required: [true, 'Email must not be empty'],
   },
   contact_no: {

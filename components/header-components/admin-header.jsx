@@ -1,15 +1,45 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { TbLogout } from 'react-icons/tb'
 import { useRouter } from 'next/router'
 import { Button } from 'flowbite-react'
 import Link from 'next/link'
 import DATA from '../../utils/DATA'
-
+import { useAppContext } from '../../context/AppContext'
+import { authLogout, getUser } from '../../services/auth.services'
+import toast from 'react-hot-toast'
 const AdminHeader = props => {
   const [menuBar, setMenuBar] = useState(false)
 
   const router = useRouter()
+  const { state, dispatch } = useAppContext()
+  useEffect(() => {
+    const load = async () => {
+      if (!state.isAuth) {
+        const res = await getUser()
+        await dispatch({ type: 'SET_USER', value: res?.data })
+      }
+    }
+    load()
+  }, [state.isAuth])
+  const logoutHandler = async () => {
+    toast.dismiss()
+
+    dispatch({ type: 'LOGIN_REQUEST' })
+    setTimeout(async () => {
+      const { success, message } = await authLogout()
+
+      if (!success) {
+        dispatch({ type: 'LOGIN_ERROR', value: { error: message } })
+        toast.error(message, {
+          duration: 1500,
+        })
+      } else {
+        router.push('/')
+        dispatch({ type: 'LOGOUT' })
+      }
+    }, 1000)
+  }
   return (
     <>
       <div className='z-50 sticky top-0'>
@@ -44,14 +74,16 @@ const AdminHeader = props => {
           </div>
           <div className='flex flex-row gap-2 items-center'>
             <img
-              src='/images/about1.png'
+              src={state?.user?.profile_image || '/images/no-profile.png'}
               className='w-[2.5rem] h-[2.5rem] object-cover rounded-full'
             />
             <div className='flex-col flex'>
-              <p className='font-semibold'>John doe</p>
-              <p className='text-xs'>johndoe@gmail.com</p>
+              <p className='font-semibold'>
+                {state?.user?.first_name} {state?.user?.last_name}
+              </p>
+              <p className='text-xs sm:w-[10rem] w-[5rem] truncate'>{state?.user?.email}</p>
             </div>
-            <Button color='light' size='sm'>
+            <Button color='light' size='sm' onClick={logoutHandler}>
               <TbLogout />
             </Button>
           </div>

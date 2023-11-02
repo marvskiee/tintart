@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { AdminLayout, DynamicFetchLayout, ProductFormLayout } from '../../../../components'
+import { AdminLayout, DynamicFetchLayout, LoadingLayout, ProductFormLayout } from '../../../../components'
 import { getOneProduct } from '../../../../services/product.services'
 import { useRouter } from 'next/router'
 
@@ -25,17 +25,9 @@ const EditProduct = () => {
 
   return (
     <AdminLayout>
-      {isLoading ?
-        <DynamicFetchLayout message="Please wait while we load the data." />
-        :
-        <>
-          {!data ?
-            <DynamicFetchLayout message="Product does not exist!" path="/admin/products" />
-            :
-            <ProductFormLayout title="Edit Product" oldData={data} />
-          }
-        </>
-      }
+      <LoadingLayout message="Product does not exist!" loadingState={isLoading} hasContent={data}>
+        <ProductFormLayout title="Edit Product" oldData={data} />
+      </LoadingLayout>
     </AdminLayout>
   )
 }

@@ -26,7 +26,7 @@ const Faqs = () => {
     return (
         <CustomerLayout>
             <CustomerWrapper>
-                <div className=' px-4 py-10'>
+                <div className=' p-4'>
                     {selected &&
                         <>
                             <p className='text-2xl font-semibold my-4'>{selected?.topic}</p>

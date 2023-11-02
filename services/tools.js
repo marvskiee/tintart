@@ -1,3 +1,7 @@
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage"
+import { storage } from "./firebase"
+import { v4 } from "uuid"
+
 export const getHTTPFormat = async ({ url }) => {
   const res = await fetch(`/api${url}`, {
     method: 'GET',
@@ -53,3 +57,50 @@ export const hasBlankValue = array => {
 export const formatNumberWithCommas = (number) => {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
+
+export const imageUploader = async (images, handler) => {
+  console.log(images)
+  let tmp = [];
+  for (let i = 0; i < images.length; i++) {
+    console.log(images[i]?.url)
+    if (images[i]?.url) {
+      console.log("yes")
+      const imageRef = ref(
+        storage,
+        `images/${images[i].file.name + v4()}`
+      );
+      await uploadBytes(imageRef, images[i].file).then((snapshot) => {
+        getDownloadURL(snapshot.ref)
+          .then((url) => {
+            tmp.push(url);
+            console.log(tmp.length, images.length)
+
+            if (tmp.length == images.length) {
+              console.log(tmp)
+              handler(tmp)
+            }
+          })
+          .catch((e) => {
+            console.log("Error", e);
+            return null;
+          });
+      });
+    } else {
+      tmp.push(images[i]);
+    }
+    if (tmp.length == images.length) {
+      console.log(tmp)
+      handler(tmp)
+
+    }
+  }
+}
+
+export const filterObjectWithEmptyProperties = obj =>
+  Object.fromEntries(
+    Object.entries(obj)
+      .filter(([key, value]) => value !== '' && value !== undefined && value !== null)
+      .map(([key, value]) =>
+        [key, typeof value === 'object' ? filterObjectWithEmptyProperties(value) : value]
+      )
+  );

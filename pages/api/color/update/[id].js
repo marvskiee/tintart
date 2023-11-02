@@ -9,7 +9,8 @@ export default async (req, res) => {
         case 'PUT':
             let newError
             try {
-                const color = await Color.findByIdAndUpdate(req.query.id, req.body, {
+                const { merchandise, values } = req.body
+                const color = await Color.findByIdAndUpdate(req.query.id, { merchandise, values }, {
                     new: true,
                     runValidators: true,
                 })

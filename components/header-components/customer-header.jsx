@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BiSolidUser } from 'react-icons/bi'
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { useRouter } from 'next/router'
@@ -8,9 +8,23 @@ import TextInput from '../input-components/text-input'
 import { Button } from 'flowbite-react'
 import Link from 'next/link'
 import DATA from '../../utils/DATA'
+import { useAppContext } from '../../context/AppContext'
+import { getUser } from '../../services/auth.services'
 
 const CustomerHeader = props => {
   const [menuBar, setMenuBar] = useState(false)
+
+  const { state, dispatch } = useAppContext()
+  useEffect(() => {
+    const load = async () => {
+      if (!state.isAuth) {
+        const res = await getUser()
+        await dispatch({ type: 'SET_USER', value: res?.data })
+      }
+    }
+    load()
+  }, [state.isAuth])
+
   const SearchComponents = props => {
     return (
       <div className={`flex items-center order-3 md:order-2 w-full ${props.className}`}>
@@ -39,7 +53,13 @@ const CustomerHeader = props => {
               >
                 <GiHamburgerMenu color='white' />
               </Button>
-              <img src={'/images/logo.png'} alt='logo' width={100} height={100} className='' />
+              <img
+                src={'/images/logo.png'}
+                alt='logo'
+                width={100}
+                height={100}
+                className=''
+              />
             </div>
             <SearchComponents className='hidden lg:flex' />
             <div className='order-2 md:order-3 flex gap-3 items-center'>

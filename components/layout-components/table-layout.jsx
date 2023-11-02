@@ -8,17 +8,20 @@ import toast from 'react-hot-toast'
 import { toastOptions } from '../../styles/modalOption'
 import { FiMoreHorizontal } from 'react-icons/fi'
 import { useRouter } from 'next/router'
+import DropdownInput from '../input-components/dropdown-input'
 
 const TableLayout = ({
   title,
-  refs,
+  data,
+  setData,
+  initialData,
   nextPage,
   validationHandler,
   loadRequest,
   postRequest,
   updateRequest,
   deleteRequest,
-  header,
+  fieldInputs,
 }) => {
   const router = useRouter()
   const [search, setSearch] = useState('')
@@ -26,10 +29,8 @@ const TableLayout = ({
   const [modalType, setModalType] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [fetchData, setFetchData] = useState([])
-  const targetRef = useRef()
 
-  const headerArray = header.map(item => item.name)
-  const fieldsArray = header.map(item => item.name).slice(0, -1)
+  const headerArray = fieldInputs?.map(item => item.name)
 
   const searchHandler = array => {
     return array.filter(item =>
@@ -53,28 +54,25 @@ const TableLayout = ({
   }
 
   const requestHandler = async ({ requestName }) => {
-    let newData = {}
     if (requestName != 'deleted') {
-      for (let i = 0; i < refs.length; i++) {
-        newData[fieldsArray[i]] = refs[i].current.value
-      }
-      const validation_result = validationHandler(newData)
+      console.log(data)
+
+      const validation_result = validationHandler(data)
       if (!validation_result?.success) {
         return toast.error(validation_result?.message, toastOptions)
       }
-      console.log(newData)
     }
     setModal(undefined)
     let result
     switch (requestName) {
       case 'added':
-        result = await postRequest(newData)
+        result = await postRequest(data)
         break
       case 'updated':
-        result = await updateRequest(newData, targetRef.current?._id)
+        result = await updateRequest(data, data?._id)
         break
       case 'deleted':
-        result = await deleteRequest(targetRef.current?._id)
+        result = await deleteRequest(data?._id)
         break
       default:
         result = null
@@ -83,7 +81,10 @@ const TableLayout = ({
     console.log(result)
     if (await result?.success) {
       await loadHandler()
-      toast.success(`${title.slice(0, -1)} has been ${requestName} successfuly!`, toastOptions)
+      toast.success(
+        `${title.replace('ie', 'y').slice(0, -1)} has been ${requestName} successfuly!`,
+        toastOptions
+      )
     } else {
       toast.error('Something went wrong!', toastOptions)
     }
@@ -92,7 +93,7 @@ const TableLayout = ({
   const RowTemplate = ({ label }) => {
     return (
       <Table.Row>
-        <Table.Cell colSpan={header.length + 1} className='text-center'>
+        <Table.Cell colSpan={fieldInputs?.length + 1} className='text-center'>
           {label}
         </Table.Cell>
       </Table.Row>
@@ -101,7 +102,7 @@ const TableLayout = ({
 
   return (
     <>
-      {(refs && modal) && (
+      {modal && (
         <Modal dismissible show={modal === 'dismissible'} onClose={() => setModal(undefined)}>
           <Modal.Header>
             {modalType} {title.replace('ie', 'y').slice(0, -1)}
@@ -110,25 +111,30 @@ const TableLayout = ({
             <div className='space-y-6'>
               {modalType == 'Add' || modalType == 'Edit' ? (
                 <>
-                  {fieldsArray.map((item, key) => (
+                  {fieldInputs?.slice(0, -1).map((item, key) => (
                     <div key={`${key}-${title}-input`}>
-                      <Label className='capitalize mb-2 block'>{item}</Label>
-                      <input
-                        type='text'
-                        className='
-                        bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 undefined'
-                        ref={refs[key]}
-                        defaultValue={targetRef.current && targetRef.current[item]}
-                        placeholder={item?.name}
-                      />
+                      <Label className='capitalize mb-2 block'>{item?.label}</Label>
+                      {item?.label == 'Merchandise' ? (
+                        <DropdownInput
+                          name='merchandise'
+                          selected={item?.value}
+                          item={['T-Shirt', 'Sintra Board', 'Photocard']}
+                          handler={e => item?.setValue(e)}
+                        />
+                      ) : (
+                        <TextInput
+                          disabled={isLoading}
+                          value={item?.value}
+                          onChange={e => item?.setValue(e)}
+                          type='text'
+                        />
+                      )}
                     </div>
                   ))}
                 </>
               ) : (
                 modalType == 'Delete' && (
-                  <p>
-                    Are you sure you want to delete this "{targetRef.current[headerArray[0]]}"?{' '}
-                  </p>
+                  <p>Are you sure you want to delete this "{data[headerArray[0]]}"? </p>
                 )
               )}
             </div>
@@ -162,7 +168,7 @@ const TableLayout = ({
               if (nextPage != null) {
                 return nextPage.addHandler()
               }
-              targetRef.current = null
+              setData(initialData)
               setModalType('Add')
               setModal('dismissible')
             }}
@@ -173,8 +179,8 @@ const TableLayout = ({
         </div>
         <Table>
           <Table.Head>
-            {header.map((item, key) => (
-              <Table.HeadCell key={`header-${title.toLowerCase()}-${key}`}>
+            {fieldInputs?.map((item, key) => (
+              <Table.HeadCell key={`fieldInputs-${title.toLowerCase()}-${key}`}>
                 {item?.label}
               </Table.HeadCell>
             ))}
@@ -185,8 +191,8 @@ const TableLayout = ({
               <RowTemplate label='Fetching...' />
             ) : searchFilter.length > 0 ? (
               searchFilter.map((parentItem, parentKey) => (
-                <Table.Row key={`parent-${title.toLowerCase()}-${parentKey}`}>
-                  {headerArray.map((childItem, childKey) => (
+                <Table.Row key={`parent-${title.toLowerCase()}-${parentKey}`} className={parentKey % 2&& "transition-colors bg-zinc-100"}>
+                  {headerArray?.map((childItem, childKey) => (
                     <Table.Cell key={`children-${title.toLowerCase()}-${childKey}`}>
                       {childItem == 'created_at'
                         ? moment(parentItem[childItem]).format('MMMM DD, yyyy hh:mm A')
@@ -194,11 +200,11 @@ const TableLayout = ({
                         ? `${parentItem['role'] == 2 ? 'Admin' : 'Artist'}`
                         : childItem == 'name'
                         ? `${parentItem['first_name']} ${parentItem['last_name']}`
-                        : childItem == 'colors' ? 
-                          parentItem['colors'].join(', ')
-                        : ["is_featured","is_sold_out","is_archived"].indexOf(childItem) > -1  ?
-                          parentItem[childItem].toString().toUpperCase()
-                        :parentItem[childItem]}
+                        : childItem == 'colors'
+                        ? parentItem['colors'].join(', ')
+                        : ['is_featured', 'is_sold_out', 'is_archived'].indexOf(childItem) > -1
+                        ? parentItem[childItem].toString().toUpperCase()
+                        : parentItem[childItem]}
                     </Table.Cell>
                   ))}
                   <Table.Cell className='flex flex-row gap-4 items-center justify-end'>
@@ -207,8 +213,8 @@ const TableLayout = ({
                         <Button
                           gradientDuoTone='greenToBlue'
                           onClick={() => {
-                            targetRef.current = parentItem
                             setModalType('Edit')
+                            setData(parentItem)
                             setModal('dismissible')
                           }}
                         >
@@ -217,7 +223,7 @@ const TableLayout = ({
                         <Button
                           gradientDuoTone='pinkToOrange'
                           onClick={() => {
-                            targetRef.current = parentItem
+                            setData(parentItem)
                             setModalType('Delete')
                             setModal('dismissible')
                           }}

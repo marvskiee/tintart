@@ -19,5 +19,7 @@ export { default as GraphLayout } from './layout-components/graph-layout'
 export { default as DynamicFetchLayout } from './layout-components/dynamic-fetch-layout'
 export { default as DeleteModalLayout } from './layout-components/delete-modal-layout'
 export { default as ContactLayout } from './layout-components/contact-layout'
+export { default as LoadingLayout } from './layout-components/loading-layout'
+export { default as ModalLayout } from './layout-components/modal-layout'
 
 
