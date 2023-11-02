@@ -32,6 +32,9 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     required: [true, 'Role must not be empty'],
   },
+  shipping_id: {
+    type: String,
+  },
   created_at: {
     type: Date,
     default: Date.now,

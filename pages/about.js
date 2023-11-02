@@ -88,7 +88,7 @@ const About = () => {
                     <LoadingLayout
                         message="" loadingState={isLoading} hasContent={data?.length > 0}
                     >
-                        <div className='flex items-center justify-center gap-6 md:gap-10 my-8'>
+                        <div className='flex flex-col lg:flex-row items-center justify-center gap-6 md:gap-10 my-8'>
                             {data.map((item, key) => (
                                 <div key={"about-" + key} className={`max-w-[20rem] text-zinc-900 font-semibold border bg-zinc-100 shadow-md p-4 rounded-lg ${key == 0 && "order-last"}`}>
                                     <p>{item?.role}</p>

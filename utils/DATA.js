@@ -195,14 +195,6 @@ const DATA = {
             { label: "Color", name: "colors" },
             { label: "Date Added", name: "created_at" }
         ],
-        SHIPPING_ADDRESS: [
-            { label: "Receiver's Name", name: "receiver_name" },
-            { label: "Contact No", name: "contact_no" },
-            { label: "Region/City/District", name: "region" },
-            { label: "Street/Building Name", name: "street" },
-            { label: "Unit/Floor", name: "unit" },
-            { label: "Additional Information (Optional)", name: "information" },
-        ]
     },
     DROPDOWN_GRAPH: ["Weekly", "Monthly", "Daily"],
     FAQS: [{

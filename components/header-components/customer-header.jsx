@@ -10,35 +10,71 @@ import Link from 'next/link'
 import DATA from '../../utils/DATA'
 import { useAppContext } from '../../context/AppContext'
 import { getUser } from '../../services/auth.services'
+import { getAllProduct } from '../../services/product.services'
 
 const CustomerHeader = props => {
+  const [search, setSearch] = useState('de')
   const [menuBar, setMenuBar] = useState(false)
-
+  const [data, setData] = useState([])
+  const router = useRouter()
+  const loadHandler = async () => {
+    const { success, data } = await getAllProduct()
+    if (success) {
+      let filtered = data?.filter(d => d.is_archived == false && d.is_sold_out == false)
+      if (filtered.length > 0) setData(filtered)
+    }
+  }
+  const filteredData = data?.filter(
+    d =>
+      d.product_name.toLowerCase().includes(search.toLowerCase()) ||
+      d.category.toLowerCase().includes(search.toLowerCase()) ||
+      d.merchandise.toLowerCase().includes(search.toLowerCase())
+  )
+  console.log(filteredData)
   const { state, dispatch } = useAppContext()
   useEffect(() => {
     const load = async () => {
       if (!state.isAuth) {
         const res = await getUser()
         await dispatch({ type: 'SET_USER', value: res?.data })
+        loadHandler()
       }
     }
     load()
   }, [state.isAuth])
 
-  const SearchComponents = props => {
+  const SearchComponents = ({ search, filteredData }) => {
+    console.log(search)
     return (
-      <div className={`flex items-center order-3 md:order-2 w-full ${props.className}`}>
-        <TextInput
-          placeholder={'Search...'}
-          className='w-full sm:min-w-[20rem] rounded-tr-none rounded-br-none'
-        />
-        <Button size='lg' className='rounded-tl-none rounded-bl-none ' color='failure'>
-          <FaSearch className='text-md text-white' />
-        </Button>
-      </div>
+      <>
+        {search.trim().length > 0 && (
+          <div className='w-full bg-white absolute top-[3rem] z-20 rounded-md border'>
+            <ul
+              className=' py-2 text-sm text-gray-700 dark:text-gray-200'
+              aria-labelledby='dropdownDefaultButton'
+            >
+              {filteredData?.map((item, key) => (
+                <li
+                  key={item?._id}
+                  className='cursor-pointer hover:bg-slate-200 flex w-full items-center justify-between p-4'
+                  onClick={() => router.push('/shop/product/' + item?._id)}
+                >
+                  <img src={item?.images[0]} className='object-cover w-20 rounded-md aspect-square' />
+                  <div className='flex w-full justify-between items-center'>
+                    <div className='p-2'>
+                      <p className=''>{item?.product_name}</p>
+                      <p className=''>{item?.merchandise}</p>
+                      <p className='font-semibold'>{item?.price}</p>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </>
     )
   }
-  const router = useRouter()
   return (
     <>
       <div className='z-50 sticky top-0'>
@@ -53,15 +89,22 @@ const CustomerHeader = props => {
               >
                 <GiHamburgerMenu color='white' />
               </Button>
-              <img
-                src={'/images/logo.png'}
-                alt='logo'
-                width={100}
-                height={100}
-                className=''
-              />
+              <img src={'/images/logo.png'} alt='logo' width={100} height={100} className='' />
             </div>
-            <SearchComponents className='hidden lg:flex' />
+            <div className='hidden relative lg:flex w-full'>
+              <div className={` flex items-center order-3 md:order-2 w-full `}>
+                <TextInput
+                  placeholder={'Search...'}
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  className='w-full sm:min-w-[20rem] rounded-tr-none rounded-br-none'
+                />
+                <Button size='lg' className='rounded-tl-none rounded-bl-none ' color='failure'>
+                  <FaSearch className='text-md text-white' />
+                </Button>
+              </div>
+              <SearchComponents filteredData={filteredData} search={search}></SearchComponents>
+            </div>
             <div className='order-2 md:order-3 flex gap-3 items-center'>
               <Link href='/profile'>
                 <Button size='large' color='dark' className='p-2'>
@@ -78,7 +121,20 @@ const CustomerHeader = props => {
             </div>
           </div>
           <div className='max-w-[80rem] mx-auto w-full'>
-            <SearchComponents className='flex lg:hidden' />
+            <div className='lg:hidden relative flex w-full'>
+              <div className={` flex items-center order-3 md:order-2 w-full `}>
+                <TextInput
+                  placeholder={'Search...'}
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  className='w-full sm:min-w-[20rem] rounded-tr-none rounded-br-none'
+                />
+                <Button size='lg' className='rounded-tl-none rounded-bl-none ' color='failure'>
+                  <FaSearch className='text-md text-white' />
+                </Button>
+              </div>
+              <SearchComponents filteredData={filteredData} search={search}></SearchComponents>
+            </div>
           </div>
         </div>
         <div

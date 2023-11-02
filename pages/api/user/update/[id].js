@@ -11,13 +11,14 @@ export default async (req, res) => {
             try {
                 const { email, password, confirm_password } = req.body;
                 let newError = ""
-                if (
-                    !email.match(
-                        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-                    )
-                ) {
-                    newError = "Please enter valid email address!"
-                }
+                if (email)
+                    if (
+                        !email?.match(
+                            /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                        )
+                    ) {
+                        newError = "Please enter valid email address!"
+                    }
 
                 if (newError) {
                     res.status(400).json({
@@ -38,6 +39,7 @@ export default async (req, res) => {
                             new: true,
                             runValidators: true,
                         })
+                        console.log(user)
                         if (!user) {
                             return response({
                                 res,
@@ -66,7 +68,8 @@ export default async (req, res) => {
                 }
             }
             catch (error) {
-                response({ res, status_code: 400, success: false, error })
+                console.log(error)
+                response({ res, status_code: 400, success: false, error: error?.message })
             }
             break
         default:

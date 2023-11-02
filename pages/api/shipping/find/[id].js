@@ -8,7 +8,7 @@ export default async (req, res) => {
     switch (req.method) {
         case 'GET':
             try {
-                const shipping = await Shipping.findById(req.query.id)
+                const shipping = await Shipping.find({ user_id: req.query.id })
                 return response({
                     res,
                     status_code: 200,

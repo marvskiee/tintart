@@ -9,6 +9,7 @@ import { FaArrowRight } from 'react-icons/fa'
 import { getAllGallery } from '../services/gallery.services'
 import { getAllProduct } from '../services/product.services'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 
 const Home = () => {
   const [galleryData, setGalleryData] = useState([])
@@ -27,7 +28,7 @@ const Home = () => {
     if (products_result.success)
       setProductData(products_result?.data)
     setIsLoading(false)
-    
+
   }
   useEffect(() => {
     loadHandler()
@@ -41,7 +42,9 @@ const Home = () => {
             <h3 className=' text-lg'>Have you ever wanted to create and wear your own designs on your shirts? Be able to show your feelings through your art? Try our very own customization and print your own designs now!</h3>
             <div>
               <Button color="failure" size="lg" className='font-bold'>
-                Start Customizing
+                <Link href="https://tintartcustomize.vercel.app/" target="_blank">
+                  Start Customizing
+                </Link>
                 <FaArrowRight color='white' className='ml-2 text-xl' />
               </Button>
             </div>
@@ -57,7 +60,7 @@ const Home = () => {
         <div className='flex flex-col gap-10 min-h-[40rem] items-center justify-center my-4'>
           <h2 className='font-semibold text-center w-full uppercase text-4xl'>Featured Products</h2>
           <LoadingLayout message="There is no product listed!" loadingState={isLoading} hasContent={productData?.slice(0, 4)?.length > 0}>
-            <div className='flex items-center justify-center gap-10 place-items-center '>
+            <div className='flex items-center justify-center md:flex-row flex-col gap-10 place-items-center '>
               {
                 productData?.slice(0, 4).map((item, key) => (
                   <div key={`project-${key}`}>
@@ -85,12 +88,11 @@ const Home = () => {
       </CustomerWrapper>
       <CustomerWrapper containerClass="p-6 lg:p-16">
         <LoadingLayout message="Gallery is Empty." loadingState={isLoading} hasContent={galleryData?.slice(0, 5)?.length > 0}>
-          <div className='my-16 flex items-center justify-center gap-4 lg:gap-10'>
+          <div className='my-16 flex items-center md:flex-row flex-col justify-center gap-4 lg:gap-10'>
             {
               galleryData?.slice(0, 5).map((item, key) => (
-                <div key={`artist-${key}`} className="max-w-[20rem]">
-                  <img src={item.image} className='shadow-md w-full aspect-square rounded-xl object-cover' />
-
+                <div key={`artist-${key}`} className="max-w-[20rem] w-full">
+                  <img src={item.image} className='max-w-[20rem] shadow-md w-full aspect-square rounded-xl object-cover' />
                 </div>
               ))
             }

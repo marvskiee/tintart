@@ -1,5 +1,5 @@
 import { deleteHTTPFormat, getHTTPFormat, postHTTPFormat, updateHTTPFormat } from './tools'
-export const getAllWishList = async (id) =>
+export const getUserWishList = async (id) =>
     getHTTPFormat({ url: '/wishlist/find/' + id })
 
 export const addWishList = async (newData) =>

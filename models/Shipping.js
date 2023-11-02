@@ -25,10 +25,7 @@ const ShippingSchema = new mongoose.Schema({
     information: {
         type: String,
     },
-    is_default: {
-        type: Boolean,
-        default: false
-    },
+   
     created_at: {
         type: Date,
         default: Date.now,
