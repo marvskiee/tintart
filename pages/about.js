@@ -39,7 +39,6 @@ const About = () => {
         let tempData = []
         const shop_result = await getAllShop()
 
-
         const gallery_result = await getAllGallery()
         if (gallery_result.success) {
             let temp = []
@@ -52,7 +51,7 @@ const About = () => {
         if (shop_result.success) {
             if (shop_result.data.length > 0) {
                 console.log(tempData)
-                tempData = [tempData[0], ...filteredObjects(shop_result.data.slice(0, 1)), tempData[1]]
+                tempData = [...tempData, ...filteredObjects(shop_result.data.slice(0, 1))]
             }
         }
         console.log(tempData)
@@ -91,7 +90,7 @@ const About = () => {
                     >
                         <div className='flex items-center justify-center gap-6 md:gap-10 my-8'>
                             {data.map((item, key) => (
-                                <div key={"about-" + key} className={`max-w-[20rem] text-zinc-900 font-semibold border bg-zinc-100 shadow-md p-4 rounded-lg ${key == 0 && ""}`}>
+                                <div key={"about-" + key} className={`max-w-[20rem] text-zinc-900 font-semibold border bg-zinc-100 shadow-md p-4 rounded-lg ${key == 0 && "order-last"}`}>
                                     <p>{item?.role}</p>
                                     <p className='text-xl'>{item?.name}</p>
                                     <div className='flex gap-4 my-4'>

@@ -82,7 +82,7 @@ const UserFormLayout = ({ title, oldData }) => {
     console.log(newData)
 
     if (postImage) {
-      newData['profile_image'] = postImage
+      newData['profile_image'] = postImage[0]
     }
     if (oldData) {
       const result = await updateUser(newData, oldData?._id)

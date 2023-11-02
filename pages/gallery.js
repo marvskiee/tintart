@@ -81,7 +81,7 @@ const Gallery = () => {
     setIsLoading(true)
     await imageUploader([imageUpload], async (postImage) => {
       const newData = {
-        ...formData, user_id: state?.user?._id, image: postImage
+        ...formData, user_id: state?.user?._id, image: postImage[0]
       }
 
       const result = await addGallery(newData)
