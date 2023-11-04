@@ -32,7 +32,7 @@ const FooterLayout = () => {
       <div className='text-zinc-100  bg-zinc-900'>
         <div className=' flex justify-between flex-col gap-10 lg:flex-row py-10'>
           <div className='flex flex-col gap-4 w-full'>
-            <img alt='logo' src='./images/logo.png' className='w-[20rem]  object-cover' />
+            <img alt='logo' src='/images/logo.png' className='w-[20rem]  object-cover' />
             <p>{DATA?.FOOTER.ADDRESS}</p>
             <p>Call Us: {DATA.FOOTER.CONTACT}</p>
             {shopData && <p>E-Mail: {shopData.email}</p>}

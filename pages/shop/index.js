@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai"
-import { CustomerHeader, CustomerWrapper, DropdownInput, LoadingLayout, TextInput } from '../components'
+import { CustomerHeader, CustomerWrapper, DropdownInput, LoadingLayout, TextInput } from '../../components'
 import { Accordion, Button, Label } from 'flowbite-react'
-import CustomerLayout from '../components/layout-components/customer-layout'
-import DATA from '../utils/DATA'
+import CustomerLayout from '../../components/layout-components/customer-layout'
 import { useRouter } from 'next/router'
-import { getAllProduct } from '../services/product.services'
-import { addWishList, deleteWishList, getUserWishList } from '../services/wishlist.services'
-import { useAppContext } from '../context/AppContext'
+import { getAllProduct } from '../../services/product.services'
+import { addWishList, deleteWishList, getUserWishList } from '../../services/wishlist.services'
+import { useAppContext } from '../../context/AppContext'
 import toast from 'react-hot-toast'
-import { toastOptions } from '../styles/modalOption'
-import { getAllCategory } from '../services/category.services'
+import { toastOptions } from '../../styles/modalOption'
+import { getAllCategory } from '../../services/category.services'
 
 const Shop = () => {
   const router = useRouter()
@@ -154,9 +153,9 @@ const Shop = () => {
                       <AiFillHeart className='text-2xl text-red-600' />
                     }
                   </Button>
-                  <img onClick={() => router.push("/shop/product/" + item?._id)} alt='luffy' src={item?.images[0]} className='rounded-2xl w-full aspect-square object-cover' />
-                  <p onClick={() => router.push("/shop/product/" + item?._id)} className="px-2 font-semibold text-md">{item?.product_name}</p>
-                  <p onClick={() => router.push("/shop/product/" + item?._id)} className="px-2 font-semibold text-xl">PHP {item?.price}</p>
+                  <img onClick={() => router.push("/shop/" + item?._id)} alt='luffy' src={item?.images[0]} className='rounded-2xl w-full aspect-square object-cover' />
+                  <p onClick={() => router.push("/shop/" + item?._id)} className="px-2 font-semibold text-md">{item?.product_name}</p>
+                  <p onClick={() => router.push("/shop/" + item?._id)} className="px-2 font-semibold text-xl">PHP {item?.price}</p>
                 </div>
               ))}
             </div>

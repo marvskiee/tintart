@@ -169,7 +169,7 @@ const ProductFormLayout = ({ title, oldData }) => {
                 )}
               </div>
             ))}
-            {!isLoading && imageUpload.length < 4 && (
+            {!isLoading && imageUpload.length < 5 && (
               <img
                 onClick={() => uploadRef.current.click()}
                 src='/images/camera.png'

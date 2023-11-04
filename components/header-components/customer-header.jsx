@@ -18,10 +18,12 @@ const CustomerHeader = props => {
   const [data, setData] = useState([])
   const router = useRouter()
   const loadHandler = async () => {
-    const { success, data } = await getAllProduct()
-    if (success) {
-      let filtered = data?.filter(d => d.is_archived == false && d.is_sold_out == false)
-      if (filtered.length > 0) setData(filtered)
+    if (search.length > 0) {
+      const { success, data } = await getAllProduct()
+      if (success) {
+        let filtered = data?.filter(d => d.is_archived == false && d.is_sold_out == false)
+        if (filtered.length > 0) setData(filtered)
+      }
     }
   }
   const filteredData = data?.filter(
@@ -37,39 +39,46 @@ const CustomerHeader = props => {
       if (!state.isAuth) {
         const res = await getUser()
         await dispatch({ type: 'SET_USER', value: res?.data })
-        loadHandler()
       }
     }
     load()
-  }, [state.isAuth])
+    loadHandler()
+  }, [state.isAuth, search])
 
   const SearchComponents = ({ search, filteredData }) => {
     console.log(search)
     return (
       <>
-        {search.trim().length > 0 && (
+        {search?.trim().length > 0 && (
           <div className='w-full bg-white absolute top-[3rem] z-20 rounded-md border'>
-            <ul
-              className=' py-2 text-sm text-gray-700 dark:text-gray-200'
-              aria-labelledby='dropdownDefaultButton'
-            >
-              {filteredData?.map((item, key) => (
-                <li
-                  key={item?._id}
-                  className='cursor-pointer hover:bg-slate-200 flex w-full items-center justify-between p-4'
-                  onClick={() => router.push('/shop/product/' + item?._id)}
-                >
-                  <img src={item?.images[0]} className='object-cover w-20 rounded-md aspect-square' />
-                  <div className='flex w-full justify-between items-center'>
-                    <div className='p-2'>
-                      <p className=''>{item?.product_name}</p>
-                      <p className=''>{item?.merchandise}</p>
-                      <p className='font-semibold'>{item?.price}</p>
+            {filteredData?.length > 0 ? (
+              <ul
+                className=' py-2 text-sm text-gray-700 dark:text-gray-200'
+                aria-labelledby='dropdownDefaultButton'
+              >
+                {filteredData?.map((item, key) => (
+                  <li
+                    key={item?._id}
+                    className='cursor-pointer hover:bg-slate-200 flex w-full items-center justify-between p-4'
+                    onClick={() => router.push('/shop/product/' + item?._id)}
+                  >
+                    <img
+                      src={item?.images[0]}
+                      className='object-cover w-20 rounded-md aspect-square'
+                    />
+                    <div className='flex w-full justify-between items-center'>
+                      <div className='p-2'>
+                        <p className=''>{item?.product_name}</p>
+                        <p className=''>{item?.merchandise}</p>
+                        <p className='font-semibold'>{item?.price}</p>
+                      </div>
                     </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className='p-4 text-center'>Product not found.</p>
+            )}
           </div>
         )}
       </>
@@ -147,7 +156,8 @@ const CustomerHeader = props => {
               <Link
                 href={item?.link}
                 className={` text-white lg:text-zinc-900 whitespace-nowrap h-full block w-full flex-grow-0 lg:text-center text-left cursor-pointer transition-colors delay-75 border-b-2 border-transparent hover:border-white lg:hover:border-zinc-500 p-2 px-4 uppercase font-semibold ${
-                  router.pathname == item?.link && 'border-white lg:border-black'
+                  router.pathname.split('/')[1] == item?.link.split('/')[1] &&
+                  'border-white lg:border-black'
                 }`}
                 key={key}
               >

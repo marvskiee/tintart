@@ -151,7 +151,7 @@ const Profile = () => {
                                         <div className='p-2'>
                                             <p className='font-semibold'>{item?.title}</p>
                                             <p className='underline'>
-                                                <Link href={"/shop/product/" + item?._id}>
+                                                <Link href={"/shop/" + item?._id}>
                                                     Live Preview
                                                 </Link>
                                             </p>

@@ -50,7 +50,7 @@ const Home = () => {
             </div>
           </div>
           <div className='flex w-full items-center justify-center'>
-            <div className='lg:flex-shrink-0 aspect-square lg:max-h-[20rem]'>
+            <div className='lg:flex-shrink-0 aspect-square lg:max-h-[20rem] lg:min-h-[20rem]'>
               <img src="/images/about1.png" className='object-cover w-full h-full rounded-xl' />
             </div>
           </div>
@@ -66,7 +66,7 @@ const Home = () => {
                   <div key={`project-${key}`}>
                     <img src={item.images[0]} className='max-w-[20rem] shadow-md w-full aspect-square rounded-xl object-cover' />
                     <div className='p-2'>
-                      <p className='font-semibold text-lg text-center'>{item?.title}</p>
+                      <p className='font-semibold text-lg text-center'>{item?.product_name}</p>
                       <p className=' text-lg text-center'>PHP {item?.price}</p>
                     </div>
                   </div>

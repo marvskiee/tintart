@@ -5,7 +5,7 @@ import { response } from '../../../../services/response'
 dbConnect()
 
 export default async (req, res) => {
-    switch (req.method) {
+switch (req.method) {
         case 'GET':
             try {
                 const wishlist = await WishList.find({ user_id: req.query.id })

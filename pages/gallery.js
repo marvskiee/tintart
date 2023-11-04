@@ -103,7 +103,7 @@ const Gallery = () => {
   return (
     <>
       <DeleteModalLayout
-        title='Gallery'
+        title='Image'
         modal={deleteModal}
         setModal={setDeleteModal}
         id={targetRef?.current?._id}
