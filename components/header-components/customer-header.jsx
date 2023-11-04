@@ -32,7 +32,6 @@ const CustomerHeader = props => {
       d.category.toLowerCase().includes(search.toLowerCase()) ||
       d.merchandise.toLowerCase().includes(search.toLowerCase())
   )
-  console.log(filteredData)
   const { state, dispatch } = useAppContext()
   useEffect(() => {
     const load = async () => {
@@ -46,7 +45,6 @@ const CustomerHeader = props => {
   }, [state.isAuth, search])
 
   const SearchComponents = ({ search, filteredData }) => {
-    console.log(search)
     return (
       <>
         {search?.trim().length > 0 && (

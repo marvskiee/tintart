@@ -5,43 +5,14 @@ import { BsFillTrash3Fill } from 'react-icons/bs'
 import DATA from '../utils/DATA'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import useFetch from '../hooks/useFetch'
+import { getUserCart } from '../services/cart.services'
+import { useAppContext } from '../context/AppContext'
 const Cart = () => {
+    const { state } = useAppContext()
+    const { data, loading, error } = useFetch(() => getUserCart(state?.user?._id), state?.isAuth);
+    const [products, setProducts] = useState(data)
     const router = useRouter();
-    const TEMP_DATA = [
-        {
-            key: 1,
-            product_name: "Product 1",
-            artist_name: "Oda",
-            quantity: 1,
-            is_selected: true,
-            price: 500
-        },
-        {
-            key: 2,
-            product_name: "Product 2",
-            artist_name: "Oda",
-            quantity: 1,
-            is_selected: true,
-            price: 600
-        },
-        {
-            key: 3,
-            product_name: "Product 3",
-            artist_name: "Oda",
-            quantity: 2,
-            is_selected: true,
-            price: 800
-        },
-        {
-            key: 4,
-            product_name: "Product 4",
-            artist_name: "Oda",
-            quantity: 1,
-            is_selected: true,
-            price: 700
-        }
-    ]
-    const [data, setData] = useState(TEMP_DATA)
     const table_header = [
         "Product",
         "Quantity",
@@ -53,7 +24,7 @@ const Cart = () => {
             ...temp[key],
             is_selected: newValue
         }
-        setData([...temp])
+        setProducts([...temp])
     }
     const quantityHandler = (key, newValue) => {
         let temp = data;
@@ -61,17 +32,17 @@ const Cart = () => {
             ...temp[key],
             quantity: newValue
         }
-        setData([...temp])
+        setProducts([...temp])
     }
     const deleteHandler = (key) => {
         let temp = data.filter((item) => item?.key != key);
-        setData([...temp])
+        setProducts([...temp])
     }
     // computations
-    console.log(data)
-    const total = data.filter((item) => item?.is_selected)?.reduce((accumulator, product) => {
-        return accumulator + (product.price * product.quantity)
+    const total = data?.filter((item) => item?.is_selected)?.reduce((accumulator, product) => {
+        return accumulator + (product.product_id?.price * product.quantity)
     }, 0)
+    console.log(total)
     return (
         <CustomerLayout hasFetch={true}>
             <CustomerWrapper>
@@ -96,13 +67,13 @@ const Cart = () => {
                                 </Table.HeadCell>
                             </Table.Head>
                             <Table.Body>
-                                {data.map((item, key) => (
-                                    <Table.Row key={`row-${item?.key}`}>
+                                {data?.map((item, key) => (
+                                    <Table.Row key={`row-${item?._id}`}>
                                         <Table.Cell align='center'>
                                             <input type='checkbox' checked={item?.is_selected} onChange={() => selectHandler(key, !item?.is_selected)} />
                                         </Table.Cell>
                                         <Table.Cell className='flex flex-shrink-0 items-center gap-4 flex-row'>
-                                            <img src="./images/hero.png" alt='pic' className='lg:w-20 w-10 aspect-square object-contain' />
+                                            <img src={item?.product_id?.images[0]} alt='pic' className='lg:w-20 w-10 aspect-square object-contain' />
                                             <div className=''>
                                                 <p className='text-lg font-semibold'>{item?.product_name}</p>
                                                 <p>{item?.artist_name}</p>
@@ -114,12 +85,12 @@ const Cart = () => {
                                                 <p className='font-semibold'>
                                                     {item.quantity}
                                                 </p>
-                                                <Button size="xs" onClick={() => quantityHandler(key, item.quantity + 1)} color="light">+</Button>
+                                                <Button size="xs" onClick={() => quantityHandler(key, Number(item.quantity) + 1)} color="light">+</Button>
                                             </div>
                                         </Table.Cell>
                                         <Table.Cell align='center'>
                                             <p className='font-semibold text-lg whitespace-nowrap'>
-                                                {DATA.PESO} {item?.price}
+                                                {DATA.PESO} {item?.product_id?.price}
                                             </p>
                                         </Table.Cell>
                                         <Table.Cell align='center'>

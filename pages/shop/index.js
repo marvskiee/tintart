@@ -10,6 +10,7 @@ import { useAppContext } from '../../context/AppContext'
 import toast from 'react-hot-toast'
 import { toastOptions } from '../../styles/modalOption'
 import { getAllCategory } from '../../services/category.services'
+import useQuantity from '../../hooks/useQuantity'
 
 const Shop = () => {
   const router = useRouter()
@@ -21,7 +22,6 @@ const Shop = () => {
   const { state, dispatch } = useAppContext()
   const [merchandise, setMerchandise] = useState('')
   const [category, setCategory] = useState('')
-
   const refreshWishList = async () => {
     const wishlist_result = await getUserWishList(state?.user?._id)
     if (wishlist_result.success)
