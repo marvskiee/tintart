@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai"
-import { CustomerHeader, CustomerWrapper, DropdownInput, LoadingLayout, TextInput } from '../../components'
-import { Accordion, Button, Label } from 'flowbite-react'
+import { CustomerWrapper, DropdownInput, LoadingLayout, TextInput } from '../../components'
+import { Button, Label } from 'flowbite-react'
 import CustomerLayout from '../../components/layout-components/customer-layout'
 import { useRouter } from 'next/router'
 import { getAllProduct } from '../../services/product.services'
@@ -10,7 +10,6 @@ import { useAppContext } from '../../context/AppContext'
 import toast from 'react-hot-toast'
 import { toastOptions } from '../../styles/modalOption'
 import { getAllCategory } from '../../services/category.services'
-import useQuantity from '../../hooks/useQuantity'
 
 const Shop = () => {
   const router = useRouter()

@@ -1,25 +1,34 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CustomerLayout, CustomerWrapper } from '../components'
 import { Button, Table } from 'flowbite-react'
 import { BsFillTrash3Fill } from 'react-icons/bs'
 import DATA from '../utils/DATA'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
-import useFetch from '../hooks/useFetch'
-import { getUserCart } from '../services/cart.services'
+import { deleteCart, getUserCart, updateCart } from '../services/cart.services'
 import { useAppContext } from '../context/AppContext'
+import { toastOptions } from '../styles/modalOption'
+import toast from 'react-hot-toast'
 const Cart = () => {
     const { state } = useAppContext()
-    const { data, loading, error } = useFetch(() => getUserCart(state?.user?._id), state?.isAuth);
-    const [products, setProducts] = useState(data)
+    const [products, setProducts] = useState([])
     const router = useRouter();
     const table_header = [
         "Product",
         "Quantity",
         "Price"
     ]
+    const loadHandler = async () => {
+        const result = await getUserCart(state?.user?._id)
+        if (result?.success)
+            setProducts(result?.data)
+    }
+
+    useEffect(() => {
+        loadHandler()
+    }, [state?.isAuth])
+
     const selectHandler = (key, newValue) => {
-        let temp = data;
+        let temp = products;
         temp[key] = {
             ...temp[key],
             is_selected: newValue
@@ -27,29 +36,36 @@ const Cart = () => {
         setProducts([...temp])
     }
     const quantityHandler = (key, newValue) => {
-        let temp = data;
+        let temp = products;
         temp[key] = {
             ...temp[key],
             quantity: newValue
         }
         setProducts([...temp])
+        updateCart({ quantity: newValue }, temp[key]?._id)
     }
-    const deleteHandler = (key) => {
-        let temp = data.filter((item) => item?.key != key);
-        setProducts([...temp])
+    const deleteHandler = async (id) => {
+        const result = await deleteCart(id)
+        if (result.success) {
+            toast.success("Product has been removed from cart.", toastOptions)
+            loadHandler()
+        } else {
+            toast.error("Something went wrong!", toastOptions)
+        }
     }
+    
     // computations
-    const total = data?.filter((item) => item?.is_selected)?.reduce((accumulator, product) => {
+    const total = products?.filter((item) => item?.is_selected)?.reduce((accumulator, product) => {
         return accumulator + (product.product_id?.price * product.quantity)
     }, 0)
-    console.log(total)
+
     return (
         <CustomerLayout hasFetch={true}>
             <CustomerWrapper>
                 <div className='flex px-4 py-10 flex-col lg:flex-row gap-4'>
                     {/* sidebar  */}
                     <div className=' w-full'>
-                        <h1 className='mb-10 text-4xl font-extrabold'>Your Cart</h1>
+                        <p className='font-semibold text-2xl mb-4'>Your Cart</p>
                         <Table className='text-zinc-900'>
                             <Table.Head>
                                 <Table.HeadCell align='center'>
@@ -67,7 +83,7 @@ const Cart = () => {
                                 </Table.HeadCell>
                             </Table.Head>
                             <Table.Body>
-                                {data?.map((item, key) => (
+                                {products?.map((item, key) => (
                                     <Table.Row key={`row-${item?._id}`}>
                                         <Table.Cell align='center'>
                                             <input type='checkbox' checked={item?.is_selected} onChange={() => selectHandler(key, !item?.is_selected)} />
@@ -75,8 +91,9 @@ const Cart = () => {
                                         <Table.Cell className='flex flex-shrink-0 items-center gap-4 flex-row'>
                                             <img src={item?.product_id?.images[0]} alt='pic' className='lg:w-20 w-10 aspect-square object-contain' />
                                             <div className=''>
-                                                <p className='text-lg font-semibold'>{item?.product_name}</p>
-                                                <p>{item?.artist_name}</p>
+                                                <p className=' font-semibold'>{item?.product_id?.product_name}</p>
+                                                <p>Size: {item?.size}</p>
+                                                <p className='flex gap-2'>Color:<span className='block w-5 h-5 rounded-md' style={{ backgroundColor: item?.color }}></span></p>
                                             </div>
                                         </Table.Cell>
                                         <Table.Cell align='center'>
@@ -94,7 +111,7 @@ const Cart = () => {
                                             </p>
                                         </Table.Cell>
                                         <Table.Cell align='center'>
-                                            <Button color="light" onClick={() => deleteHandler(item.key)}>
+                                            <Button color="light" onClick={() => deleteHandler(item._id)}>
                                                 <BsFillTrash3Fill className='text-red-700 text-lg' />
                                             </Button>
                                         </Table.Cell>
@@ -102,7 +119,7 @@ const Cart = () => {
 
                                 ))}
 
-                                {data?.length == 0 && <Table.Cell className='text-center w-fullfont-semibold' colSpan={5}>Cart is Empty</Table.Cell>}
+                                {products?.length == 0 && <Table.Cell className='text-center w-fullfont-semibold' colSpan={5}>Cart is Empty</Table.Cell>}
                             </Table.Body>
                         </Table>
                     </div>

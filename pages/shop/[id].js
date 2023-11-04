@@ -11,18 +11,19 @@ import { addWishList, deleteWishList, getUserWishList } from '../../services/wis
 import toast from 'react-hot-toast'
 import { useAppContext } from '../../context/AppContext'
 import useQuantity from '../../hooks/useQuantity'
-import { addCart } from '../../services/cart.services'
+import { addCart, getUserCart, updateCart } from '../../services/cart.services'
 
 const ViewProduct = () => {
     const [wishListData, setWishListData] = useState([])
     const { state } = useAppContext()
     const { quantity, increment, decrement } = useQuantity(1)
-
+    const [cart, setCart] = useState(null)
     const [data, setData] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
     const [primaryImage, setPrimaryImage] = useState(null)
     const [size, setSize] = useState(null)
     const [color, setColor] = useState(null)
+
     const heartHandler = async (item) => {
         const { product_name, images, _id } = item
         console.log(wishListData)
@@ -52,28 +53,25 @@ const ViewProduct = () => {
         setIsLoading(true)
         refreshWishList()
 
-        const result = await getOneProduct(id)
-        console.log(result)
-        if (result.success) {
-            setData(result.data)
+        const result1 = await getOneProduct(id)
+        const result2 = await getUserCart(state?.user?._id)
+        console.log(result1)
+        if (result1.success) {
+            setData(result1.data)
+        }
+        if (result2.success) {
+            setCart(result2?.data.filter(d => d.product_id?._id == id)[0])
         }
         setIsLoading(false)
     }
-    const quantityHandler = (key, newValue) => {
-        let temp = data;
-        temp[key] = {
-            ...temp[key],
-            quantity: newValue
-        }
-        // setData([...temp])
-    }
+
     const router = useRouter()
     const id = router?.query?.id;
     useEffect(() => {
         if (id != undefined) {
             loadHandler();
         }
-    }, [id])
+    }, [id, state?.isAuth])
 
     const addToCartHandler = async () => {
         if (!(size && color))
@@ -88,7 +86,15 @@ const ViewProduct = () => {
                 product_id: data?._id
             }
             console.log(newData)
-            const result = await addCart(newData)
+            console.log(cart)
+            let result;
+            if (cart?.color == newData.color && cart?.size == newData.size) {
+                result = await updateCart({
+                    quantity: Number(cart?.quantity) + Number(newData.quantity)
+                }, cart?._id)
+            } else {
+                result = await addCart(newData)
+            }
             if (result.success) {
                 return toast.success("Product has been added to cart.", toastOptions)
             }
@@ -138,7 +144,7 @@ const ViewProduct = () => {
                             <p className='font-semibold'>Sizes: </p>
                             <div className='flex gap-4'>
                                 {data?.sizes.map((item, key) => (
-                                    <p key={"sizes-" + key} className={`cursor-pointer p-2 border rounded-md ${size == item && "border-red-600"} border-2`} onClick={() => setSize(item)}>{item}</p>
+                                    <p key={"sizes-" + key} className={`cursor-pointer px-2 py-1 border rounded-md ${size == item && "border-red-600"} border-2`} onClick={() => setSize(item)}>{item}</p>
                                 ))}
                             </div>
                             <div className='w-full flex items-center justify-between'>

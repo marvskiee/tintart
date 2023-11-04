@@ -9,8 +9,7 @@ export default async (req, res) => {
         case 'PUT':
             let newError
             try {
-                const { merchandise, values } = req.body
-                const cart = await Cart.findByIdAndUpdate(req.query.id, { merchandise, values }, {
+                const cart = await Cart.findByIdAndUpdate(req.query.id, req.body, {
                     new: true,
                     runValidators: true,
                 })
