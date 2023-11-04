@@ -8,6 +8,7 @@ import { deleteCart, getUserCart, updateCart } from '../services/cart.services'
 import { useAppContext } from '../context/AppContext'
 import { toastOptions } from '../styles/modalOption'
 import toast from 'react-hot-toast'
+import { formatNumberWithCommas } from '../services/tools'
 const Cart = () => {
     const { state } = useAppContext()
     const [products, setProducts] = useState([])
@@ -53,7 +54,7 @@ const Cart = () => {
             toast.error("Something went wrong!", toastOptions)
         }
     }
-    
+
     // computations
     const total = products?.filter((item) => item?.is_selected)?.reduce((accumulator, product) => {
         return accumulator + (product.product_id?.price * product.quantity)
@@ -102,12 +103,12 @@ const Cart = () => {
                                                 <p className='font-semibold'>
                                                     {item.quantity}
                                                 </p>
-                                                <Button size="xs" onClick={() => quantityHandler(key, Number(item.quantity) + 1)} color="light">+</Button>
+                                                <Button size="xs" onClick={() => quantityHandler(key, item?.quantity < 100 ? Number(item.quantity) + 1 : 100)} color="light">+</Button>
                                             </div>
                                         </Table.Cell>
                                         <Table.Cell align='center'>
                                             <p className='font-semibold text-lg whitespace-nowrap'>
-                                                {DATA.PESO} {item?.product_id?.price}
+                                                {DATA.PESO} {formatNumberWithCommas(item?.product_id?.price)}
                                             </p>
                                         </Table.Cell>
                                         <Table.Cell align='center'>

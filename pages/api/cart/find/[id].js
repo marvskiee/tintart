@@ -1,6 +1,7 @@
 import dbConnect from '../../../../utils/dbConnect'
 import Cart from '../../../../models/Cart'
 import { response } from '../../../../services/response'
+import Product from '../../../../models/Product'
 
 dbConnect()
 
@@ -16,7 +17,7 @@ export default async (req, res) => {
                     data: cart,
                 })
             } catch (error) {
-                response({ res, status_code: 400, success: false, error })
+                response({ res, status_code: 400, success: false, error: error.message })
             }
             break
         default:
