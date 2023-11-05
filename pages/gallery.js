@@ -5,9 +5,9 @@ import { addGallery, deleteGallery, getAllGallery } from '../services/gallery.se
 import { useAppContext } from '../context/AppContext'
 import toast from 'react-hot-toast'
 import { toastOptions } from '../styles/modalOption'
-import { imageUploader } from '../services/tools'
+import { hasBlankValue, imageUploader } from '../services/tools'
 import Link from 'next/link'
-import { FaFacebook, FaInstagram, FaTwitter } from 'react-icons/fa'
+import { FaFacebook, FaInstagram, FaTiktok, FaTwitter } from 'react-icons/fa'
 import { RiDeleteBin6Line } from 'react-icons/ri'
 
 const Gallery = () => {
@@ -78,6 +78,15 @@ const Gallery = () => {
     },
   ]
   const addHandler = async () => {
+    const hasBlank = hasBlankValue(Object.values(formData).slice(0, -3))
+
+    if (hasBlank)
+      return toast.error('Please fill up atleast the name and artwork title!', toastOptions)
+
+    if (!imageUpload)
+      return toast.error('Please select an image!', toastOptions)
+
+
     setIsLoading(true)
     await imageUploader([imageUpload], async (postImage) => {
       const newData = {
@@ -211,9 +220,15 @@ const Gallery = () => {
                   >
                     <p className=' left-0 bottom-10 truncate w-full text-center text-xl font-semibold text-white'>{item?.artwork_title}</p>
                     <div className='flex gap-4 my-4'>
-                      <Link target='_blank' className='p-2 rounded-full bg-zinc-500 text-white' href={item?.facebook_link}><FaInstagram /></Link>
-                      <Link target='_blank' className='p-2 rounded-full bg-zinc-500 text-white' href={item?.instagram_link}><FaTwitter /></Link>
-                      <Link target='_blank' className='p-2 rounded-full bg-zinc-500 text-white' href={item?.tiktok_link}><FaFacebook /></Link>
+                      {item?.instagram_link &&
+                        <Link target='_blank' className='p-2 rounded-full bg-zinc-500 text-white' href={item?.instagram_link}><FaInstagram /></Link>
+                      }
+                      {item?.tiktok_link &&
+                        <Link target='_blank' className='p-2 rounded-full bg-zinc-500 text-white' href={item?.tiktok_link}><FaTiktok /></Link>
+                      }
+                      {item?.facebook_link &&
+                        <Link target='_blank' className='p-2 rounded-full bg-zinc-500 text-white' href={item?.facebook_link}><FaFacebook /></Link>
+                      }
                     </div>
                     <p className=' left-0 bottom-10 truncate w-full text-center text-white'>Artist: {item?.name}</p>
                   </div>

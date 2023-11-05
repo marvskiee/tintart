@@ -58,11 +58,11 @@ const CustomerHeader = props => {
                   <li
                     key={item?._id}
                     className='cursor-pointer hover:bg-slate-200 flex w-full items-center justify-between p-4'
-                    onClick={() => router.push('/shop/product/' + item?._id)}
+                    onClick={() => router.push('/shop/' + item?._id)}
                   >
                     <img
                       src={item?.images[0]}
-                      className='object-cover w-20 rounded-md aspect-square'
+                      className=' object-cover w-20 rounded-md aspect-square'
                     />
                     <div className='flex w-full justify-between items-center'>
                       <div className='p-2'>
@@ -96,7 +96,9 @@ const CustomerHeader = props => {
               >
                 <GiHamburgerMenu color='white' />
               </Button>
-              <img src={'/images/logo.png'} alt='logo' width={100} height={100} className='' />
+              <Link href='/'>
+                <img src={'/images/logo.png'} alt='logo' width={100} height={100} className='cursor-pointer' />
+              </Link>
             </div>
             <div className='hidden relative lg:flex w-full'>
               <div className={` flex items-center order-3 md:order-2 w-full `}>

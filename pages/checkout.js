@@ -40,7 +40,7 @@ const Checkout = () => {
         <CustomerLayout hasFetch={true}>
             <CustomerWrapper>
                 <div className='flex px-4 py-10 flex-col lg:flex-row gap-4'>
-                    {/* sidebar  */}
+                    {/* sidebar  */}  
                     <div className=' w-full'>
                         <LoadingLayout message="You have no address listed." loadingState={isLoading} hasContent={shippingData.length > 0}>
                             <div className='flex flex-col justify-between border p-4 text-zinc-500'>

@@ -17,69 +17,20 @@ const DATA = {
             { name: 'change password', link: '/admin/settings/password' },
         ]
     },
-    SAMPLE_PRODUCT: [
+    PAYMENT_METHOD: [
         {
-            name: "Demon Slayer – Tanjiro",
-            description: "Tanjiro from anime Demon Slayer",
-            price: 150,
-            color: "White",
-            size: ["S", "M", "L", "XL", "XXL"],
-            category: "Demon Slayer",
-            images: []
+            title:"Credit/Debit Card",
+            logo: "https://cdn.visa.com/v2/assets/images/logos/visa/blue/logo.png",
+            method:"credit"
         },
         {
-            name: "Demon Slayer",
-            description: "Demon Slayer logo from its self-entitled anime",
-            price: 150,
-            color: "White",
-            size: ["S", "M", "L", "XL", "XXL"],
-            category: "Demon Slayer",
-            images: []
+            title:"Gcash",
+            logo: "https://www.gcash.com/wp-content/uploads/2019/09/gcash-text-logo.png",
+            method:"gcash"
         },
         {
-            name: "Demon Slayer – Nezuko",
-            description: "Nezuko from anime Demon Slayer",
-            price: 150,
-            color: "White",
-            size: ["S", "M", "L", "XL", "XXL"],
-            category: "Demon Slayer",
-            images: []
-        },
-        {
-            name: "Demon Slayer – Rengoku",
-            description: "Rengoku from anime Demon Slayer",
-            price: 150,
-            color: "White",
-            size: ["S", "M", "L", "XL", "XXL"],
-            category: "Demon Slayer",
-            images: []
-        },
-        {
-            name: "Demon Slayer – Akaza",
-            description: "Akaza from anime Demon Slayer",
-            price: 150,
-            color: "White",
-            size: ["S", "M", "L", "XL", "XXL"],
-            category: "Demon Slayer",
-            images: []
-        },
-        {
-            name: "Demon Slayer – Tanjuro",
-            description: "Tanjuro from anime Demon Slayer",
-            price: 150,
-            color: "White",
-            size: ["S", "M", "L", "XL", "XXL"],
-            category: "Demon Slayer",
-            images: []
-        },
-        {
-            name: "Demon Slayer – Tanjiro 2",
-            description: "Tanjiro from anime Demon Slayer",
-            price: 150,
-            color: "White",
-            size: ["S", "M", "L", "XL", "XXL"],
-            category: "Demon Slayer",
-            images: []
+            title:"Cash on Delivery",
+            method:"cod"
         },
     ],
     FOOTER:

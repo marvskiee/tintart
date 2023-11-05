@@ -145,13 +145,13 @@ const Profile = () => {
                         </div>
                         <LoadingLayout message="You have no wishlist." loadingState={isLoading} hasContent={wishlistData?.length > 0}>
                             {wishlistData?.map((item, key) => (
-                                <div className='flex items-center justify-between'>
+                                <div className='flex items-center justify-between' key={"wishlist" + key}>
                                     <img src={item?.image} className='object-cover w-14 aspect-square' />
                                     <div className="flex w-full justify-between items-center">
                                         <div className='p-2'>
                                             <p className='font-semibold'>{item?.title}</p>
                                             <p className='underline'>
-                                                <Link href={"/shop/" + item?._id}>
+                                                <Link href={"/shop/" + item?.product_id}>
                                                     Live Preview
                                                 </Link>
                                             </p>

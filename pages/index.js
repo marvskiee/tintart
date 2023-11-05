@@ -26,7 +26,7 @@ const Home = () => {
     // fetch products
     const products_result = await getAllProduct()
     if (products_result.success)
-      setProductData(products_result?.data)
+      setProductData(products_result?.data.filter(d => d.is_featured))
     setIsLoading(false)
 
   }
@@ -63,13 +63,15 @@ const Home = () => {
             <div className='flex items-center justify-center md:flex-row flex-col gap-10 place-items-center '>
               {
                 productData?.slice(0, 4).map((item, key) => (
-                  <div key={`project-${key}`}>
-                    <img src={item.images[0]} className='max-w-[20rem] shadow-md w-full aspect-square rounded-xl object-cover' />
-                    <div className='p-2'>
-                      <p className='font-semibold text-lg text-center'>{item?.product_name}</p>
-                      <p className=' text-lg text-center'>PHP {item?.price}</p>
+                  <Link href={item?.is_archived ? "" : "/shop/" + item?._id}>
+                    <div key={`project-${key}`} className='cursor-pointer'>
+                      <img src={item.images[0]} className='max-w-[20rem] shadow-md w-full aspect-square rounded-xl object-cover' />
+                      <div className='p-2'>
+                        <p className='font-semibold text-lg text-center'>{item?.product_name}</p>
+                        <p className=' text-lg text-center'>PHP {item?.price}</p>
+                      </div>
                     </div>
-                  </div>
+                  </Link>
                 ))
               }
             </div>
@@ -83,7 +85,9 @@ const Home = () => {
         <div className='flex flex-col gap-8 my-4 items-center justify-center'>
           <h2 className='font-semibold text-3xl'>BULK ORDERS?</h2>
           <p className='lg:text-xl'>Streamline Your Wholesale Shopping Experience - Hassle-Free Bulk Orders Await!</p>
-          <Button color="failure" className=' mx-auto border border-white' size="lg">Contact Us</Button>
+          <Link href={"/about"}>
+            <Button color="failure" className=' mx-auto border border-white' size="lg">Contact Us</Button>
+          </Link>
         </div>
       </CustomerWrapper>
       <CustomerWrapper containerClass="p-6 lg:p-16">
@@ -102,7 +106,7 @@ const Home = () => {
           <Button color="failure" className=' mx-auto' size="lg" onClick={() => router.push("/gallery")}>View Gallery</Button>
         </div>
       </CustomerWrapper>
-    </CustomerLayout>
+    </CustomerLayout >
   )
 }
 

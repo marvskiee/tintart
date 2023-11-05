@@ -9,7 +9,7 @@ export default async (req, res) => {
     switch (req.method) {
         case 'GET':
             try {
-                const cart = await Cart.find({ user_id: req.query.id }).populate('product_id')
+                const cart = await Cart.find({ user_id: req.query.id, is_checkout: false }).populate('product_id')
                 return response({
                     res,
                     status_code: 200,

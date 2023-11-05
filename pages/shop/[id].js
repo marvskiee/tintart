@@ -113,7 +113,7 @@ const ViewProduct = () => {
 
     return (
         <CustomerLayout hasFetch={true}>
-            <LoadingLayout message="Product does not exist!" loadingState={isLoading} hasContent={data}>
+            <LoadingLayout message="Product does not exist!" loadingState={isLoading} hasContent={!data?.is_archived}>
                 <CustomerWrapper>
                     <div className='flex flex-col lg:flex-row gap-4 p-4'>
                         {/* image section  */}
@@ -141,6 +141,7 @@ const ViewProduct = () => {
                             <p className='font-semibold text-xl'>{data?.product_name}</p>
                             <p className='font-semibold text-2xl'>{DATA.PESO} {data?.price}</p>
                             <p className='h-full'>{data?.description}</p>
+                            <p><span className='font-semibold'>Category: </span> {data?.category}</p>
                             <p className='font-semibold'>Sizes: </p>
                             <div className='flex gap-4'>
                                 {data?.sizes.map((item, key) => (
@@ -168,7 +169,12 @@ const ViewProduct = () => {
                                 </div>
                             </div>
                             <div className='flex gap-4'>
-                                <Button className='w-full uppercase' color="failure" onClick={addToCartHandler}>Add to Cart</Button>
+                                {
+                                    data?.is_sold_out ?
+                                        <Button className='w-full uppercase' disabled color="light">Sold Out</Button>
+                                        :
+                                        <Button className='w-full uppercase' color="failure" onClick={addToCartHandler}>Add to Cart</Button>
+                                }
                                 <Button className={`flex items-center gap-4 w-full uppercase  font-semibold `} color={"light"} onClick={() => heartHandler(data)}>
                                     {!wishListData.filter(d => d.product_id == data?._id).length > 0 ?
                                         <>
