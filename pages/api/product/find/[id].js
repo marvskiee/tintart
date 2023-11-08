@@ -8,7 +8,7 @@ export default async (req, res) => {
     switch (req.method) {
         case 'GET':
             try {
-                const product = await Product.findById(req.query.id)
+                const product = await Product.findOne({ _id: req.query.id, is_sold_out: false, is_archived: false }).populate("category")
                 return response({
                     res,
                     status_code: 200,

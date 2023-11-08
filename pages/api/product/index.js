@@ -9,7 +9,7 @@ export default async (req, res) => {
     case 'GET':
       try {
         const all_product = await Product.find()
-        response({ res, status_code: 200, success: true, data: all_product })
+        response({ res, status_code: 200, success: true, data: all_product }).populate("category")
       } catch (error) {
         response({ res, status_code: 400, success: false, error })
       }

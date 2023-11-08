@@ -35,6 +35,9 @@ const UserSchema = new mongoose.Schema({
   shipping_id: {
     type: String,
   },
+  recovery_code: {
+    type: String,
+  },
   created_at: {
     type: Date,
     default: Date.now,

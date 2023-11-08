@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { CustomerLayout, CustomerWrapper, LoadingLayout, TextInput } from '../../components'
+import { CustomerLayout, CustomerWrapper, LoadingLayout, StarLayout, TextInput } from '../../components'
 import { getOneProduct } from '../../services/product.services'
 import { useRouter } from 'next/router'
 import DATA from '../../utils/DATA'
@@ -12,17 +12,57 @@ import toast from 'react-hot-toast'
 import { useAppContext } from '../../context/AppContext'
 import useQuantity from '../../hooks/useQuantity'
 import { addCart, getUserCart, updateCart } from '../../services/cart.services'
+import { addReview, getProductReview } from '../../services/review.services'
+import { hasBlankValue } from '../../services/tools'
 
 const ViewProduct = () => {
+
+    const router = useRouter()
+    const id = router?.query?.id;
+
     const [wishListData, setWishListData] = useState([])
     const { state } = useAppContext()
     const { quantity, increment, decrement } = useQuantity(1)
     const [cart, setCart] = useState(null)
     const [data, setData] = useState(null)
-    const [isLoading, setIsLoading] = useState(true)
+    const [review, setReview] = useState([])
+
+    const [isLoading, setIsLoading] = useState({
+        fetch: true,
+        review: false
+    })
     const [primaryImage, setPrimaryImage] = useState(null)
     const [size, setSize] = useState(null)
     const [color, setColor] = useState(null)
+    const initialData = {
+        comment: "",
+        rating: "",
+    }
+    const [formData, setFormData] = useState(initialData)
+    const submitHandler = async () => {
+        const hasBlank = hasBlankValue(Object.values(formData))
+        if (hasBlank)
+            return toast.error("Please fill up the fields!", toastOptions)
+        setIsLoading({ ...isLoading, review: true })
+        const newData = {
+            rating: formData?.rating,
+            user: state?.user?._id,
+            comment: formData?.comment,
+            product_id: id
+        }
+        console.log(newData)
+        const result = await addReview(newData)
+        if (result?.success) {
+            setFormData(initialData)
+            loadReviewHandler()
+            toast.success("Review Submitted", toastOptions)
+        } else {
+            toast.error("Something went wrong!", toastOptions)
+        }
+        setIsLoading({ ...isLoading, review: false })
+
+    }
+
 
     const heartHandler = async (item) => {
         const { product_name, images, _id } = item
@@ -49,12 +89,20 @@ const ViewProduct = () => {
             }
         }
     }
+    const loadReviewHandler = async () => {
+        const result3 = await getProductReview(id)
+        if (result3.success) {
+            setReview(result3.data)
+        }
+    }
     const loadHandler = async () => {
-        setIsLoading(true)
+        setIsLoading({ ...isLoading, fetch: true })
         refreshWishList()
 
         const result1 = await getOneProduct(id)
         const result2 = await getUserCart(state?.user?._id)
+
+
         console.log(result1)
         if (result1.success) {
             setData(result1.data)
@@ -62,11 +110,11 @@ const ViewProduct = () => {
         if (result2.success) {
             setCart(result2?.data.filter(d => d.product_id?._id == id)[0])
         }
-        setIsLoading(false)
+        await loadReviewHandler()
+        setIsLoading({ ...isLoading, fetch: false })
+
     }
 
-    const router = useRouter()
-    const id = router?.query?.id;
     useEffect(() => {
         if (id != undefined) {
             loadHandler();
@@ -113,7 +161,7 @@ const ViewProduct = () => {
 
     return (
         <CustomerLayout hasFetch={true}>
-            <LoadingLayout message="Product does not exist!" loadingState={isLoading} hasContent={!data?.is_archived}>
+            <LoadingLayout message="Product does not exist!" loadingState={isLoading?.fetch} hasContent={data}>
                 <CustomerWrapper>
                     <div className='flex flex-col lg:flex-row gap-4 p-4'>
                         {/* image section  */}
@@ -141,7 +189,7 @@ const ViewProduct = () => {
                             <p className='font-semibold text-xl'>{data?.product_name}</p>
                             <p className='font-semibold text-2xl'>{DATA.PESO} {data?.price}</p>
                             <p className='h-full'>{data?.description}</p>
-                            <p><span className='font-semibold'>Category: </span> {data?.category}</p>
+                            <p><span className='font-semibold'>Category: </span> {data?.category?.category}</p>
                             <p className='font-semibold'>Sizes: </p>
                             <div className='flex gap-4'>
                                 {data?.sizes.map((item, key) => (
@@ -200,34 +248,40 @@ const ViewProduct = () => {
                 <CustomerWrapper>
                     <div className='p-4'>
                         <div className='border-b-4 py-2 border-red-600'>
-                            <p className='text-2xl font-semibold'>Reviews</p>
+                            <p className='text-2xl font-semibold'>Review's: {review?.length}</p>
                         </div>
-                        <p className='py-4'>There are no reviews yet.</p>
+
                         {/* review form  */}
-                        <div className='flex flex-col w-full gap-4 p-4 border-2 border-yellow-500'>
-                            <p className='font-semibold text-lg'>Be the first to review product</p>
-                            <p className='font-semibold'>Your rating</p>
-                            <div className='flex gap-2'>
-                                {Array.from({ length: 5 }, (_, index) => index + 1).map((item, key) => (
-                                    <AiFillStar key={"star-" + key} size={20} className='text-zinc-400' />
-                                ))}
-                            </div>
-                            <p className='font-semibold'>Your review</p>
-                            <Textarea rows="10" />
-                            <div className='flex gap-4'>
-                                <div className='w-full'>
-                                    <Label>Name:</Label>
-                                    <TextInput />
+                        <LoadingLayout hasContent={true} loadingState={isLoading?.review}>
+                            {review?.length == 0 ?
+                                <p className='py-4'>There are no reviews yet.</p>
+                                :
+                                review.map(({ user, comment, rating, _id }) => (
+                                    <div key={_id} className='flex items-start gap-4 flex-col border my-4 p-4'>
+                                        <div className='flex gap-4 items-center font-semibold'>
+                                            <img src={user?.profile_image} className='h-10 2-10 rounded-full object-cover' />
+                                            <p className='text-lg'>{user?.first_name} {user?.last_name}</p>
+                                        </div>
+                                        <StarLayout rating={rating} />
+                                        <p>{comment}</p>
+
+                                    </div>
+                                ))
+                            }
+                            <div className='flex flex-col w-full gap-4 p-4 border-2 border-yellow-500'>
+                                {review?.length == 0 &&
+                                    <p className='font-semibold text-lg'>Be the first to review product</p>
+                                }
+                                <p className='font-semibold'>Your rating</p>
+                                <StarLayout rating={formData.rating} setRating={setFormData} data={formData} />
+                                <p className='font-semibold'>Your review</p>
+                                <Textarea rows="5" value={formData.comment} onChange={(e) => setFormData({ ...formData, comment: e.target.value })} />
+                                <div>
+                                    <Button className='float-left uppercase' color="failure" onClick={submitHandler}>Submit</Button>
                                 </div>
-                                <div className='w-full'>
-                                    <Label>Email:</Label>
-                                    <TextInput />
-                                </div>
                             </div>
-                            <div>
-                                <Button className='float-left uppercase' color="failure">Submit</Button>
-                            </div>
-                        </div>
+                        </LoadingLayout>
+
                     </div>
                 </CustomerWrapper>
             </LoadingLayout>

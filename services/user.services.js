@@ -12,6 +12,9 @@ export const changePassword = async (newData, id) =>
 export const getAllUser = async () =>
   getHTTPFormat({ url: '/user' })
 
+  export const getAdminUsers = async (Role) =>
+  getHTTPFormat({ url: '/user/admin' })
+
 export const getOneUser = async (id) =>
   getHTTPFormat({ url: '/user/view/' + id })
 

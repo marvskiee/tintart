@@ -29,7 +29,7 @@ const DropdownInput = ({ name, item, handler, selected, disabled }) => {
       </button>
 
       <div
-        className={`z-10 ${
+        className={`z-20 ${
           !toggle || disabled ? 'hidden' : ''
         }  bg-white absolute w-full divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700`}
       >
@@ -46,7 +46,7 @@ const DropdownInput = ({ name, item, handler, selected, disabled }) => {
               }}
             >
               <p className='block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
-                {title}
+                {title?.category || title}
               </p>
             </li>
           ))}

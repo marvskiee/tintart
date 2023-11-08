@@ -31,7 +31,7 @@ const ProductFormLayout = ({ title, oldData }) => {
   const [categoryList, setCategoryList] = useState([])
   const [colorList, setColorList] = useState([])
   const [sizeList, setSizeList] = useState([])
-
+  const categoryRef = useRef()
   // image
   const uploadRef = useRef()
 
@@ -47,7 +47,7 @@ const ProductFormLayout = ({ title, oldData }) => {
     if (category_result?.success) {
       let list = category_result?.data.map(item => item.category)
       setData({ ...data, category: list[0] })
-      setCategoryList(list)
+      setCategoryList(category_result?.data)
     }
 
     if (color_result?.success) setColorList(color_result?.data.map(item => item.values))
@@ -67,12 +67,13 @@ const ProductFormLayout = ({ title, oldData }) => {
         is_sold_out,
         images,
       } = oldData
+      categoryRef.current = category
       setData({
         merchandise,
         description,
         product_name,
         price,
-        category,
+        category: category?.category,
         colors,
         sizes,
         is_featured,
@@ -95,7 +96,7 @@ const ProductFormLayout = ({ title, oldData }) => {
   }
 
   const submitHandler = async postImage => {
-    const newData = { ...data, images: postImage }
+    const newData = { ...data, images: postImage, category: categoryRef.current }
     console.log(newData)
     if (oldData) {
       const result = await updateProduct(newData, oldData?._id)
@@ -220,11 +221,15 @@ const ProductFormLayout = ({ title, oldData }) => {
         <div>
           <Label className='capitalize mb-2 block'>Category</Label>
           <DropdownInput
+            isObject={true}
             item={categoryList}
             name='category'
             value={data?.category}
             selected={data?.category}
-            handler={value => setData({ ...data, category: value })}
+            handler={value => {
+              categoryRef.current = value?._id
+              setData({ ...data, category: value?.category })
+            }}
             disabled={isLoading}
           />
         </div>

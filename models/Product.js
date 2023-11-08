@@ -19,8 +19,8 @@ const ProductSchema = new mongoose.Schema({
         required: [true, 'Price must not be empty'],
     },
     category: {
-        type: String,
-        required: [true, 'Category must not be empty'],
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category',
     },
     merchandise: {
         type: String,

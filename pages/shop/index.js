@@ -84,7 +84,8 @@ const Shop = () => {
   const filteredProducts = productData?.filter(d =>
     (Number(d.price) >= priceRange.min && Number(d.price) <= priceRange.max) &&
     (d.merchandise.includes(merchandise)) &&
-    (d.category.includes(category))
+    (d.category.includes(category)) &&
+    (d.is_archived == false)
   )
   return <CustomerLayout hasFetch={true}>
     <CustomerWrapper containerClass="p-4">
@@ -152,7 +153,7 @@ const Shop = () => {
                       <AiFillHeart className='text-2xl text-red-600' />
                     }
                   </Button>
-                  <img onClick={() => router.push("/shop/" + item?._id)} alt='luffy' src={item?.images[0]} className='rounded-2xl w-full aspect-square object-cover' />
+                  <img onClick={() => router.push("/shop/" + item?._id)} src={item?.images[0]} className='rounded-2xl w-full aspect-square object-cover' />
                   <p onClick={() => router.push("/shop/" + item?._id)} className="px-2 font-semibold text-md">{item?.product_name}</p>
                   <p onClick={() => router.push("/shop/" + item?._id)} className="px-2 font-semibold text-xl">PHP {item?.price}</p>
                 </div>

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { CustomerLayout, CustomerWrapper } from '../components'
-import { Button, Table } from 'flowbite-react'
+import React, { useEffect, useRef, useState } from 'react'
+import { CustomerLayout, CustomerWrapper, LoadingLayout, ModalLayout } from '../components'
+import { Button, Label, Table } from 'flowbite-react'
 import { BsFillTrash3Fill } from 'react-icons/bs'
 import DATA from '../utils/DATA'
 import { useRouter } from 'next/router'
@@ -11,12 +11,18 @@ import toast from 'react-hot-toast'
 import { formatNumberWithCommas } from '../services/tools'
 import { getUserShipping } from '../services/shipping.services'
 import { BiSolidMap } from 'react-icons/bi'
+import { getAllShop } from '../services/shop.services'
+import { RiDeleteBin6Line } from 'react-icons/ri'
 const Cart = () => {
     const { state } = useAppContext()
     const [products, setProducts] = useState([])
+    const [terms, setTerms] = useState([])
     const [isCheckOut, setIsCheckOut] = useState(false)
     const [shippingData, setShippingData] = useState([])
+    const [shippingList, setShippingList] = useState([])
+
     const [paymentMethod, setPaymentMethod] = useState(null)
+    const [termsChecked, setTermsChecked] = useState(false)
     const table_header = [
         "Product",
         "Quantity",
@@ -26,12 +32,19 @@ const Cart = () => {
         const result_shipping = await getUserShipping(state?.user?._id)
         if (result_shipping?.success) {
             let defaultData = result_shipping?.data.filter((d) => d._id == state?.user?.shipping_id)
-            if (defaultData.length > 0)
-                setShippingData(defaultData)
+            if (defaultData.length > 0) {
+                setShippingList(result_shipping?.data)
+                setShippingData(defaultData[0])
+            }
         }
         const result = await getUserCart(state?.user?._id)
         if (result?.success)
             setProducts(result?.data)
+        const result_shop = await getAllShop()
+        if (result_shop?.success) {
+            if (result_shop?.data.length > 0)
+                setTerms(result_shop.data[0])
+        }
     }
 
     useEffect(() => {
@@ -74,22 +87,104 @@ const Cart = () => {
     const placeHolderHandler = () => {
         if (!paymentMethod)
             return toast.error("Please select payment method!", toastOptions)
+
     }
 
+    const [termsModal, setTermsModal] = useState(false)
+    const [shippingModal, setShippingModal] = useState(false)
+
+    const TermsModal = ({ modal, setModal, content }) => {
+        return (
+            <>
+                {modal &&
+                    <ModalLayout>
+                        <div className='flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600'>
+                            <h3 className='text-xl font-semibold text-gray-900 dark:text-white'>Terms and Conditions</h3>
+                        </div>
+                        <div className='p-6 space-y-6'>
+                            <p>
+                                {content?.terms}
+                            </p>
+                        </div>
+                        <div className="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+                            <Button color='gray' onClick={() => setModal(false)}>
+                                Close
+                            </Button>
+                        </div>
+                    </ModalLayout>
+                }
+            </>
+        )
+    }
+    const ShippingModal = ({ modal, setModal, list, handler, default_id }) => {
+        return (
+            <>
+                {modal &&
+                    <ModalLayout>
+                        <div className='flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600'>
+                            <h3 className='text-xl font-semibold text-gray-900 dark:text-white'>Choose Shipping Address</h3>
+                        </div>
+                        <div className='p-6 w-full'>
+                            {list?.length > 0 && list?.map((item, key) => (
+                                <div key={item?._id} className='flex items-center justify-between border-y p-4 gap-8 text-zinc-500'>
+                                    <div>
+                                        <div className='flex gap-2 lg:flex-row flex-col'>
+                                            <p className='text-black'>{item?.receiver_name}</p>
+                                            <p className=''>{item?.contact_no}</p>
+                                        </div>
+                                        <p className=''>{item?.unit} {item?.street} {item?.region}</p>
+                                        <p className=''>{item?.information}</p>
+                                    </div>
+                                    {default_id != item?._id &&
+                                        <div className='flex gap-4 flex-col'>
+                                            <Button
+                                                gradientDuoTone='cyanToBlue'
+                                                onClick={() => handler(item)}
+                                            >
+                                                Select Address
+                                            </Button>
+                                        </div>
+                                    }
+                                </div>
+                            ))}
+                        </div>
+                        <div className="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+                            <Button color='gray' onClick={() => setModal(false)}>
+                                Close
+                            </Button>
+                        </div>
+                    </ModalLayout>
+                }
+            </>
+        )
+    }
+
+console.log(shippingData)
     return (
         <CustomerLayout hasFetch={true}>
             <CustomerWrapper>
+                <TermsModal content={terms} modal={termsModal} setModal={setTermsModal} />
+                <ShippingModal modal={shippingModal} default_id={shippingData?._id} setModal={setShippingModal} list={shippingList} setShippingData={setShippingData} handler={(item) => {
+                    setShippingModal(false)
+                    setShippingData(item)
+                }} />
+
                 <div className='flex px-4 py-10 flex-col lg:flex-row gap-4'>
                     {/* sidebar  */}
                     <div className=' w-full'>
                         <p className='font-semibold text-2xl mb-4'>{isCheckOut ? "Checkout" : "Your Cart"}</p>
                         {isCheckOut &&
-                            <div className='flex flex-col mb-4 justify-between border p-4 text-zinc-500'>
-                                <p className='text-lg text-red-600 font-semibold flex items-center gap-2'>
-                                    <BiSolidMap /> Delivery Address</p>
-                                <p className='text-black'>Name: {shippingData[0]?.receiver_name} <span className="text-zinc-700">{shippingData[0]?.contact_no}</span></p>
-                                <p><span className="text-black">Address: </span>{shippingData[0]?.unit} {shippingData[0]?.street} {shippingData[0]?.region}</p>
-                                <p><span className="text-black">Additional Information: </span>{shippingData[0]?.information}</p>
+                            <div className='flex items-end justify-between mb-4 border p-4'>
+                                <div className='flex flex-col justify-between text-zinc-500'>
+                                    <p className='text-lg text-red-600 font-semibold flex items-center gap-2'>
+                                        <BiSolidMap /> Delivery Address</p>
+                                    <p className='text-black'>Name: {shippingData?.receiver_name} <span className="text-zinc-700">{shippingData?.contact_no}</span></p>
+                                    <p><span className="text-black">Address: </span>{shippingData?.unit} {shippingData?.street} {shippingData?.region}</p>
+                                    <p><span className="text-black">Additional Information: </span>{shippingData?.information}</p>
+                                </div>
+                                <div>
+                                    <p onClick={() => setShippingModal(true)} className='cursor-pointer font-semibold underline text-rose-600'>Change</p>
+                                </div>
                             </div>
                         }
                         <Table className='text-zinc-900'>
@@ -184,10 +279,22 @@ const Cart = () => {
                                 <p className='text-red-700 font-semibold'>{DATA.PESO} {formatNumberWithCommas(total)}</p>
                             </div>
                         </div>
-                        <Button onClick={() => !isCheckOut ? setIsCheckOut(true) : placeHolderHandler()} disabled={total == 0} className='w-full mt-4' color="failure">{!isCheckOut ? "PROCEED TO CHECKOUT" : "PLACE ORDER"}</Button>
                         {isCheckOut &&
-                            <Button onClick={() => setIsCheckOut(false)} className='w-full mt-4' color="light">Cancel</Button>
+                            <div className='p-4'>
+                                <input type='checkbox' id="policy" checked={termsChecked} onChange={(e) => setTermsChecked(e.target.checked)} />
+                                <Label for="policy" className='ml-2'>
+                                    I have read and accepted the <span className='text-red-500 underline cursor-pointer' onClick={() => setTermsModal(true)}>Terms and Conditions</span> and privacy policy.
+                                </Label>
+                            </div>
                         }
+                        <Button onClick={() => !isCheckOut ? setIsCheckOut(true) : placeHolderHandler()} disabled={total == 0 || (isCheckOut && !termsChecked)} className='w-full mt-4' color="failure">{!isCheckOut ? "PROCEED TO CHECKOUT" : "PLACE ORDER"}</Button>
+                        {isCheckOut &&
+                            <>
+
+                                <Button onClick={() => setIsCheckOut(false)} className='w-full mt-4' color="light">Cancel</Button>
+                            </>
+                        }
+
 
                     </div>
                     {/* main content  */}

@@ -5,13 +5,13 @@ const ReviewSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Product Id must not be empty'],
     },
-    order_id: {
-        type: String,
-        required: [true, 'Order Id must not be empty'],
-    },
     comment: {
         type: String,
         required: [true, 'Product Id must not be empty'],
+    },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
     },
     rating: {
         type: String,

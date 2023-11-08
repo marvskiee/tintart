@@ -191,7 +191,10 @@ const TableLayout = ({
               <RowTemplate label='Fetching...' />
             ) : searchFilter.length > 0 ? (
               searchFilter.map((parentItem, parentKey) => (
-                <Table.Row key={`parent-${title.toLowerCase()}-${parentKey}`} className={parentKey % 2&& "transition-colors bg-zinc-100"}>
+                <Table.Row
+                  key={`parent-${title.toLowerCase()}-${parentKey}`}
+                  className={parentKey % 2 && 'transition-colors bg-zinc-100'}
+                >
                   {headerArray?.map((childItem, childKey) => (
                     <Table.Cell key={`children-${title.toLowerCase()}-${childKey}`}>
                       {childItem == 'created_at'
@@ -220,16 +223,18 @@ const TableLayout = ({
                         >
                           <AiOutlineEdit />
                         </Button>
-                        <Button
-                          gradientDuoTone='pinkToOrange'
-                          onClick={() => {
-                            setData(parentItem)
-                            setModalType('Delete')
-                            setModal('dismissible')
-                          }}
-                        >
-                          <RiDeleteBin6Line />
-                        </Button>
+                        {title != 'Categories' && (
+                          <Button
+                            gradientDuoTone='pinkToOrange'
+                            onClick={() => {
+                              setData(parentItem)
+                              setModalType('Delete')
+                              setModal('dismissible')
+                            }}
+                          >
+                            <RiDeleteBin6Line />
+                          </Button>
+                        )}
                       </>
                     ) : (
                       <Button

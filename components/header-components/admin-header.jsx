@@ -60,15 +60,15 @@ const AdminHeader = props => {
             } lg:flex`}
           >
             {DATA.ADMIN.HEADER_LINKS.map((item, key) => (
-              <Link
-                href={item?.link}
-                className={`text-zinc-900 whitespace-nowrap h-full block w-full flex-grow-0 lg:text-center text-left gap-4 cursor-pointer transition-colors delay-75 border-transparent text-sm hover:border-white lg:hover:border-zinc-500 p-4 capitalize font-semibold ${
-                  router.pathname.split('/')[2] == item?.link.split('/')[2] &&
-                  'font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600'
-                }`}
-                key={key}
-              >
-                {item?.name}
+              <Link href={item?.link} key={key}>
+                <p
+                  className={` whitespace-nowrap h-full block w-full flex-grow-0 lg:text-center text-left gap-4 cursor-pointer transition-colors delay-75 border-transparent text-sm hover:border-white lg:hover:border-zinc-500 p-4 capitalize font-semibold ${
+                    router.pathname.split('/')[2] == item?.link.split('/')[2] &&
+                    'font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600 text-blue-600'
+                  }`}
+                >
+                  {item?.name}
+                </p>
               </Link>
             ))}
           </div>

@@ -144,7 +144,7 @@ const Login = () => {
                     {loginMode == "login" &&
                         <p className='text-left w-full underline' onClick={() => setLoginMode("forgot")}>Forgot Password?</p>
                     }
-                    <Button disabled={isLoading} color="failure" className='w-full' onClick={submitHandler}>{!isLoading ? "Sign In" : "Signing In..."}</Button>
+                    <Button disabled={isLoading} color="failure" className='w-full' onClick={submitHandler}>{!isLoading ? "Register" : "Registering..."}</Button>
                     {loginMode == "login" ?
                         <p className='text-center ' onClick={() => setLoginMode("register")}>Don't have an account? <span className='underline cursor-pointer'>Create Account</span></p>
                         : loginMode == "register" &&

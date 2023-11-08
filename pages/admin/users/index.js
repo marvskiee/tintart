@@ -1,7 +1,7 @@
 import React from 'react'
 import { TableLayout, AdminLayout } from '../../../components'
 import DATA from '../../../utils/DATA'
-import { getAllUser } from '../../../services/user.services'
+import { getAdminUsers } from '../../../services/user.services'
 import { useRouter } from 'next/router'
 
 const Users = () => {
@@ -12,7 +12,7 @@ const Users = () => {
       <TableLayout
         title="Users"
         nextPage={{ addHandler: () => router.push('/admin/users/add') }}
-        loadRequest={getAllUser}
+        loadRequest={getAdminUsers}
         fieldInputs={DATA.TABLE_HEADERS.USERS} />
     </AdminLayout>
   )
