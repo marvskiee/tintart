@@ -340,7 +340,7 @@ const ProductFormLayout = ({ title, oldData }) => {
           />
         </div>
         <div
-          className={`flex gap-4 ${
+          className={`flex flex-col lg:flex-row gap-4 ${
             oldData ? 'justify-between' : 'justify-end'
           } mt-4 lg:col-span-3 col-span-1`}
         >
@@ -353,7 +353,7 @@ const ProductFormLayout = ({ title, oldData }) => {
               Delete this product
             </Button>
           )}
-          <div className='flex gap-4'>
+          <div className='flex gap-4 flex-col lg:flex-row'>
             <Button disabled={isLoading} gradientDuoTone={'cyanToBlue'} onClick={validationHandler}>
               Submit
             </Button>

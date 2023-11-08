@@ -16,7 +16,7 @@ export default async (req, res) => {
                     data: product,
                 })
             } catch (error) {
-                response({ res, status_code: 400, success: false, error })
+                response({ res, status_code: 400, success: false, error: error?.message })
             }
             break
         default:

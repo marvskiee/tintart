@@ -8,8 +8,8 @@ export default async (req, res) => {
   switch (req.method) {
     case 'GET':
       try {
-        const all_product = await Product.find()
-        response({ res, status_code: 200, success: true, data: all_product }).populate("category")
+        const all_product = await Product.find().populate("category")
+        response({ res, status_code: 200, success: true, data: all_product })
       } catch (error) {
         response({ res, status_code: 400, success: false, error })
       }

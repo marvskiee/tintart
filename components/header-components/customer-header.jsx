@@ -29,7 +29,7 @@ const CustomerHeader = props => {
   const filteredData = data?.filter(
     d =>
       d.product_name.toLowerCase().includes(search.toLowerCase()) ||
-      d.category.toLowerCase().includes(search.toLowerCase()) ||
+      d.category?.category.toLowerCase().includes(search.toLowerCase()) ||
       d.merchandise.toLowerCase().includes(search.toLowerCase())
   )
   const { state, dispatch } = useAppContext()

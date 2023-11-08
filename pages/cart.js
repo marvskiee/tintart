@@ -159,7 +159,6 @@ const Cart = () => {
         )
     }
 
-console.log(shippingData)
     return (
         <CustomerLayout hasFetch={true}>
             <CustomerWrapper>
@@ -210,7 +209,7 @@ console.log(shippingData)
                                     <Table.Row key={`row-${item?._id}`}>
                                         {!isCheckOut &&
                                             <Table.Cell align='center'>
-                                                <input type='checkbox' checked={item?.is_selected} onChange={() => selectHandler(key, !item?.is_selected)} />
+                                                <input type='checkbox' checked={item?.is_selected || false} onChange={() => selectHandler(key, !item?.is_selected)} />
                                             </Table.Cell>
                                         }
                                         <Table.Cell className='flex flex-shrink-0 items-center gap-4 flex-row'>
@@ -253,7 +252,11 @@ console.log(shippingData)
 
                                 ))}
 
-                                {filteredData?.length == 0 && <Table.Cell className='text-center w-fullfont-semibold' colSpan={5}>Cart is Empty</Table.Cell>}
+                                {filteredData?.length == 0 &&
+                                    (<Table.Row>
+                                        <Table.Cell className='text-center w-fullfont-semibold' colSpan={5}>Cart is Empty</Table.Cell>
+                                    </Table.Row>
+                                    )}
                             </Table.Body>
                         </Table>
                         {isCheckOut &&
@@ -282,7 +285,7 @@ console.log(shippingData)
                         {isCheckOut &&
                             <div className='p-4'>
                                 <input type='checkbox' id="policy" checked={termsChecked} onChange={(e) => setTermsChecked(e.target.checked)} />
-                                <Label for="policy" className='ml-2'>
+                                <Label htmlFor="policy" className='ml-2'>
                                     I have read and accepted the <span className='text-red-500 underline cursor-pointer' onClick={() => setTermsModal(true)}>Terms and Conditions</span> and privacy policy.
                                 </Label>
                             </div>

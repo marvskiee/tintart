@@ -50,7 +50,6 @@ const ViewProduct = () => {
             comment: formData?.comment,
             product_id: id
         }
-        console.log(newData)
         const result = await addReview(newData)
         if (result?.success) {
             setFormData(initialData)
@@ -66,9 +65,7 @@ const ViewProduct = () => {
 
     const heartHandler = async (item) => {
         const { product_name, images, _id } = item
-        console.log(wishListData)
         let filtered = wishListData.filter(d => d.product_id == _id)
-        console.log(filtered)
         if (filtered.length > 0) {
             let selected_wishlist = wishListData.filter(d => d.product_id == item?._id)[0]
             const result = await deleteWishList(selected_wishlist?._id)
@@ -103,7 +100,6 @@ const ViewProduct = () => {
         const result2 = await getUserCart(state?.user?._id)
 
 
-        console.log(result1)
         if (result1.success) {
             setData(result1.data)
         }
@@ -133,8 +129,6 @@ const ViewProduct = () => {
                 user_id: state?.user?._id,
                 product_id: data?._id
             }
-            console.log(newData)
-            console.log(cart)
             let result;
             if (cart?.color == newData.color && cart?.size == newData.size) {
                 result = await updateCart({

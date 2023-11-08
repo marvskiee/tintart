@@ -84,7 +84,7 @@ const Shop = () => {
   const filteredProducts = productData?.filter(d =>
     (Number(d.price) >= priceRange.min && Number(d.price) <= priceRange.max) &&
     (d.merchandise.includes(merchandise)) &&
-    (d.category.includes(category)) &&
+    (d.category?.category?.includes(category)) &&
     (d.is_archived == false)
   )
   return <CustomerLayout hasFetch={true}>
