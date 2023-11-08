@@ -11,7 +11,7 @@ export default async (req, res) => {
         const all_product = await Product.find().populate("category")
         response({ res, status_code: 200, success: true, data: all_product })
       } catch (error) {
-        response({ res, status_code: 400, success: false, error })
+        response({ res, status_code: 400, success: false, error: error?.message })
       }
       break
     case 'POST':
