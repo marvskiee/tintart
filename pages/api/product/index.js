@@ -1,5 +1,6 @@
 import dbConnect from '../../../utils/dbConnect'
 import Product from '../../../models/Product'
+import Category from '../../../models/Category'
 import { response } from '../../../services/response'
 
 dbConnect()
