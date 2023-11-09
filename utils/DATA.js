@@ -127,7 +127,7 @@ const DATA = {
             { label: "Categories", name: "category" },
             { label: "Date Added", name: "created_at" }],
         ORDERS: [
-            { label: "Order ID", name: "order_id" },
+            { label: "Order ID", name: "_id" },
             { label: "Name", name: "name" },
             { label: "Contact No.", name: "contact_no" },
             { label: "Address", name: "address" },

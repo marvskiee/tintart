@@ -6,7 +6,7 @@ import { AiOutlineEdit } from 'react-icons/ai'
 import moment from 'moment/moment'
 import toast from 'react-hot-toast'
 import { toastOptions } from '../../styles/modalOption'
-import { FiMoreHorizontal } from 'react-icons/fi'
+import { FiEye, FiMoreHorizontal } from 'react-icons/fi'
 import { useRouter } from 'next/router'
 import DropdownInput from '../input-components/dropdown-input'
 
@@ -55,7 +55,6 @@ const TableLayout = ({
 
   const requestHandler = async ({ requestName }) => {
     if (requestName != 'deleted') {
-
       const validation_result = validationHandler(data)
       if (!validation_result?.success) {
         return toast.error(validation_result?.message, toastOptions)
@@ -160,20 +159,22 @@ const TableLayout = ({
         <p className='font-semibold text-xl'>{title}</p>
         <div className='flex gap-4'>
           <TextInput placeholder='Search here...' onChange={e => setSearch(e.target.value)} />
-          <Button
-            gradientDuoTone='cyanToBlue'
-            onClick={() => {
-              if (nextPage != null) {
-                return nextPage.addHandler()
-              }
-              setData(initialData)
-              setModalType('Add')
-              setModal('dismissible')
-            }}
-            className='shrink-0'
-          >
-            Add New
-          </Button>
+          {title != 'Orders' && (
+            <Button
+              gradientDuoTone='cyanToBlue'
+              onClick={() => {
+                if (nextPage != null) {
+                  return nextPage.addHandler()
+                }
+                setData(initialData)
+                setModalType('Add')
+                setModal('dismissible')
+              }}
+              className='shrink-0'
+            >
+              Add New
+            </Button>
+          )}
         </div>
         <Table>
           <Table.Head>
@@ -198,12 +199,20 @@ const TableLayout = ({
                       {childItem == 'created_at'
                         ? moment(parentItem[childItem]).format('MMMM DD, yyyy hh:mm A')
                         : childItem == 'role'
-                        ? `${parentItem['role'] == 2 ? 'Admin' : 'Artist'}`
-                        : childItem == 'name'
+                        ? `${
+                            parentItem['role'] == 2
+                              ? 'Admin'
+                              : parentItem['role'] == 1
+                              ? 'Artist'
+                              : parentItem['role'] == 0 && 'Customer'
+                          }`
+                        : childItem == 'name' && title == 'Users'
                         ? `${parentItem['first_name']} ${parentItem['last_name']}`
                         : childItem == 'colors'
                         ? parentItem['colors'].join(', ')
-                        : ['is_featured', 'is_sold_out', 'is_archived'].indexOf(childItem) > -1
+                        : ['is_featured', 'is_sold_out', 'is_archived', 'is_paid'].indexOf(
+                            childItem
+                          ) > -1
                         ? parentItem[childItem].toString().toUpperCase()
                         : parentItem[childItem]}
                     </Table.Cell>
@@ -235,14 +244,26 @@ const TableLayout = ({
                         )}
                       </>
                     ) : (
-                      <Button
-                        gradientDuoTone='cyanToBlue'
-                        onClick={() => {
-                          router.push(title.toLowerCase() + '/edit/' + parentItem?._id)
-                        }}
-                      >
-                        <FiMoreHorizontal />
-                      </Button>
+                      <>
+                        {title == 'Products' && (
+                          <Button
+                            gradientDuoTone='pinkToOrange'
+                            onClick={() => {
+                              router.push(title.toLowerCase() + '/view/' + parentItem?._id)
+                            }}
+                          >
+                            <FiEye />
+                          </Button>
+                        )}
+                        <Button
+                          gradientDuoTone='cyanToBlue'
+                          onClick={() => {
+                            router.push(title.toLowerCase() + '/edit/' + parentItem?._id)
+                          }}
+                        >
+                          <FiMoreHorizontal />
+                        </Button>
+                      </>
                     )}
                   </Table.Cell>
                 </Table.Row>

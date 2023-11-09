@@ -135,9 +135,9 @@ const Profile = () => {
                         </div>
                         {/* list of orders  */}
                         <LoadingLayout message="You have no order listed." loadingState={isLoading} hasContent={orderData}>
-                            <div className='flex items-center justify-between border p-4 gap-4'>
+                            <div className='flex items-center flex-col justify-between gap-4'>
                                 {orderData?.map((item) => (
-                                    <div key={item?._id} className='w-full flex-col flex gap-4'>
+                                    <div key={item?._id} className='w-full flex-col flex gap-4  p-4 border'>
                                         <div className='flex items-center justify-between'>
                                             <p className='font-semibold text-lg'>Order Status:</p>
                                             <p className='font-semibold text-lg uppercase'>{item?.status}</p>

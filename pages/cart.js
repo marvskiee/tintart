@@ -96,7 +96,7 @@ const Cart = () => {
         // second 
 
         let tmp_order_data = []
-        for (let p of products) {
+        for (let p of filteredData) {
             tmp_order_data.push({
                 name: p?.product_id?.product_name,
                 size: p?.size,
@@ -132,7 +132,7 @@ const Cart = () => {
             if (result_order_details.success) {
                 // first update cart to checkout
                 const newData1 = {
-                    product_ids: products.map((item) => item?._id)
+                    product_ids: filteredData.map((item) => item?._id)
                 }
                 await updateItemCart(newData1)
                 toast.success("Successfuly place an order.", toastOptions)
@@ -237,7 +237,7 @@ const Cart = () => {
                                         <p><span className="text-black">Additional Information: </span>{shippingData?.information}</p>
                                     </div>
                                     <div>
-                                        <p onClick={() => setShippingModal(true)} className='cursor-pointer font-semibold underline text-rose-600'>Change</p>
+                                        <p onClick={() => !isLoading && setShippingModal(true)} className='cursor-pointer font-semibold underline text-rose-600'>Change</p>
                                     </div>
                                 </div>
                             }
@@ -319,7 +319,7 @@ const Cart = () => {
                                     <p className='text-lg text-red-600 font-semibold flex items-center gap-2 py-4'>Select Payment Method</p>
                                     <div className='flex gap-4 flex-col lg:flex-row'>
                                         {DATA.PAYMENT_METHOD.map((item, key) => (
-                                            <div key={"payment-method-" + key} onClick={() => setPaymentMethod(item?.method)} className={`${item?.method == paymentMethod && "border-red-600 "}  border p-4 w-full cursor-pointer`}>
+                                            <div key={"payment-method-" + key} onClick={() => !isLoading && setPaymentMethod(item?.method)} className={`${item?.method == paymentMethod && "border-red-600 "}  border p-4 w-full cursor-pointer`}>
                                                 <p className='font-semibold'>{item?.title}</p>
                                                 {item?.logo &&
                                                     <img src={item?.logo} className='mt-2 min-h-6 max-h-6' />
@@ -340,23 +340,21 @@ const Cart = () => {
                             </div>
                             {isCheckOut &&
                                 <div className='p-4'>
-                                    <input type='checkbox' id="policy" checked={termsChecked} onChange={(e) => setTermsChecked(e.target.checked)} />
+                                    <input disabled={isLoading} type='checkbox' id="policy" checked={termsChecked} onChange={(e) => setTermsChecked(e.target.checked)} />
                                     <Label htmlFor="policy" className='ml-2'>
                                         I have read and accepted the <span className='text-red-500 underline cursor-pointer' onClick={() => setTermsModal(true)}>Terms and Conditions</span> and privacy policy.
                                     </Label>
                                 </div>
                             }
-                            {!isLoading &&
-                                <>
-                                    <Button onClick={() => !isCheckOut ? setIsCheckOut(true) : placeOrderHandler()} disabled={total == 0 || (isCheckOut && !termsChecked)} className='w-full mt-4' color="failure">{!isCheckOut ? "PROCEED TO CHECKOUT" : "PLACE ORDER"}</Button>
-                                    {isCheckOut &&
-                                        <>
+                            <>
+                                <Button onClick={() => !isCheckOut ? setIsCheckOut(true) : placeOrderHandler()} disabled={total == 0 || (isCheckOut && !termsChecked) || isLoading} className='w-full mt-4' color="failure">{!isCheckOut ? "PROCEED TO CHECKOUT" : "PLACE ORDER"}</Button>
+                                {isCheckOut &&
+                                    <>
 
-                                            <Button onClick={() => setIsCheckOut(false)} className='w-full mt-4' color="light">Cancel</Button>
-                                        </>
-                                    }
-                                </>
-                            }
+                                        <Button disabled={isLoading} onClick={() => setIsCheckOut(false)} className='w-full mt-4' color="light">Cancel</Button>
+                                    </>
+                                }
+                            </>
 
 
                         </div>

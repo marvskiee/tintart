@@ -12,12 +12,12 @@ const Shop = () => {
     name: "",
     description: "",
     terms: "",
-    facebook_link: "",
-    instagram_link: "",
-    tiktok_link: "",
     shopee: "",
     email: "",
     contact_no: "",
+    facebook_link: "",
+    instagram_link: "",
+    tiktok_link: "",
   }
 
   const [data, setData] = useState(initialData)
@@ -88,9 +88,13 @@ const Shop = () => {
   ]
 
   const validationHandler = async () => {
-    const hasBlank = hasBlankValue(
-      Object.values(data)
-    )
+    const list = [
+      data?.name,
+      data?.description,
+      data?.terms,
+      data?.email,
+      data?.contact_no]
+    const hasBlank = hasBlankValue(list)
 
     if (hasBlank) return toast.error('Please enter valid values!', toastOptions)
     setIsLoading(true)

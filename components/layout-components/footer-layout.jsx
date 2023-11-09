@@ -20,9 +20,13 @@ const FooterLayout = () => {
       <div className='w-full flex flex-col gap-4'>
         <p className='underline text-red-700 font-semibold text-lg'>{headings}</p>
         {data.map((item, key) => (
-          <Link target="_blank" key={`${headings}-${key}`} href={item?.link || ''}>
-            <p className='hover:text-red-700 capitalize transition-colors'>{item?.name}</p>
-          </Link>
+          <div key={item?.name + key}>
+            {item?.link && (
+              <Link target='_blank' key={`${headings}-${key}`} href={item?.link || ''}>
+                <p className='hover:text-red-700 capitalize transition-colors'>{item?.name}</p>
+              </Link>
+            )}
+          </div>
         ))}
       </div>
     )
@@ -44,6 +48,7 @@ const FooterLayout = () => {
                 { name: 'Facebook', link: shopData?.facebook_link },
                 { name: 'Instagram', link: shopData?.instagram_link },
                 { name: 'TikTok', link: shopData?.tiktok_link },
+                { name: 'Shopee', link: shopData?.tiktok_link },
               ]}
               headings='Follow Us'
             />

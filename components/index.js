@@ -22,5 +22,6 @@ export { default as ContactLayout } from './layout-components/contact-layout'
 export { default as LoadingLayout } from './layout-components/loading-layout'
 export { default as ModalLayout } from './layout-components/modal-layout'
 export { default as StarLayout } from './layout-components/star-layout'
+export { default as LiveProductLayout } from './layout-components/live-product-layout'
 
 
