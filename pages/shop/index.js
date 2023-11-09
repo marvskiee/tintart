@@ -48,9 +48,7 @@ const Shop = () => {
   }
   const heartHandler = async (item) => {
     const { product_name, images, _id } = item
-    console.log(wishListData)
     let filtered = wishListData.filter(d => d.product_id == _id)
-    console.log(filtered)
     if (filtered.length > 0) {
       let selected_wishlist = wishListData.filter(d => d.product_id == item?._id)[0]
       const result = await deleteWishList(selected_wishlist?._id)
@@ -146,13 +144,17 @@ const Shop = () => {
               {filteredProducts?.map((item, key) => (
 
                 <div className='relative flex-col flex gap-2 cursor-pointer' key={key} >
-                  <Button onClick={() => heartHandler(item)} color="light" size="xs" className='bg-black/50 border-0 absolute top-5 right-5 aspect-square'>
+                  <Button onClick={() => heartHandler(item)} color="light" size="xs" className='z-10 bg-black/50 border-0 absolute top-5 right-5 aspect-square'>
                     {!wishListData.filter(d => d.product_id == item?._id).length > 0 ?
                       <AiOutlineHeart className='text-2xl text-red-600' />
                       :
                       <AiFillHeart className='text-2xl text-red-600' />
                     }
                   </Button>
+                  {item?.is_sold_out &&
+                    <div onClick={() => router.push("/shop/" + item?._id)} src={item?.images[0]} className='rounded-md absolute flex items-center justify-center max-w-[20rem] w-full aspect-square top-0 left-0 bg-black/50'>
+                      <p className='text-white text-xl font-semibold uppercase'>Sold Out</p>
+                    </div>}
                   <img onClick={() => router.push("/shop/" + item?._id)} src={item?.images[0]} className='rounded-2xl w-full aspect-square object-cover' />
                   <p onClick={() => router.push("/shop/" + item?._id)} className="px-2 font-semibold text-md">{item?.product_name}</p>
                   <p onClick={() => router.push("/shop/" + item?._id)} className="px-2 font-semibold text-xl">PHP {item?.price}</p>

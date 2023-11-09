@@ -13,17 +13,34 @@ const OrderDetailsSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Address must not be empty!'],
   },
+  information: {
+    type: String,
+  },
   total_price: {
     type: String,
     required: [true, 'Total Price must not be empty!'],
   },
+  products: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Order',
+      required: [true, 'Products must not be empty'],
+    },
+  ],
   is_paid: {
     type: Boolean,
-    required: [true, 'Is Paid must not be empty!'],
+    default: false
   },
   status: {
     type: String,
-    required: [true, 'Status must not be empty!'],
+    default: "pending"
+  },
+  mop: {
+    type: String,
+  },
+  user_id:{
+    type: String,
+    required: [true, 'User Id must not be empty!'],
   },
   created_at: {
     type: Date,

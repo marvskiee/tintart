@@ -1,6 +1,7 @@
 import dbConnect from '../../../../utils/dbConnect'
 import { response } from '../../../../services/response'
 import Review from '../../../../models/Review'
+import User from '../../../../models/User'
 
 dbConnect()
 

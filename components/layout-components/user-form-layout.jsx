@@ -79,7 +79,6 @@ const UserFormLayout = ({ title, oldData }) => {
   ]
   const submitHandler = async postImage => {
     let newData = filterObjectWithEmptyProperties(data)
-    console.log(newData)
 
     if (postImage) {
       newData['profile_image'] = postImage[0]
@@ -89,7 +88,6 @@ const UserFormLayout = ({ title, oldData }) => {
       if (await result?.success) {
         toast.success(`User has been updated successfuly!`, toastOptions)
       } else {
-        console.log(result?.errors)
         toast.error(result?.errors || 'Something went wrong!', toastOptions)
       }
     } else {
@@ -109,7 +107,6 @@ const UserFormLayout = ({ title, oldData }) => {
       oldData ? Object.values(data).slice(0, -3) : Object.values(data).slice(0, -1)
     )
     const passwordMatch = data?.password == data?.confirm_password
-    console.log(data)
     if (oldData) {
       if (hasBlank || !passwordMatch) return toast.error('Please enter valid values!', toastOptions)
     } else {

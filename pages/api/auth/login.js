@@ -33,7 +33,6 @@ export default async (req, res) => {
         result = null
       }
     } catch (error) { }
-    console.log(result)
     if (result) {
       const token = sign(
         {

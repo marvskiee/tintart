@@ -57,7 +57,6 @@ export default async (req, res) => {
             });
             return res.status(201).json({ success: true, data: user });
           } catch (error) {
-            console.log(error);
             if (error.code === 11000 && error.keyPattern?.email) {
               newError = "Email already exist!"
             }

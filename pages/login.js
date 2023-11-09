@@ -30,7 +30,6 @@ const Login = () => {
         const passwordMatch = password === confirm_password
         let hasBlank = hasBlankValue(Object.values({ email, password }))
         if (loginMode == "register") {
-            console.log(credentials)
             if (!passwordMatch)
                 return toast.error('Password Mismatch!', toastOptions)
         }
@@ -43,11 +42,9 @@ const Login = () => {
             if (["login", "admin-login"].indexOf(loginMode) > -1) {
                 const { success, errors, data } = await authLogin(credentials)
                 if (!success) {
-                    console.log(errors)
                     toast.error('Wrong email or password, Please try again!', toastOptions)
                     setIsLoading(false)
                 } else {
-                    console.log(data)
                     let path = (([0, 1].indexOf(data.role) > -1 && loginMode == "login") ? "/" :
                         (data.role == 2 && loginMode == "admin-login") && "/admin/dashboard")
                     router.push(path)
@@ -62,7 +59,6 @@ const Login = () => {
                     setLoginMode("login")
                     toast.success(`Registered successfuly!`, toastOptions)
                 } else {
-                    console.log(errors)
                     toast.error(errors || 'Something went wrong!', toastOptions)
                 }
                 setIsLoading(false)
@@ -144,7 +140,7 @@ const Login = () => {
                     {loginMode == "login" &&
                         <p className='text-left w-full underline' onClick={() => setLoginMode("forgot")}>Forgot Password?</p>
                     }
-                    <Button disabled={isLoading} color="failure" className='w-full' onClick={submitHandler}>{!isLoading ? "Register" : "Registering..."}</Button>
+                    <Button disabled={isLoading} color="failure" className='w-full' onClick={submitHandler}>{!isLoading ? "Sign In" : "Signing In..."}</Button>
                     {loginMode == "login" ?
                         <p className='text-center ' onClick={() => setLoginMode("register")}>Don't have an account? <span className='underline cursor-pointer'>Create Account</span></p>
                         : loginMode == "register" &&

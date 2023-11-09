@@ -24,7 +24,6 @@ export default async (req, res) => {
 
             mailTransporter.sendMail(details, (err) => {
                 if (err) {
-                    console.log(err)
                     return res.json({ success: false, message: err })
                 }
                 return res.json({ success: true, message: "Email has been sent!" })

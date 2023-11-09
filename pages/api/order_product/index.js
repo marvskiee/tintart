@@ -16,7 +16,7 @@ export default async (req, res) => {
       break
     case 'POST':
       try {
-        const add_order_product = await OrderProduct.create(req.body)
+        const add_order_product = await OrderProduct.insertMany(req.body.products)
         response({ res, status_code: 201, success: true, data: add_order_product })
       } catch (error) {
         response({ res, status_code: 400, success: false, error })

@@ -6,7 +6,7 @@ const CartSchema = new mongoose.Schema({
         ref: 'Product',
     },
     quantity: {
-        type: String,
+        type: Number,
         required: [true, 'Quantity must not be empty!'],
     },
     user_id: {

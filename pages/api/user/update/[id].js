@@ -39,7 +39,6 @@ export default async (req, res) => {
                             new: true,
                             runValidators: true,
                         })
-                        console.log(user)
                         if (!user) {
                             return response({
                                 res,
@@ -56,7 +55,6 @@ export default async (req, res) => {
                             })
                         }
                     } catch (error) {
-                        console.log(error);
                         if (error.code === 11000 && error.keyPattern?.email) {
                             newError = "Email already exist!"
                         }
@@ -68,7 +66,6 @@ export default async (req, res) => {
                 }
             }
             catch (error) {
-                console.log(error)
                 response({ res, status_code: 400, success: false, error: error?.message })
             }
             break

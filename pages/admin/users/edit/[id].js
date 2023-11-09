@@ -8,7 +8,6 @@ const EditUser = () => {
   const [isLoading, setIsLoading] = useState(true)
   const loadHandler = async () => {
     const result = await getOneUser(id)
-    console.log(result)
     if (result.success) {
       setData(result.data)
     }

@@ -2,7 +2,7 @@ import { deleteHTTPFormat, getHTTPFormat, postHTTPFormat, updateHTTPFormat } fro
 export const getAllOrderProduct = async () =>
     getHTTPFormat({ url: '/order_product'})
 
-export const getSortOrderProduct = async (id) =>
+export const getUserOrderProduct = async (id) =>
     getHTTPFormat({ url: '/order_product/find/' + id })
 
 export const addOrderProduct = async (newData) =>

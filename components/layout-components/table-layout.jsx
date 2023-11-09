@@ -55,7 +55,6 @@ const TableLayout = ({
 
   const requestHandler = async ({ requestName }) => {
     if (requestName != 'deleted') {
-      console.log(data)
 
       const validation_result = validationHandler(data)
       if (!validation_result?.success) {
@@ -78,7 +77,6 @@ const TableLayout = ({
         result = null
         break
     }
-    console.log(result)
     if (await result?.success) {
       await loadHandler()
       toast.success(

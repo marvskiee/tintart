@@ -7,3 +7,6 @@ export const addOrderDetails = async (newData) =>
 
 export const updateOrderDetails = async (newData, id) =>
     updateHTTPFormat({ newData, url: '/order_details/update/' + id })
+
+export const getUserOrderDetails = async (id) =>
+    getHTTPFormat({ url: '/order_details/find/' + id })

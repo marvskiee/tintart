@@ -17,10 +17,8 @@ const Checkout = () => {
     const loadHandler = async () => {
         let id = state?.user?._id
         const result_shipping = await getUserShipping(id)
-        console.log(result_shipping?.data)
         if (result_shipping?.success) {
             let defaultData = result_shipping?.data.filter((d) => d._id == state?.user?.shipping_id)
-            console.log(defaultData)
             if (defaultData.length > 0)
                 setShippingData(defaultData)
         }

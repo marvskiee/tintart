@@ -103,7 +103,6 @@ const Shipping = () => {
                 result = null
                 break
         }
-        console.log(result)
         if (await result?.success) {
             setModal(null)
             await loadHandler()
@@ -121,7 +120,6 @@ const Shipping = () => {
 
     }
 
-    console.log(data)
     return (<>
         {modal &&
             <Modal show={modal === 'dismissible'} onClose={() => setModal(undefined)}>

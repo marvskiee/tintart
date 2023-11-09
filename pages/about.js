@@ -50,11 +50,9 @@ const About = () => {
         }
         if (shop_result.success) {
             if (shop_result.data.length > 0) {
-                console.log(tempData)
                 tempData = [...tempData, ...filteredObjects(shop_result.data.slice(0, 1))]
             }
         }
-        console.log(tempData)
         setData(tempData)
         setIsLoading(false)
     }

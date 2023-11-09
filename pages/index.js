@@ -63,8 +63,12 @@ const Home = () => {
             <div className='flex items-center justify-center md:flex-row flex-col gap-10 place-items-center '>
               {
                 productData?.slice(0, 4).map((item, key) => (
-                  <Link href={item?.is_archived ? "" : "/shop/" + item?._id}>
-                    <div key={`project-${key}`} className='cursor-pointer'>
+                  <Link href={item?.is_archived ? "" : "/shop/" + item?._id} key={item?._id}>
+                    <div className='relative cursor-pointer'>
+                      {item?.is_sold_out &&
+                        <div className='rounded-md absolute flex items-center justify-center max-w-[20rem] w-full aspect-square top-0 left-0 bg-black/50'>
+                          <p className='text-white text-xl font-semibold uppercase'>Sold Out</p>
+                        </div>}
                       <img src={item.images[0]} className='max-w-[20rem] shadow-md w-full aspect-square rounded-xl object-cover' />
                       <div className='p-2'>
                         <p className='font-semibold text-lg text-center'>{item?.product_name}</p>
@@ -94,8 +98,8 @@ const Home = () => {
         <LoadingLayout message="Gallery is Empty." loadingState={isLoading} hasContent={galleryData?.slice(0, 5)?.length > 0}>
           <div className='my-16 flex items-center md:flex-row flex-col justify-center gap-4 lg:gap-10'>
             {
-              galleryData?.slice(0, 5).map((item, key) => (
-                <div key={`artist-${key}`} className="max-w-[20rem] w-full">
+              galleryData?.slice(0, 5).map((item) => (
+                <div key={item?._id} className="max-w-[20rem] w-full">
                   <img src={item.image} className='max-w-[20rem] shadow-md w-full aspect-square rounded-xl object-cover' />
                 </div>
               ))

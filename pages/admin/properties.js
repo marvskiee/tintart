@@ -63,7 +63,6 @@ const Properties = () => {
 
   const colorValidationHandler = (data) => {
     const hasBlank = hasBlankValue(Object.values(data));
-    console.log("DATA: ", !hasBlank)
     const hexColorRegex = /^#([0-9A-Fa-f]{3}){1,2}$/;
     let is_valid = !hasBlank && hexColorRegex.test(data?.values)
     return { success: is_valid, message: "Please enter valid values!" };

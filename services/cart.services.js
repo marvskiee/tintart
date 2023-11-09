@@ -13,3 +13,6 @@ export const updateCart = async (newData, id) =>
 
 export const deleteCart = async (id) =>
     deleteHTTPFormat({ url: '/cart/delete/' + id })
+
+export const updateItemCart = async (newData) =>
+    updateHTTPFormat({ newData, url: '/cart/update-many/' })

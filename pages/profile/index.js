@@ -10,6 +10,9 @@ import { addWishList, deleteWishList, getUserWishList } from '../../services/wis
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import Link from 'next/link';
 import { toastOptions } from '../../styles/modalOption';
+import { getUserOrderDetails } from '../../services/order_details.services';
+import DATA from '../../utils/DATA';
+import { formatNumberWithCommas } from '../../services/tools';
 
 const Profile = () => {
     const { state, dispatch } = useAppContext();
@@ -28,20 +31,18 @@ const Profile = () => {
     }
     const loadHandler = async () => {
         let id = state?.user?._id
+        // get shipping
         const result_shipping = await getUserShipping(id)
-        console.log(result_shipping?.data)
         if (result_shipping?.success) {
             let defaultData = result_shipping?.data.filter((d) => d._id == state?.user?.shipping_id)
-            console.log(defaultData)
             if (defaultData.length > 0)
                 setShippingData(defaultData)
         }
         refreshWishList(id)
-        // const result_order = await getUserShipping(id)
-        // if (result_order?.success) {
-        //     setData({ ...data, order: result_order?.data })
-        //     setIsLoading({ ...isLoading, order: false })
-        // }
+        const result_order = await getUserOrderDetails(id)
+        if (result_order?.success) {
+            setOrderData(result_order?.data)
+        }
         setIsLoading(false)
     }
 
@@ -133,9 +134,40 @@ const Profile = () => {
                             <p className='text-2xl py-2 font-semibold uppercase'>My Orders</p>
                         </div>
                         {/* list of orders  */}
-                        <div>
+                        <LoadingLayout message="You have no order listed." loadingState={isLoading} hasContent={orderData}>
+                            <div className='flex items-center justify-between border p-4 gap-4'>
+                                {orderData?.map((item) => (
+                                    <div key={item?._id} className='w-full flex-col flex gap-4'>
+                                        <div className='flex items-center justify-between'>
+                                            <p className='font-semibold text-lg'>Order Status:</p>
+                                            <p className='font-semibold text-lg uppercase'>{item?.status}</p>
+                                        </div>
+                                        {item?.products.map((product) => (
+                                            <div key={product?._id} className='flex items-center justify-between'>
+                                                <div className='flex gap-4 items-center'>
+                                                    <img src={product?.image} className='aspect-square h-20 w-20' />
+                                                    <div className="flex flex-col gap-2">
+                                                        <p className='font-semibold'>{product?.name}</p>
+                                                        <p className='font-semibold'>{product?.size}</p>
+                                                        <p className='w-5 h-5' style={{ backgroundColor: product?.color }} />
+                                                    </div>
 
-                        </div>
+                                                </div>
+                                                <div className='flex gap-4 flex-col'>
+                                                    <p className='font-semibold text-right'>X{product?.quantity}</p>
+                                                    <p className='font-semibold text-xl'>{`${DATA.PESO} ${formatNumberWithCommas(product?.price)}`}</p>
+                                                </div>
+
+                                            </div>
+                                        ))}
+                                        <div className='flex gap-4 items-center justify-between'>
+                                            <p className='font-semibold'>No. of items: {item?.products?.length}</p>
+                                            <p className='font-semibold'>Order Total Price: {item?.total_price}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </LoadingLayout>
                     </div>
 
                     <div className='w-full flex flex-col gap-4'>

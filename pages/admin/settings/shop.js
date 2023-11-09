@@ -92,7 +92,6 @@ const Shop = () => {
       Object.values(data)
     )
 
-    console.log(data)
     if (hasBlank) return toast.error('Please enter valid values!', toastOptions)
     setIsLoading(true)
     if (logo) {
@@ -115,13 +114,11 @@ const Shop = () => {
     if (postImage) {
       newData['logo'] = postImage[0]
     }
-    console.log(newData)
     if (dataRowRef.current > 0) {
       const result = await updateShop(newData, data?._id)
       if (await result?.success) {
         toast.success(`Shop has been updated successfuly!`, toastOptions)
       } else {
-        console.log(result?.errors)
         toast.error(result?.errors || 'Something went wrong!', toastOptions)
       }
     } else {

@@ -97,7 +97,6 @@ const ProductFormLayout = ({ title, oldData }) => {
 
   const submitHandler = async postImage => {
     const newData = { ...data, images: postImage, category: categoryRef.current }
-    console.log(newData)
     if (oldData) {
       const result = await updateProduct(newData, oldData?._id)
       if (await result?.success) {
@@ -265,7 +264,6 @@ const ProductFormLayout = ({ title, oldData }) => {
                   <span
                     onClick={() => {
                       let filtered = data.colors.filter(d => d != item)
-                      console.log(filtered, item)
                       setData({ ...data, colors: filtered })
                     }}
                   >
@@ -298,7 +296,6 @@ const ProductFormLayout = ({ title, oldData }) => {
                   <span
                     onClick={() => {
                       let filtered = data.sizes.filter(d => d != item)
-                      console.log(filtered, item)
                       setData({ ...data, sizes: filtered })
                     }}
                   >

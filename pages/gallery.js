@@ -102,7 +102,6 @@ const Gallery = () => {
       } else {
         toast.error('Something went wrong!', toastOptions)
       }
-      console.log(newData)
       loadHandler()
       setIsLoading(false)
     })

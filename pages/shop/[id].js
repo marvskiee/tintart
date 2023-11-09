@@ -253,7 +253,7 @@ const ViewProduct = () => {
                                 review.map(({ user, comment, rating, _id }) => (
                                     <div key={_id} className='flex items-start gap-4 flex-col border my-4 p-4'>
                                         <div className='flex gap-4 items-center font-semibold'>
-                                            <img src={user?.profile_image} className='h-10 2-10 rounded-full object-cover' />
+                                            <img src={user?.profile_image || '/images/no-profile.png'} className='h-10 2-10 rounded-full object-cover' />
                                             <p className='text-lg'>{user?.first_name} {user?.last_name}</p>
                                         </div>
                                         <StarLayout rating={rating} />

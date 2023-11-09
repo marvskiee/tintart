@@ -15,7 +15,7 @@ const ProductSchema = new mongoose.Schema({
         required: [true, 'Product Name must not be empty'],
     },
     price: {
-        type: String,
+        type: Number,
         required: [true, 'Price must not be empty'],
     },
     category: {

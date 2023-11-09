@@ -8,7 +8,6 @@ const EditProduct = () => {
   const [isLoading, setIsLoading] = useState(true)
   const loadHandler = async () => {
     const result = await getOneProduct(id)
-    console.log(result)
     if (result.success) {
       setData(result.data)
     }

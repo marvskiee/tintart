@@ -59,12 +59,9 @@ export const formatNumberWithCommas = (number) => {
 }
 
 export const imageUploader = async (images, handler) => {
-  console.log(images)
   let tmp = [];
   for (let i = 0; i < images.length; i++) {
-    console.log(images[i]?.url)
     if (images[i]?.url) {
-      console.log("yes")
       const imageRef = ref(
         storage,
         `images/${images[i].file.name + v4()}`
@@ -73,15 +70,11 @@ export const imageUploader = async (images, handler) => {
         getDownloadURL(snapshot.ref)
           .then((url) => {
             tmp.push(url);
-            console.log(tmp.length, images.length)
-
             if (tmp.length == images.length) {
-              console.log(tmp)
               handler(tmp)
             }
           })
           .catch((e) => {
-            console.log("Error", e);
             return null;
           });
       });
@@ -89,7 +82,6 @@ export const imageUploader = async (images, handler) => {
       tmp.push(images[i]);
     }
     if (tmp.length == images.length) {
-      console.log(tmp)
       handler(tmp)
 
     }
