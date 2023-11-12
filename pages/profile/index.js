@@ -149,7 +149,8 @@ const Profile = () => {
                                                     <div className="flex flex-col gap-2">
                                                         <p className='font-semibold'>{product?.name}</p>
                                                         <p className='font-semibold'>{product?.size}</p>
-                                                        <p className='w-5 h-5' style={{ backgroundColor: product?.color }} />
+                                                        <p className='font-semibold'>{product?.color}</p>
+
                                                     </div>
 
                                                 </div>

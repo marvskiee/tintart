@@ -277,7 +277,7 @@ const Cart = () => {
                                                 <div className=''>
                                                     <p className=' font-semibold'>{item?.product_id?.product_name}</p>
                                                     <p>Size: {item?.size}</p>
-                                                    <p className='flex gap-2'>Color:<span className='block w-5 h-5 rounded-md' style={{ backgroundColor: item?.color }}></span></p>
+                                                    <p className='flex gap-2'>Color: {item?.color}</p>
                                                 </div>
                                             </Table.Cell>
                                             {!isCheckOut &&

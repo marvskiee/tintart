@@ -55,7 +55,7 @@ export const hasBlankValue = array => {
   return array.some(value => /^\s*$/.test(value))
 }
 export const formatNumberWithCommas = (number) => {
-  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return number?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 export const imageUploader = async (images, handler) => {

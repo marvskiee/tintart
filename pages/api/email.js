@@ -1,25 +1,25 @@
 import { response } from '../../services/response'
 import nodemailer from 'nodemailer'
 
-const sender = "kentrussel37@gmail.com"
+const sender = "tintart123@gmail.com"
 
 let mailTransporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
         user: sender,
-        pass: "jmxk ycqg gglj glte"
+        pass: "pcif wyhh ftyu qqrf"
     }
 })
 
 export default async (req, res) => {
     switch (req.method) {
         case 'POST':
-            const { first_name, last_name, email, subject, body } = req.body
+            const { email, subject, text } = req.body
             let details = {
                 from: sender,
                 to: email,
                 subject,
-                text: `Name: ${first_name} ${last_name}\nMessage: ${body}`
+                text,
             }
 
             mailTransporter.sendMail(details, (err) => {

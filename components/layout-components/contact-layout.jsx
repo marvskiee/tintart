@@ -45,7 +45,10 @@ const ContactLayout = ({ title }) => {
     const hasBlank = hasBlankValue(Object.values(data))
     if (hasBlank) return toast.error('Please enter valid values!', toastOptions)
     setIsLoading(true)
-    const result = await sendMessage(data)
+    const result = await sendMessage({
+      ...data,
+      text: `Name: ${data?.first_name} ${data?.last_name}\nMessage: ${data?.body}`,
+    })
     if (await result?.success) {
       toast.success(`Email has been sent!`, toastOptions)
       setData(initialData)

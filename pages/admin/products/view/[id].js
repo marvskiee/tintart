@@ -194,17 +194,18 @@ const ViewProduct = (props) => {
                   <p key={"sizes-" + key} className={` px-2 py-1 border rounded-md`}>{item}</p>
                 ))}
               </div>
-              <div className='w-full flex items-center justify-between'>
-                <div>
-                  <p className='font-semibold'>Colors: </p>
-                  <div className='flex gap-4'>
-                    {data?.colors.map((item, key) => (
-                      <p key={"colors-" + key} className={` w-10 aspect-square border rounded-md`} style={{ backgroundColor: item }}></p>
-                    ))}
+              {data?.colors &&
+                <div className='w-full flex items-center justify-between'>
+                  <div>
+                    <p className='font-semibold'>Colors: </p>
+                    <div className='flex gap-4'>
+                      {data?.colors.map((item, key) => (
+                        <p key={"colors-" + key} className={` w-10 aspect-square border rounded-md`} style={{ backgroundColor: item }}></p>
+                      ))}
+                    </div>
                   </div>
                 </div>
-
-              </div>
+              }
             </div>
           </div>
         </CustomerWrapper>

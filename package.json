@@ -14,9 +14,11 @@
     "firebase": "^9.18.0",
     "flowbite": "^1.8.1",
     "flowbite-react": "^0.3.8",
+    "html2pdf.js": "^0.10.1",
     "jose": "^4.13.1",
     "jotai": "^2.0.3",
     "jsonwebtoken": "^9.0.0",
+    "jspdf": "^2.5.1",
     "moment": "^2.29.4",
     "mongoose": "^7.0.2",
     "next": "latest",
@@ -26,7 +28,8 @@
     "react-dom": "18.2.0",
     "react-hot-toast": "^2.4.0",
     "react-icons": "^4.7.1",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@builder.io/partytown": "^0.8.1",

@@ -83,7 +83,7 @@ const Properties = () => {
           data={colorData}
           initialData={initialColorData}
           setData={setColorData}
-          validationHandler={colorValidationHandler}
+          validationHandler={sizeValidationHandler}
           loadRequest={getAllColor}
           postRequest={addColor}
           updateRequest={updateColor}

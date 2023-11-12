@@ -9,6 +9,7 @@ import { toastOptions } from '../../styles/modalOption'
 import { FiEye, FiMoreHorizontal } from 'react-icons/fi'
 import { useRouter } from 'next/router'
 import DropdownInput from '../input-components/dropdown-input'
+import { downloadFile } from '../../services/excel.services'
 
 const TableLayout = ({
   title,
@@ -83,7 +84,7 @@ const TableLayout = ({
         toastOptions
       )
     } else {
-      toast.error('Something went wrong!', toastOptions)
+      toast.error(result?.error || 'Something went wrong!', toastOptions)
     }
   }
 
@@ -96,11 +97,13 @@ const TableLayout = ({
       </Table.Row>
     )
   }
-
+  const booleanCell = value => {
+    return value ? 'YES' : 'NO'
+  }
   return (
     <>
       {modal && (
-        <Modal dismissible show={modal === 'dismissible'} onClose={() => setModal(undefined)}>
+        <Modal show={modal === 'dismissible'} onClose={() => setModal(undefined)}>
           <Modal.Header>
             {modalType} {title.replace('ie', 'y').slice(0, -1)}
           </Modal.Header>
@@ -157,7 +160,7 @@ const TableLayout = ({
       )}
       <div className='flex-col gap-4 flex'>
         <p className='font-semibold text-xl'>{title}</p>
-        <div className='flex gap-4'>
+        <div className='flex gap-4 flex-col md:flex-row'>
           <TextInput placeholder='Search here...' onChange={e => setSearch(e.target.value)} />
           {title != 'Orders' && (
             <Button
@@ -175,6 +178,16 @@ const TableLayout = ({
               Add New
             </Button>
           )}
+          <Button
+            gradientDuoTone='purpleToBlue'
+            onClick={() => {
+              downloadFile(title, searchFilter)
+            }}
+            disabled={!searchFilter?.length}
+            className='shrink-0'
+          >
+            Export Excel
+          </Button>
         </div>
         <Table>
           <Table.Head>
@@ -210,10 +223,14 @@ const TableLayout = ({
                         ? `${parentItem['first_name']} ${parentItem['last_name']}`
                         : childItem == 'colors'
                         ? parentItem['colors'].join(', ')
+                        : childItem == 'status'
+                        ? parentItem[childItem].replaceAll('_', ' ').toUpperCase()
+                        : childItem == 'sizes'
+                        ? parentItem['sizes'].join(', ')
                         : ['is_featured', 'is_sold_out', 'is_archived', 'is_paid'].indexOf(
                             childItem
                           ) > -1
-                        ? parentItem[childItem].toString().toUpperCase()
+                        ? booleanCell(parentItem[childItem])
                         : parentItem[childItem]}
                     </Table.Cell>
                   ))}

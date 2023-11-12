@@ -50,8 +50,8 @@ const ProductFormLayout = ({ title, oldData }) => {
       setCategoryList(category_result?.data)
     }
 
-    if (color_result?.success) setColorList(color_result?.data.map(item => item.values))
-    if (size_result?.success) setSizeList(size_result?.data.map(item => item.values))
+    if (color_result?.success) setColorList(color_result?.data)
+    if (size_result?.success) setSizeList(size_result?.data)
 
     if (oldData) {
       const {
@@ -120,6 +120,10 @@ const ProductFormLayout = ({ title, oldData }) => {
 
   const router = useRouter()
   const [modal, setModal] = useState(false)
+
+  const colorFilter = colorList.filter(c => c.merchandise == data?.merchandise).map(d => d?.values)
+  const sizeFilter = sizeList.filter(s => s.merchandise == data?.merchandise).map(d => d?.values)
+  console.log(colorList, data?.merchandise)
   return (
     <div>
       {oldData && (
@@ -242,43 +246,45 @@ const ProductFormLayout = ({ title, oldData }) => {
               bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 undefined'
           ></textarea>
         </div>
-        <div>
-          <Label className='capitalize mb-2 block'>Color</Label>
-          <DropdownInput
-            name='color'
-            item={colorList}
-            disabled={isLoading}
-            handler={item => {
-              if (data.colors?.indexOf(item) == -1)
-                setData({ ...data, colors: [...data?.colors, item] })
-            }}
-          />
-          {data?.colors?.length > 0 && (
-            <div className='flex flex-wrap rounded-md my-4 gap-2'>
-              {data?.colors?.map((item, key) => (
-                <div
-                  key={key + '-image-'}
-                  className='flex gap-2 bg-zinc-100 rounded-full px-2 items-center'
-                >
-                  <span>{item}</span>
-                  <span
-                    onClick={() => {
-                      let filtered = data.colors.filter(d => d != item)
-                      setData({ ...data, colors: filtered })
-                    }}
+        {data?.merchandise == 'T-Shirt' && (
+          <div>
+            <Label className='capitalize mb-2 block'>Color</Label>
+            <DropdownInput
+              name='color'
+              item={colorFilter}
+              disabled={isLoading}
+              handler={item => {
+                if (data.colors?.indexOf(item) == -1)
+                  setData({ ...data, colors: [...data?.colors, item] })
+              }}
+            />
+            {data?.colors?.length > 0 && (
+              <div className='flex flex-wrap rounded-md my-4 gap-2'>
+                {data?.colors?.map((item, key) => (
+                  <div
+                    key={key + '-image-'}
+                    className='flex gap-2 bg-zinc-100 rounded-full px-2 items-center'
                   >
-                    <AiFillCloseCircle />
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+                    <span>{item}</span>
+                    <span
+                      onClick={() => {
+                        let filtered = data.colors.filter(d => d != item)
+                        setData({ ...data, colors: filtered })
+                      }}
+                    >
+                      <AiFillCloseCircle />
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
         <div>
           <Label className='capitalize mb-2 block'>Sizes</Label>
           <DropdownInput
             name='size'
-            item={sizeList}
+            item={sizeFilter}
             handler={item => {
               if (data.sizes?.indexOf(item) == -1)
                 setData({ ...data, sizes: [...data?.sizes, item] })

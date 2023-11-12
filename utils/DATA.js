@@ -1,3 +1,4 @@
+import moment from "moment";
 import { IoShirtSharp } from "react-icons/io"
 const DATA = {
     PESO: "₱",
@@ -19,18 +20,18 @@ const DATA = {
     },
     PAYMENT_METHOD: [
         {
-            title:"Credit/Debit Card",
+            title: "Credit/Debit Card",
             logo: "https://cdn.visa.com/v2/assets/images/logos/visa/blue/logo.png",
-            method:"credit"
+            method: "credit"
         },
         {
-            title:"Gcash",
+            title: "Gcash",
             logo: "https://www.gcash.com/wp-content/uploads/2019/09/gcash-text-logo.png",
-            method:"gcash"
+            method: "gcash"
         },
         {
-            title:"Cash on Delivery",
-            method:"cod"
+            title: "Cash on Delivery",
+            method: "cod"
         },
     ],
     FOOTER:
@@ -333,7 +334,77 @@ const DATA = {
             },
         ]
     }
+    ],
+    EMAILS:
+    {
+        WELCOME: {
+            SUBJECT: "Welcome to TintArt!",
+            BODY: ({ name }) => {
+                return (
+                    `Dear ${name},\nThank you for joining in our Community! We're thrilled to welcome you to TintArt! Thank you for creating an account with us. Here's to a seamless and enjoyable experience ahead.\nIf you have any questions or need assistance, feel free to reach out to our support team at tintart@gmail.com or call us (+63) 9123456789. Happy exploring!\nBest regards,\nTintArt`)
+            }
+        },
+        PASSWORD: {
+            SUBJECT: "Password Reset Request",
+            BODY: ({ name, code }) => {
+                return (
+                    `Dear ${name},
+
+                    We received a request to reset the password associated with your account. To proceed with the password reset, please follow the steps below:
+                    Your Code: ${code}
+                    1. Enter the code that have been sent! 
+                    2. Enter your new password and confirm password!
+                    
+                    If you did not initiate this request or have any concerns, please contact our support team immediately at tintart@gmail.com or call us (+63) 9123456789.
+                    
+                    Thank you for choosing our system.
+                    
+                    Best regards,
+                    TintArt Customer Support Team`)
+            }
+        },
+        ORDER: {
+            SUBJECT: (order_number) => `Order ${order_number} confirmed`,
+            BODY: ({ name, order_number, date, item, payment_method, amount }) => {
+                const items = `${item?.map((i) => i?.product_name).join('\n') || ''}`;
+                return (
+                    `
+                    Dear ${name},
+
+                    We hope this message finds you well. Thank you for your purchase! Here are the details of your order:
+
+                    Order Number: ${order_number}
+                    Date of Purchase: ${moment(date).format("MMMM DD, YYYY")}
+                    Items Ordered:
+                    ${items}
+
+                    Payment Details:
+                    Total Amount: ${amount}
+                    Payment Method: ${payment_method}
+
+                    You may send your payment to:
+                    Gcash: [Gcash of Tofu Ink], K*** S****
+                    Debit/Credit: [Card of Tofu Ink]
+
+                    Please review the information above and ensure that all details are accurate. If you have any questions or concerns, feel free to reply to this email, and our customer support team will be happy to assist you.
+
+                    We appreciate your business and look forward to serving you again.
+
+                    Best regards,
+                    TintArt Customer Support Team`
+                )
+            }
+        }
+    },
+    ORDER_STATUS: [
+        "PENDING PAYMENT",
+        "PREPARING ORDER",
+        "OUT OF DELIVERY",
+        "DELIVERED",
+        "CANCELLED"
     ]
+
+
 }
 
 export default DATA;

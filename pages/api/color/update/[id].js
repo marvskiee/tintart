@@ -10,6 +10,11 @@ export default async (req, res) => {
             let newError
             try {
                 const { merchandise, values } = req.body
+                
+                const all_color = await Color.find({ merchandise, values })
+                if (all_color?.length > 0)
+                    return response({ res, status_code: 400, success: false, error: "Color already exist!" })
+                
                 const color = await Color.findByIdAndUpdate(req.query.id, { merchandise, values }, {
                     new: true,
                     runValidators: true,

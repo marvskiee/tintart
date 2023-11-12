@@ -110,13 +110,13 @@ const Profile = () => {
                 disabled={isLoading}
                 onChange={e => {
                   try {
+                    if (e.target?.files[0].size > 2000000)
+                      return toast.error('File must be less than 2mb.', toastOptions)
                     setImageUpload({
                       url: URL?.createObjectURL(e.target?.files[0]),
                       file: e.target?.files[0],
                       size: e.target?.files[0].size,
                     })
-                    if (e.target?.files[0].size > 2000000)
-                      toast.error('File must be less than 2mb.', toastOptions)
                   } catch (e) { }
                 }}
                 accept='image/*'

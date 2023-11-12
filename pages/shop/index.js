@@ -152,7 +152,7 @@ const Shop = () => {
                     }
                   </Button>
                   {item?.is_sold_out &&
-                    <div onClick={() => router.push("/shop/" + item?._id)} src={item?.images[0]} className='rounded-md absolute flex items-center justify-center max-w-[20rem] w-full aspect-square top-0 left-0 bg-black/50'>
+                    <div onClick={() => router.push("/shop/" + item?._id)} src={item?.images[0]} className='rounded-2xl absolute flex items-center justify-center w-full aspect-square top-0 left-0 bg-black/50'>
                       <p className='text-white text-xl font-semibold uppercase'>Sold Out</p>
                     </div>}
                   <img onClick={() => router.push("/shop/" + item?._id)} src={item?.images[0]} className='rounded-2xl w-full aspect-square object-cover' />

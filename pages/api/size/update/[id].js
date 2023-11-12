@@ -10,6 +10,9 @@ export default async (req, res) => {
             let newError
             try {
                 const { merchandise, values } = req.body
+                const all_size = await Size.find({ merchandise, values })
+                if (all_size?.length > 0)
+                    return response({ res, status_code: 400, success: false, error: "Size already exist!" })
                 const size = await Size.findByIdAndUpdate(req.query.id, { merchandise, values }, {
                     new: true,
                     runValidators: true,

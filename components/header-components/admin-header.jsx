@@ -42,7 +42,7 @@ const AdminHeader = props => {
   }
   return (
     <>
-      <div className='z-50 sticky top-0'>
+      <div className='z-50 sticky top-0' id="header">
         <div
           className={`px-4 lg:py-2 py-4 bg-white -z-10 border-b sticky lg:static flex-row flex items-center justify-between`}
         >

@@ -33,9 +33,12 @@ const OrderDetailsSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    default: "pending"
+    default: "PENDING PAYMENT"
   },
   mop: {
+    type: String,
+  },
+  proof_image: {
     type: String,
   },
   user_id:{

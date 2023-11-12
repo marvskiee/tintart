@@ -2,6 +2,9 @@ import { getHTTPFormat, postHTTPFormat, updateHTTPFormat } from './tools'
 export const getAllOrderDetails = async () =>
     getHTTPFormat({ url: '/order_details' })
 
+export const getOneOrderDetails = async (id) =>
+    getHTTPFormat({ url: '/order_details/find_one/' + id })
+
 export const addOrderDetails = async (newData) =>
     postHTTPFormat({ newData, url: '/order_details' })
 

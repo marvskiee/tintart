@@ -63,7 +63,7 @@ const Home = () => {
             <div className='flex items-center justify-center md:flex-row flex-col gap-10 place-items-center '>
               {
                 productData?.slice(0, 4).map((item, key) => (
-                  <Link href={item?.is_archived ? "" : "/shop/" + item?._id} key={item?._id}>
+                  <Link href={"/shop/" + item?._id} key={item?._id}>
                     <div className='relative cursor-pointer'>
                       {item?.is_sold_out &&
                         <div className='rounded-md absolute flex items-center justify-center max-w-[20rem] w-full aspect-square top-0 left-0 bg-black/50'>
