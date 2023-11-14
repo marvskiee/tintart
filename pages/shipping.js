@@ -36,9 +36,12 @@ const Shipping = () => {
             setValue: e => setFormData({ ...formData, receiver_name: e.target.value }),
         },
         {
-            label: "Contact No", name: "contact_no",
+            label: 'Contact No. (11 digits)',
+            name: 'contact',
             value: formData?.contact_no,
-            setValue: e => setFormData({ ...formData, contact_no: e.target.value }),
+            setValue: e => {
+                setFormData({ ...formData, contact_no: e.target.value.replace(/[^0-9]/g, '').slice(0, 11) })
+            },
         },
         {
             label: "Region/City/District", name: "region",
@@ -73,7 +76,8 @@ const Shipping = () => {
 
     const requestHandler = async ({ requestName }) => {
         if (requestName != 'deleted') {
-            const hasBlank = hasBlankValue(Object.values(formData))
+            let { information, ...rest } = formData
+            const hasBlank = hasBlankValue(Object.values(rest).slice(0, -1))
             if (hasBlank) return toast.error('Please enter valid values!', toastOptions)
         }
         setIsLoading({ ...isLoading, crud: true })

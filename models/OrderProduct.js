@@ -10,7 +10,6 @@ const OrderSchema = new mongoose.Schema({
     },
     color: {
         type: String,
-        required: [true, 'Color must not be empty!'],
     },
     price: {
         type: Number,

@@ -2,7 +2,6 @@ import moment from "moment";
 import * as XLSX from 'xlsx';
 export const downloadFile = (title, data_items) => {
     let newArr = null;
-console.log(title, data_items)
     switch (title?.toLowerCase()) {
         case "colors":
             newArr = data_items.map(

@@ -26,23 +26,21 @@ const AdminHeader = props => {
     toast.dismiss()
 
     dispatch({ type: 'LOGIN_REQUEST' })
-    setTimeout(async () => {
-      const { success, message } = await authLogout()
+    const { success, message } = await authLogout()
 
-      if (!success) {
-        dispatch({ type: 'LOGIN_ERROR', value: { error: message } })
-        toast.error(message, {
-          duration: 1500,
-        })
-      } else {
-        router.push('/')
-        dispatch({ type: 'LOGOUT' })
-      }
-    }, 1000)
+    if (!success) {
+      dispatch({ type: 'LOGIN_ERROR', value: { error: message } })
+      toast.error(message, {
+        duration: 1500,
+      })
+    } else {
+      await dispatch({ type: 'LOGOUT' })
+      router.push('/login')
+    }
   }
   return (
     <>
-      <div className='z-50 sticky top-0' id="header">
+      <div className='z-50 sticky top-0' id='header'>
         <div
           className={`px-4 lg:py-2 py-4 bg-white -z-10 border-b sticky lg:static flex-row flex items-center justify-between`}
         >

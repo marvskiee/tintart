@@ -26,6 +26,7 @@ export const postHTTPFormat = async ({ url, newData }) => {
   const result = await res.json()
   return result
 }
+export let generateCode = () => { return Math.floor(100000 + Math.random() * 900000) }
 
 export const updateHTTPFormat = async ({ url, newData }) => {
   const res = await fetch(`/api${url}`, {

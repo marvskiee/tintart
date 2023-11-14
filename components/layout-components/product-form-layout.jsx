@@ -101,7 +101,8 @@ const ProductFormLayout = ({ title, oldData }) => {
       const result = await updateProduct(newData, oldData?._id)
       if (await result?.success) {
         toast.success(`Product has been updated successfuly!`, toastOptions)
-        setImageUpload(postImage)
+        router?.push("/admin/products")
+        // setImageUpload(postImage)
       } else {
         toast.error('Something went wrong!', toastOptions)
       }
@@ -123,7 +124,6 @@ const ProductFormLayout = ({ title, oldData }) => {
 
   const colorFilter = colorList.filter(c => c.merchandise == data?.merchandise).map(d => d?.values)
   const sizeFilter = sizeList.filter(s => s.merchandise == data?.merchandise).map(d => d?.values)
-  console.log(colorList, data?.merchandise)
   return (
     <div>
       {oldData && (

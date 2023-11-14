@@ -67,19 +67,18 @@ const Profile = () => {
         toast.dismiss();
 
         dispatch({ type: "LOGIN_REQUEST" });
-        setTimeout(async () => {
-            const { success, message } = await authLogout();
 
-            if (!success) {
-                dispatch({ type: "LOGIN_ERROR", value: { error: message } });
-                toast.error(message, {
-                    duration: 1500,
-                });
-            } else {
-                dispatch({ type: "LOGOUT" });
-                router.push("/");
-            }
-        }, 1000);
+        const { success, message } = await authLogout();
+
+        if (!success) {
+            dispatch({ type: "LOGIN_ERROR", value: { error: message } });
+            toast.error(message, {
+                duration: 1500,
+            });
+        } else {
+            await dispatch({ type: "LOGOUT" });
+            router.push("/login");
+        }
     };
 
     return (
@@ -134,7 +133,7 @@ const Profile = () => {
                             <p className='text-2xl py-2 font-semibold uppercase'>My Orders</p>
                         </div>
                         {/* list of orders  */}
-                        <LoadingLayout message="You have no order listed." loadingState={isLoading} hasContent={orderData}>
+                        <LoadingLayout message="You have no order listed." loadingState={isLoading} hasContent={orderData?.length}>
                             <div className='flex items-center flex-col justify-between gap-4'>
                                 {orderData?.map((item) => (
                                     <div key={item?._id} className='w-full flex-col flex gap-4  p-4 border'>

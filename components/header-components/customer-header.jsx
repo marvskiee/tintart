@@ -11,6 +11,7 @@ import DATA from '../../utils/DATA'
 import { useAppContext } from '../../context/AppContext'
 import { getUser } from '../../services/auth.services'
 import { getAllProduct } from '../../services/product.services'
+import { FiLogIn } from 'react-icons/fi'
 
 const CustomerHeader = props => {
   const [search, setSearch] = useState('')
@@ -48,10 +49,10 @@ const CustomerHeader = props => {
     return (
       <>
         {search?.trim().length > 0 && (
-          <div className='w-full bg-white absolute top-[3rem] z-20 rounded-md border'>
+          <div className='w-full bg-white absolute top-[3rem] z-20 rounded-md border max-h-[50vh] overflow-y-auto'>
             {filteredData?.length > 0 ? (
               <ul
-                className=' py-2 text-sm text-gray-700 dark:text-gray-200'
+                className=' py-2 text-sm text-gray-700 dark:text-gray-200 '
                 aria-labelledby='dropdownDefaultButton'
               >
                 {filteredData?.map((item, key) => (
@@ -97,7 +98,13 @@ const CustomerHeader = props => {
                 <GiHamburgerMenu color='white' />
               </Button>
               <Link href='/'>
-                <img src={'/images/logo.png'} alt='logo' width={100} height={100} className='cursor-pointer' />
+                <img
+                  src={'/images/logo.png'}
+                  alt='logo'
+                  width={100}
+                  height={100}
+                  className='cursor-pointer'
+                />
               </Link>
             </div>
             <div className='hidden relative lg:flex w-full'>
@@ -115,18 +122,28 @@ const CustomerHeader = props => {
               <SearchComponents filteredData={filteredData} search={search}></SearchComponents>
             </div>
             <div className='order-2 md:order-3 flex gap-3 items-center'>
-              <Link href='/profile'>
-                <Button size='large' color='dark' className='p-2'>
-                  <BiSolidUser className='text-white' />
-                </Button>
-              </Link>
+              {state.user ? (
+                <>
+                  <Link href='/profile'>
+                    <Button size='large' color='dark' className='p-2'>
+                      <BiSolidUser className='text-white' />
+                    </Button>
+                  </Link>
 
-              <span className='bg-white h-5 w-[.1rem]'></span>
-              <Link href='/cart'>
-                <Button size='large' color='dark' className='p-2'>
-                  <FaShoppingCart className='text-white' />
-                </Button>
-              </Link>
+                  <span className='bg-white h-5 w-[.1rem]'></span>
+                  <Link href='/cart'>
+                    <Button size='large' color='dark' className='p-2'>
+                      <FaShoppingCart className='text-white' />
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <Link href='/login'>
+                  <Button size='large' color='dark' className='p-2 bg-zinc-900'>
+                    Login
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
           <div className='max-w-[80rem] mx-auto w-full'>

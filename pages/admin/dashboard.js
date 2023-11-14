@@ -1,21 +1,28 @@
 import React, { useEffect, useState } from 'react'
 import { AdminLayout, GraphLayout } from '../../components'
-import { AiFillDollarCircle } from 'react-icons/ai'
+import { FaPesoSign } from 'react-icons/fa6'
 import { BsFillCartCheckFill } from 'react-icons/bs'
 import { formatNumberWithCommas } from '../../services/tools'
 import { Dropdown } from 'flowbite-react'
 import DATA from "../../utils/DATA"
 import { getAllProduct } from '../../services/product.services'
+import { getDashboardData } from '../../services/order_details.services'
 const Dashboard = () => {
+  const [graph, setGraph] = useState({ orders: {}, sales: {} })
+
   const [merchandiseData, setMerchandiseData] = useState({
     sintra_board: 0,
     t_shirt: 0,
     photo_card: 0
   })
   const loadHandler = async () => {
-    const result = await getAllProduct();
-    if (result.success) {
-      const available_products = result.data.filter(d => !d.is_sold_out && !d.is_archived)
+    const result1 = await getDashboardData(sort)
+    if (result1.success) {
+      setGraph(result1.data)
+    }
+    const result2 = await getAllProduct();
+    if (result2.success) {
+      const available_products = result2.data.filter(d => !d.is_sold_out && !d.is_archived)
       setMerchandiseData({
         sintra_board: available_products.filter(d => d.merchandise == "Sintra Board").length,
         t_shirt: available_products.filter(d => d.merchandise == "T-Shirt").length,
@@ -23,25 +30,20 @@ const Dashboard = () => {
       })
     }
   }
+  const [sort, setSort] = useState("Daily")
   useEffect(() => {
     loadHandler();
-  }, [])
-  const [sort, setSort] = useState("Weekly")
+  }, [sort])
   const data = [
     {
       label: "Sales",
-      data: {
-        89: 10, 18: 90, 9: 77
-      },
-      price: 986564,
+      data: graph?.sales,
+      price: Object.values(graph?.sales).reduce((total, value) => total + value, 0),
     },
     {
       label: "Orders",
-      data:
-      {
-        89: 10, 18: 90, 9: 77
-      },
-      price: 50,
+      data: graph?.orders,
+      price: Object.values(graph?.orders).reduce((total, value) => total + value, 0),
     },
   ]
   const MERCHANDISE_DATA = [
@@ -71,7 +73,7 @@ const Dashboard = () => {
                   <p className='text-2xl font-semibold'>{formatNumberWithCommas(d?.price)}</p>
                 </div>
                 {d?.label == "Sales" ?
-                  <AiFillDollarCircle size="50" className='text-violet-300' />
+                  <FaPesoSign size="50" className='text-violet-300' />
                   :
                   <BsFillCartCheckFill size='50' className='text-rose-300' />
                 }

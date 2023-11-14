@@ -148,7 +148,7 @@ const DATA = {
             { label: "Date Added", name: "created_at" }
         ],
     },
-    DROPDOWN_GRAPH: ["Weekly", "Monthly", "Daily"],
+    DROPDOWN_GRAPH: ["Daily", "Weekly", "Monthly"],
     FAQS: [{
         topic: "Orders",
         sub_topic: [
@@ -341,7 +341,7 @@ const DATA = {
             SUBJECT: "Welcome to TintArt!",
             BODY: ({ name }) => {
                 return (
-                    `Dear ${name},\nThank you for joining in our Community! We're thrilled to welcome you to TintArt! Thank you for creating an account with us. Here's to a seamless and enjoyable experience ahead.\nIf you have any questions or need assistance, feel free to reach out to our support team at tintart@gmail.com or call us (+63) 9123456789. Happy exploring!\nBest regards,\nTintArt`)
+                    `Dear ${name},\n\nThank you for joining in our Community! We're thrilled to welcome you to TintArt! Thank you for creating an account with us. Here's to a seamless and enjoyable experience ahead.\n\nIf you have any questions or need assistance, feel free to reach out to our support team at tintart@gmail.com or call us (+63) 9123456789. Happy exploring!\n\nBest regards,\nTintArt`)
             }
         },
         PASSWORD: {
@@ -366,32 +366,10 @@ const DATA = {
         ORDER: {
             SUBJECT: (order_number) => `Order ${order_number} confirmed`,
             BODY: ({ name, order_number, date, item, payment_method, amount }) => {
-                const items = `${item?.map((i) => i?.product_name).join('\n') || ''}`;
+                const items = `${item?.map((i) => `\nName: ${i?.product_id?.product_name} \nQuantity: ${i?.quantity} \nPrice: ${i?.product_id?.price}`).join('\n\n') || ''}`;
+
                 return (
-                    `
-                    Dear ${name},
-
-                    We hope this message finds you well. Thank you for your purchase! Here are the details of your order:
-
-                    Order Number: ${order_number}
-                    Date of Purchase: ${moment(date).format("MMMM DD, YYYY")}
-                    Items Ordered:
-                    ${items}
-
-                    Payment Details:
-                    Total Amount: ${amount}
-                    Payment Method: ${payment_method}
-
-                    You may send your payment to:
-                    Gcash: [Gcash of Tofu Ink], K*** S****
-                    Debit/Credit: [Card of Tofu Ink]
-
-                    Please review the information above and ensure that all details are accurate. If you have any questions or concerns, feel free to reply to this email, and our customer support team will be happy to assist you.
-
-                    We appreciate your business and look forward to serving you again.
-
-                    Best regards,
-                    TintArt Customer Support Team`
+                    `Dear ${name},\n\nWe hope this message finds you well. Thank you for your purchase! Here are the details of your order:\n\nOrder Number: ${order_number}\nDate of Purchase: ${moment(date).format("MMMM DD, YYYY")}\nItems Ordered:\n${items}\n\nPayment Details:\nTotal Amount: ${amount}\nPayment Method: ${payment_method}\n\nYou may send your payment to:\nGcash: [Gcash of Tofu Ink], K*** S****\nDebit/Credit: [Card of Tofu Ink]\n\nPlease review the information above and ensure that all details are accurate. If you have any questions or concerns, feel free to reply to this email, and our customer support team will be happy to assist you.\n\nWe appreciate your business and look forward to serving you again.\n\nBest regards,\nTintArt Customer Support Team`
                 )
             }
         }
@@ -400,6 +378,7 @@ const DATA = {
         "PENDING PAYMENT",
         "PREPARING ORDER",
         "OUT OF DELIVERY",
+        "COMPLETED",
         "DELIVERED",
         "CANCELLED"
     ]

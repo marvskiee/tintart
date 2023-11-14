@@ -16,6 +16,8 @@ import { RiDeleteBin6Line } from 'react-icons/ri'
 import { addOrderDetails } from '../services/order_details.services'
 import { addOrderProduct } from '../services/order_product.services'
 import Link from 'next/link'
+import { sendMessage } from '../services/email.services'
+import moment from 'moment'
 const Cart = () => {
     const { state } = useAppContext()
     const [products, setProducts] = useState([])
@@ -89,6 +91,7 @@ const Cart = () => {
     }, 0)
 
     const placeOrderHandler = async () => {
+
         if (!paymentMethod)
             return toast.error("Please select payment method!", toastOptions)
         setIsLoading(true)
@@ -135,6 +138,23 @@ const Cart = () => {
                     product_ids: filteredData.map((item) => item?._id)
                 }
                 await updateItemCart(newData1)
+                // send email when registered
+                const { SUBJECT,
+                    BODY } = DATA.EMAILS.ORDER
+                sendMessage({
+                    email: state?.user?.email,
+                    subject: SUBJECT(result_order_details?.data?._id),
+                    text: BODY(
+                        {
+                            name: `${state?.user?.first_name} ${state?.user?.last_name}`,
+                            order_number: result_order_details?.data?._id,
+                            date: result_order_details?.created_at,
+                            item: filteredData,
+                            payment_method: newData2?.mop.toUpperCase(),
+                            amount: newData2?.total_price
+                        }
+                    )
+                })
                 toast.success("Successfuly place an order.", toastOptions)
                 setOrderSuccess(true)
             } else {
@@ -213,7 +233,6 @@ const Cart = () => {
             </>
         )
     }
-
     return (
         <CustomerLayout hasFetch={true}>
             <CustomerWrapper>
@@ -229,16 +248,24 @@ const Cart = () => {
                             <p className='font-semibold text-2xl mb-4'>{isCheckOut ? "Checkout" : "Your Cart"}</p>
                             {isCheckOut &&
                                 <div className='flex items-end justify-between mb-4 border p-4'>
-                                    <div className='flex flex-col justify-between text-zinc-500'>
-                                        <p className='text-lg text-red-600 font-semibold flex items-center gap-2'>
-                                            <BiSolidMap /> Delivery Address</p>
-                                        <p className='text-black'>Name: {shippingData?.receiver_name} <span className="text-zinc-700">{shippingData?.contact_no}</span></p>
-                                        <p><span className="text-black">Address: </span>{shippingData?.unit} {shippingData?.street} {shippingData?.region}</p>
-                                        <p><span className="text-black">Additional Information: </span>{shippingData?.information}</p>
-                                    </div>
-                                    <div>
-                                        <p onClick={() => !isLoading && setShippingModal(true)} className='cursor-pointer font-semibold underline text-rose-600'>Change</p>
-                                    </div>
+                                    {shippingList?.length > 0 ?
+                                        <>
+                                            <div className='flex flex-col justify-between text-zinc-500'>
+                                                <p className='text-lg text-red-600 font-semibold flex items-center gap-2'>
+                                                    <BiSolidMap /> Delivery Address</p>
+                                                <p className='text-black'>Name: {shippingData?.receiver_name} <span className="text-zinc-700">{shippingData?.contact_no}</span></p>
+                                                <p><span className="text-black">Address: </span>{shippingData?.unit} {shippingData?.street} {shippingData?.region}</p>
+                                                <p><span className="text-black">Additional Information: </span>{shippingData?.information}</p>
+                                            </div>
+                                            <div>
+                                                <p onClick={() => !isLoading && setShippingModal(true)} className='cursor-pointer font-semibold underline text-rose-600'>Change</p>
+                                            </div>
+                                        </>
+                                        :
+                                        <p>Please go to account page and add some shipping address to continue.
+
+                                        </p>
+                                    }
                                 </div>
                             }
                             <Table className='text-zinc-900'>
@@ -277,7 +304,9 @@ const Cart = () => {
                                                 <div className=''>
                                                     <p className=' font-semibold'>{item?.product_id?.product_name}</p>
                                                     <p>Size: {item?.size}</p>
-                                                    <p className='flex gap-2'>Color: {item?.color}</p>
+                                                    {item?.color &&
+                                                        <p className='flex gap-2'>Color: {item?.color}</p>
+                                                    }
                                                 </div>
                                             </Table.Cell>
                                             {!isCheckOut &&
@@ -347,7 +376,7 @@ const Cart = () => {
                                 </div>
                             }
                             <>
-                                <Button onClick={() => !isCheckOut ? setIsCheckOut(true) : placeOrderHandler()} disabled={total == 0 || (isCheckOut && !termsChecked) || isLoading} className='w-full mt-4' color="failure">{!isCheckOut ? "PROCEED TO CHECKOUT" : "PLACE ORDER"}</Button>
+                                <Button onClick={() => !isCheckOut ? setIsCheckOut(true) : placeOrderHandler()} disabled={total == 0 || (isCheckOut && !termsChecked) || isLoading || (isCheckOut && shippingList.length == 0)} className='w-full mt-4' color="failure">{!isCheckOut ? "PROCEED TO CHECKOUT" : "PLACE ORDER"}</Button>
                                 {isCheckOut &&
                                     <>
 

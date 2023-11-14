@@ -14,29 +14,29 @@ export default async function middleware(req) {
     const res = await verify(jwt?.value, secret)
     if (res) {
       switch (pathname) {
-        case "/user/borrow":
-        case "/user/profile":
-        case "/user/notifications":
-        // case "/user/liabilities":
-        case "/user/borrowed-items-history":
-        case "/user/account-settings":
-          if (res.role == "student") {
+        case '/profile':
+        case '/profile/edit':
+        case '/shipping':
+        case '/cart':
+          if (res.role == 0 || res.role == 1) {
             return NextResponse.next();
           } else {
             return NextResponse.redirect(`${domain}`);
           }
-        case "/admin":
-        case "/admin/notifications":
-        case "/admin/activity-logs":
-        case "/admin/property-category":
-        case "/admin/liabilities":
-        case "/admin/inventory":
-        case "/admin/borrow-management":
-        case "/admin/registry":
-        case "/admin/property-category-history":
-        case "/admin/registry-logs":
-        case "/admin/settings":
-          if (res.role == "admin") {
+        case '/admin/dashboard':
+        case '/admin/properties':
+        case '/admin/categories':
+        case '/admin/products':
+        case '/admin/products/add':
+        case '/admin/products/edit':
+        case '/admin/users':
+        case '/admin/users/add':
+        case '/admin/users/edit':
+        case '/admin/orders':
+        case '/admin/settings/shop':
+        case '/admin/settings/profile':
+        case '/admin/settings/password':
+          if (res.role == 2 || res.role == 3) {
             return NextResponse.next();
           } else {
             return NextResponse.redirect(`${domain}`);
@@ -45,7 +45,7 @@ export default async function middleware(req) {
           if (pathname == "/login") {
             if ([0, 1].indexOf(res?.role) > -1) {
               return NextResponse.redirect(`${domain}`);
-            } else if (res?.role == 2)
+            } else if (res?.role == 2 || res?.role == 3)
               return NextResponse.redirect(`${domain}admin/dashboard`);
             else return NextResponse.redirect(`${domain}`);
           }
@@ -68,13 +68,10 @@ export default async function middleware(req) {
         case '/admin/settings/password':
 
         // ARTIST AND CUSTOMER ROUTES
-        case '/':
-        case '/gallery':
-        case '/shop':
-        case '/faqs':
-        case '/about':
         case '/profile':
         case '/profile/edit':
+        case '/shipping':
+        case '/cart':
           return NextResponse.redirect(`${domain}login`)
         default:
           return NextResponse.next()

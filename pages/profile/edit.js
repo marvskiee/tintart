@@ -6,8 +6,10 @@ import { filterObjectWithEmptyProperties, hasBlankValue, imageUploader } from '.
 import toast from 'react-hot-toast'
 import { toastOptions } from '../../styles/modalOption'
 import { changePassword, updateUser } from '../../services/user.services'
+import { useRouter } from 'next/router'
 
 const ProfileEdit = () => {
+    const router = useRouter()
     const { state, dispatch } = useAppContext()
     const [isLoading, setIsLoading] = useState({ profile: false, newPassword: false })
     const initialProfileData = {
@@ -46,10 +48,12 @@ const ProfileEdit = () => {
             setValue: e => setProfileData({ ...profileData, email: e.target.value }),
         },
         {
-            label: 'Contact No.',
+            label: 'Contact No. (11 digits)',
             name: 'contact',
             value: profileData?.contact_no,
-            setValue: e => setProfileData({ ...profileData, contact_no: e.target.value }),
+            setValue: e => {
+                setProfileData({ ...profileData, contact_no: e.target.value.replace(/[^0-9]/g, '').slice(0, 11) })
+            },
         },
     ]
     const inputFieldsPassword = [
@@ -80,8 +84,8 @@ const ProfileEdit = () => {
         }
         const result = await updateUser(newData, state?.user?._id)
         if (await result?.success) {
+            router.push("/profile")
             dispatch({ type: 'LOGIN_SUCCESS', value: result.data })
-
             toast.success(`Profile has been updated successfuly!`, toastOptions)
         } else {
             toast.error(result?.errors || 'Something went wrong!', toastOptions)
@@ -93,7 +97,7 @@ const ProfileEdit = () => {
             Object.values(profileData).slice(0, -1)
         )
         // const passwordMatch = profileData?.newPassword == profileData?.confirmPassword
-        if (hasBlank)
+        if (hasBlank || profileData?.contact_no.length != 11)
             return toast.error('Please enter valid values!', toastOptions)
         setIsLoading({ ...isLoading, profile: true })
         if (imageUpload) {
@@ -198,7 +202,7 @@ const ProfileEdit = () => {
                                     disabled={isLoading?.newPassword}
                                     value={input?.value}
                                     onChange={e => input?.setValue(e)}
-                                    type='text'
+                                    type='password'
                                 />
                             </div>
                         ))}

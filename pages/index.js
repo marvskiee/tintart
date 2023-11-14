@@ -26,7 +26,7 @@ const Home = () => {
     // fetch products
     const products_result = await getAllProduct()
     if (products_result.success)
-      setProductData(products_result?.data.filter(d => d.is_featured))
+      setProductData(products_result?.data.filter(d => d.is_featured && d.is_archived == false))
     setIsLoading(false)
 
   }

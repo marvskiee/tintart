@@ -8,6 +8,8 @@ import { useAppContext } from '../context/AppContext'
 import { addUser } from '../services/user.services'
 import { useRouter } from 'next/router'
 import { TextInput } from '../components'
+import DATA from '../utils/DATA'
+import { sendMessage } from '../services/email.services'
 
 const Login = () => {
     const { state, dispatch } = useAppContext();
@@ -32,6 +34,8 @@ const Login = () => {
         if (loginMode == "register") {
             if (!passwordMatch)
                 return toast.error('Password Mismatch!', toastOptions)
+            if (credentials?.contact_no.length != 11)
+                return toast.error('Invalid Contact Number!', toastOptions)
         }
 
         if (hasBlank) return toast.error('Please enter valid values!', toastOptions)
@@ -46,7 +50,7 @@ const Login = () => {
                     setIsLoading(false)
                 } else {
                     let path = (([0, 1].indexOf(data.role) > -1 && loginMode == "login") ? "/" :
-                        (data.role == 2 && loginMode == "admin-login") && "/admin/dashboard")
+                        (data.role >= 2 && loginMode == "admin-login") && "/admin/dashboard")
                     router.push(path)
                     toast.success('Login Succesfuly!', toastOptions)
                     dispatch({ type: 'LOGIN_SUCCESS', value: data })
@@ -55,8 +59,16 @@ const Login = () => {
             } else if (loginMode == "register") {
                 const { success, errors } = await addUser(credentials)
                 if (await success) {
-                    setCredentials(initial_credentials)
+                    // send email when registered
+                    const { SUBJECT,
+                        BODY } = DATA.EMAILS.WELCOME
+                    sendMessage({
+                        email: credentials?.email,
+                        subject: SUBJECT,
+                        text: BODY({ name: credentials?.first_name + " " + credentials?.last_name })
+                    })
                     setLoginMode("login")
+                    setCredentials(initial_credentials)
                     toast.success(`Registered successfuly!`, toastOptions)
                 } else {
                     toast.error(errors || 'Something went wrong!', toastOptions)
@@ -92,11 +104,13 @@ const Login = () => {
             formType: ["login", "admin-login", "register"]
         },
         {
-            label: 'Contact No.',
+            label: 'Contact No. (11 digits)',
             name: 'contact',
             value: credentials?.contact_no,
-            setValue: e => setCredentials({ ...credentials, contact_no: e.target.value }),
-            type: "number",
+            setValue: e => {
+                setCredentials({ ...credentials, contact_no: e.target.value.replace(/[^0-9]/g, '').slice(0, 11) })
+            },
+            type: "text",
             formType: ["register"]
         },
         {
@@ -122,7 +136,7 @@ const Login = () => {
         <div className='flex '>
             <div className={`w-full  mx-auto ${loginMode == "admin-login" && "max-w-[25rem]"}`}>
                 <div className='bg-white rounded-md p-10 flex min-h-[100vh] items-center flex-col justify-center gap-4'>
-                    <img src='/images/logo-dark.png' className=' max-h-[2rem]' onClick={() => setLoginMode("login")} />
+                    <img src='/images/logo-dark.png' className=' max-h-[2rem]' onClick={() => !isLoading && setLoginMode("login")} />
                     <p className='font-semibold text-2xl'>{loginMode == "register" ? "Create account" : "Welcome Back"}</p>
                     <div className={`grid grid-cols-1 ${loginMode == "register" && "lg:grid-cols-2"} w-full gap-4`}>
                         {filterFields.map((item, key) => (
@@ -138,20 +152,20 @@ const Login = () => {
                         ))}
                     </div>
                     {loginMode == "login" &&
-                        <p className='text-left w-full underline' onClick={() => setLoginMode("forgot")}>Forgot Password?</p>
+                        <p className='text-left w-full underline cursor-pointer' onClick={() => router.push("/forgot-password")}>Forgot Password?</p>
                     }
                     <Button disabled={isLoading} color="failure" className='w-full' onClick={submitHandler}>{!isLoading ? "Sign In" : "Signing In..."}</Button>
                     {loginMode == "login" ?
-                        <p className='text-center ' onClick={() => setLoginMode("register")}>Don't have an account? <span className='underline cursor-pointer'>Create Account</span></p>
+                        <p className='text-center ' onClick={() => !isLoading && setLoginMode("register")}>Don't have an account? <span className='underline cursor-pointer'>Create Account</span></p>
                         : loginMode == "register" &&
-                        <p className='text-center ' onClick={() => setLoginMode("login")}>Already have an account? <span className='underline cursor-pointer'>Click here</span></p>
+                        <p className='text-center ' onClick={() => !isLoading && setLoginMode("login")}>Already have an account? <span className='underline cursor-pointer'>Click here</span></p>
                     }
                 </div>
 
             </div>
             <div className={`w-full h-[100vh] lg:relative  ${loginMode == "admin-login" ? "hidden" : "lg:block hidden"} `}>
                 <img src="/images/about1.png" className='w-full h-full object-cover' />
-                <img onClick={() => setLoginMode("admin-login")} className='absolute bottom-10 right-10 max-h-[2rem]' src='/images/logo-dark.png' />
+                <img onClick={() => !isLoading && setLoginMode("admin-login")} className='absolute bottom-10 right-10 max-h-[2rem]' src='/images/logo-dark.png' />
             </div>
         </div>
     )

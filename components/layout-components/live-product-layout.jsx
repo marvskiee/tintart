@@ -28,7 +28,6 @@ const LiveProductLayout = props => {
   const [wishListData, setWishListData] = useState([])
   const { state } = useAppContext()
   const { quantity, increment, decrement } = useQuantity(1)
-  const [cart, setCart] = useState(null)
   const [data, setData] = useState(null)
   const [review, setReview] = useState([])
 
@@ -45,6 +44,7 @@ const LiveProductLayout = props => {
   }
   const [formData, setFormData] = useState(initialData)
   const submitHandler = async () => {
+    if (!state?.user) return toast.error('You must login first!', toastOptions)
     const hasBlank = hasBlankValue(Object.values(formData))
     if (hasBlank) return toast.error('Please fill up the fields!', toastOptions)
     setIsLoading({ ...isLoading, review: true })
@@ -66,6 +66,8 @@ const LiveProductLayout = props => {
   }
 
   const heartHandler = async item => {
+    if (!state?.user) return toast.error('You must login first!', toastOptions)
+
     const { product_name, images, _id } = item
     let filtered = wishListData.filter(d => d.product_id == _id)
     if (filtered.length > 0) {
@@ -99,14 +101,11 @@ const LiveProductLayout = props => {
     refreshWishList()
 
     const result1 = await getOneProduct(id)
-    const result2 = await getUserCart(state?.user?._id)
 
     if (result1.success) {
       if (result1.data?.is_archived == false) setData(result1.data)
     }
-    if (result2.success) {
-      setCart(result2?.data.filter(d => d.product_id?._id == id)[0])
-    }
+
     await loadReviewHandler()
     setIsLoading({ ...isLoading, fetch: false })
   }
@@ -118,31 +117,40 @@ const LiveProductLayout = props => {
   }, [id, state?.isAuth])
 
   const addToCartHandler = async () => {
-    if (!(size && color)) return toast.error('Please select the size and color!', toastOptions)
-    else {
-      const newData = {
-        color,
-        size,
-        quantity,
-        user_id: state?.user?._id,
-        product_id: data?._id,
-      }
-      let result
-      if (cart?.color == newData.color && cart?.size == newData.size) {
-        result = await updateCart(
-          {
-            quantity: Number(cart?.quantity) + Number(newData.quantity),
-          },
-          cart?._id
-        )
-      } else {
-        result = await addCart(newData)
-      }
-      if (result.success) {
-        return toast.success('Product has been added to cart.', toastOptions)
-      } else {
-        return toast.error('Something went wrong!.', toastOptions)
-      }
+    if (!state?.user) return toast.error('You must login first!', toastOptions)
+
+    let newData = {
+      size,
+      quantity,
+      user_id: state?.user?._id,
+      product_id: data?._id,
+    }
+    if (data?.merchandise == 'T-Shirt') {
+      if (!(size && color)) return toast.error('Please select the size and color!', toastOptions)
+      newData.color = color
+    } else {
+      if (!size) return toast.error('Please select the size!', toastOptions)
+    }
+    // update product from cart
+    const result2 = await getUserCart(state?.user?._id)
+    let cart = result2?.data.filter(
+      d => d.product_id?._id == id && d.color == newData?.color && d.size == newData?.size
+    )
+    let result
+    if (cart?.length > 0) {
+      result = await updateCart(
+        {
+          quantity: Number(newData.quantity) + Number(cart[0]?.quantity),
+        },
+        cart[0]?._id
+      )
+    } else {
+      result = await addCart(newData)
+    }
+    if (result.success) {
+      return toast.success('Product has been added to cart.', toastOptions)
+    } else {
+      return toast.error('Something went wrong!.', toastOptions)
     }
   }
 
@@ -209,7 +217,7 @@ const LiveProductLayout = props => {
                 ))}
               </div>
               <div className='w-full flex items-center justify-between'>
-                {data?.colors && (
+                {data?.colors.length > 0 && (
                   <div>
                     <p className='font-semibold'>Colors: </p>
                     <div className='flex gap-4'>

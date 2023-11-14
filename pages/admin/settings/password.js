@@ -68,7 +68,7 @@ const ChangePassword = () => {
                 disabled={isLoading?.newPassword}
                 value={input?.value}
                 onChange={e => input?.setValue(e)}
-                type='text'
+                type='password'
               />
             </div>
           ))}

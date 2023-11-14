@@ -16,7 +16,7 @@ const Profile = () => {
       first_name: "",
       last_name: "",
       email: "",
-      contact: "",
+      contact_no: "",
     }
   )
   const [isLoading, setIsLoading] = useState(false)
@@ -40,10 +40,12 @@ const Profile = () => {
       setValue: e => setData({ ...data, email: e.target.value }),
     },
     {
-      label: 'Contact No.',
+      label: 'Contact No. (11 digits)',
       name: 'contact',
       value: data?.contact_no,
-      setValue: e => setData({ ...data, contact_no: e.target.value }),
+      setValue: e => {
+        setData({ ...data, contact_no: e.target.value.replace(/[^0-9]/g, '').slice(0, 11) })
+      },
     },
   ]
   const submitHandler = async (postImage) => {
@@ -60,7 +62,7 @@ const Profile = () => {
   }
   const validationHandler = async () => {
     const hasBlank = hasBlankValue(Object.values(data))
-    if (hasBlank) return toast.error('Please enter valid values!', toastOptions)
+    if (hasBlank || data?.contact_no.length != 11) return toast.error('Please enter valid values!', toastOptions)
 
     setIsLoading(true)
 

@@ -8,6 +8,7 @@ import toast from 'react-hot-toast'
 import { toastOptions } from '../../styles/modalOption'
 import DeleteModalLayout from './delete-modal-layout'
 import TextInput from '../input-components/text-input'
+import { useAppContext } from '../../context/AppContext'
 
 const UserFormLayout = ({ title, oldData }) => {
   const [isLoading, setIsLoading] = useState(false)
@@ -59,10 +60,12 @@ const UserFormLayout = ({ title, oldData }) => {
       setValue: e => setData({ ...data, email: e.target.value }),
     },
     {
-      label: 'Contact No.',
+      label: 'Contact No. (11 digits)',
       name: 'contact',
       value: data?.contact_no,
-      setValue: e => setData({ ...data, contact_no: e.target.value }),
+      setValue: e => {
+        setData({ ...data, contact_no: e.target.value.replace(/[^0-9]/g, '').slice(0, 11) })
+      },
     },
     {
       label: 'Password',
@@ -77,6 +80,9 @@ const UserFormLayout = ({ title, oldData }) => {
       setValue: e => setData({ ...data, confirm_password: e.target.value }),
     },
   ]
+  const finalInputFields = oldData
+    ? inputFields.filter(field => field.name !== 'password' && field.name !== 'confirm_password')
+    : inputFields
   const submitHandler = async postImage => {
     let newData = filterObjectWithEmptyProperties(data)
 
@@ -123,6 +129,7 @@ const UserFormLayout = ({ title, oldData }) => {
     }
   }
 
+  const { state } = useAppContext()
   const router = useRouter()
   const [modal, setModal] = useState(false)
   return (
@@ -171,12 +178,12 @@ const UserFormLayout = ({ title, oldData }) => {
           <Label className='capitalize mb-2 block'>User Type</Label>
           <DropdownInput
             selected={data?.role == 2 ? 'Admin' : 'Artist'}
-            item={['Admin', 'Artist']}
+            item={state?.user?.role == 3 ? ['Admin', 'Artist'] : ['Artist']}
             disabled={isLoading}
             handler={value => setData({ ...data, role: value == 'Admin' ? 2 : 1 })}
           />
         </div>
-        {inputFields.map((input, key) => (
+        {finalInputFields.map((input, key) => (
           <div key={'profile-' + key}>
             <Label className='capitalize mb-2 block'>{input.label}</Label>
             <TextInput
@@ -188,7 +195,9 @@ const UserFormLayout = ({ title, oldData }) => {
           </div>
         ))}
         <div
-          className={`flex flex-col lg:flex-row gap-4 ${oldData ? 'justify-between' : 'justify-end'} mt-4 lg:col-span-2`}
+          className={`flex flex-col lg:flex-row gap-4 ${
+            oldData ? 'justify-between' : 'justify-end'
+          } mt-4 lg:col-span-2`}
         >
           {oldData && (
             <Button

@@ -61,7 +61,7 @@ const DropdownInput = ({ name, item, handler, selected, disabled }) => {
                 setToggle(false);
               }}
             >
-              <p className='block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
+              <p className='cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
                 {title?.category || title}
               </p>
             </li>

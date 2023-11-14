@@ -18,7 +18,7 @@ const Shop = () => {
   const [wishListData, setWishListData] = useState([])
   const [categoryData, setCategoryData] = useState([])
   const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 })
-  const { state, dispatch } = useAppContext()
+  const { state } = useAppContext()
   const [merchandise, setMerchandise] = useState('')
   const [category, setCategory] = useState('')
   const refreshWishList = async () => {
@@ -47,6 +47,8 @@ const Shop = () => {
     setIsLoading(false)
   }
   const heartHandler = async (item) => {
+    if (!state?.user) return toast.error('You must login first!', toastOptions)
+
     const { product_name, images, _id } = item
     let filtered = wishListData.filter(d => d.product_id == _id)
     if (filtered.length > 0) {

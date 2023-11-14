@@ -39,7 +39,7 @@ const Faqs = () => {
                                             <h2 id="accordion-collapse-heading-1" key={"accordion-" + topic_key} onClick={() => setAccordion(accordion == topic_key ? null : topic_key)}>
                                                 <button type="button" className="flex items-center justify-between w-full py-5 font-medium text-left text-black border-b border-gray-200 dark:border-gray-700 dark:text-gray-400" data-accordion-target="#accordion-flush-body-1" aria-expanded="true" aria-controls="accordion-flush-body-1">
                                                     <span>{topic_item?.title}</span>
-                                                    <svg data-accordion-icon className={`w-3 h-3 rotate-${topic_key == accordion ? 180 : 90} shrink-0`} aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                                    <svg data-accordion-icon className={`w-3 h-3 rotate-${topic_key != accordion ? 180 : 90} shrink-0`} aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5" />
                                                     </svg>
                                                 </button>

@@ -5,6 +5,9 @@ export const getAllOrderDetails = async () =>
 export const getOneOrderDetails = async (id) =>
     getHTTPFormat({ url: '/order_details/find_one/' + id })
 
+export const getDashboardData = async (sort_type) =>
+    getHTTPFormat({ url: '/order_details/sort/' + sort_type })
+
 export const addOrderDetails = async (newData) =>
     postHTTPFormat({ newData, url: '/order_details' })
 
