@@ -8,7 +8,7 @@ export default async (req, res) => {
     switch (req.method) {
         case 'GET':
             try {
-                const order_detail = await OrderDetails.find({ user_id: req.query.id }).populate("products")
+                const order_detail = await OrderDetails.find({ user_id: req.query.id }).populate("products").sort({ created_at: -1 })
                 return response({
                     res,
                     status_code: 200,

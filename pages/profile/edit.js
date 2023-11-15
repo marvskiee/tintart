@@ -19,13 +19,8 @@ const ProfileEdit = () => {
         contact_no: '',
         profile_image: '',
     }
-    const initialPasswordData = {
-        oldPassword: '',
-        newPassword: '',
-        confirmPassword: '',
-    }
+    
     const [profileData, setProfileData] = useState(initialProfileData)
-    const [passwordData, setPasswordData] = useState(initialPasswordData)
 
     const [imageUpload, setImageUpload] = useState(null)
     const inputFieldsProfile = [
@@ -56,26 +51,7 @@ const ProfileEdit = () => {
             },
         },
     ]
-    const inputFieldsPassword = [
-        {
-            label: 'Old Password',
-            name: 'oldPassword',
-            value: passwordData?.oldPassword,
-            setValue: e => setPasswordData({ ...passwordData, oldPassword: e.target.value }),
-        },
-        {
-            label: 'Password',
-            name: 'newPassword',
-            value: passwordData?.newPassword,
-            setValue: e => setPasswordData({ ...passwordData, newPassword: e.target.value }),
-        },
-        {
-            label: 'Confirm Password',
-            name: 'confirmPassword',
-            value: passwordData?.confirmPassword,
-            setValue: e => setPasswordData({ ...passwordData, confirmPassword: e.target.value }),
-        },
-    ]
+   
     const submitHandler = async postImage => {
         let newData = filterObjectWithEmptyProperties(profileData)
 
@@ -98,7 +74,7 @@ const ProfileEdit = () => {
         )
         // const passwordMatch = profileData?.newPassword == profileData?.confirmPassword
         if (hasBlank || profileData?.contact_no.length != 11)
-            return toast.error('Please enter valid values!', toastOptions)
+            return toast.error('Please fill up the form!', toastOptions)
         setIsLoading({ ...isLoading, profile: true })
         if (imageUpload) {
             await imageUploader([imageUpload], async postImage => {
@@ -108,24 +84,7 @@ const ProfileEdit = () => {
             submitHandler()
         }
     }
-    const passwordValidationHandler = async () => {
-        const hasBlank = hasBlankValue(
-            Object.values(passwordData).slice(0, -1)
-        )
-        if (hasBlank)
-            return toast.error('Please enter valid values!', toastOptions)
-
-        setIsLoading({ ...isLoading, newPassword: true })
-        const result = await changePassword(passwordData, state?.user?._id)
-        if (result?.success) {
-            setPasswordData(initialPasswordData)
-            toast.success(`Password has been updated successfuly!`, toastOptions)
-        } else {
-            toast.error(`${result?.errors?.oldPasswordError || result?.errors?.newPasswordError || result?.errors?.confirmPasswordError}`, toastOptions)
-        }
-        setIsLoading({ ...isLoading, newPassword: false })
-
-    }
+    
     useEffect(() => {
         if (state?.isAuth) {
             const { first_name, last_name, email, profile_image, contact_no } = state?.user
@@ -193,30 +152,7 @@ const ProfileEdit = () => {
 
                         </div>
                     </div>
-                    <p className='text-2xl font-semibold my-4 mt-6'>Change Password</p>
-                    <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 lg:p-8 p-4 rounded-md border'>
-                        {inputFieldsPassword.map((input, key) => (
-                            <div key={'newPassword-' + key} className={key == 0 && "lg:col-span-2"}>
-                                <Label className='capitalize mb-2 block'>{input.label}</Label>
-                                <TextInput
-                                    disabled={isLoading?.newPassword}
-                                    value={input?.value}
-                                    onChange={e => input?.setValue(e)}
-                                    type='password'
-                                />
-                            </div>
-                        ))}
-
-                        <div
-                            className={`lg:col-span-2`}
-                        >
-
-                            <Button className='float-right mt-4' disabled={isLoading?.newPassword} gradientDuoTone={'cyanToBlue'} onClick={passwordValidationHandler}>
-                                Submit
-                            </Button>
-
-                        </div>
-                    </div>
+                    
                 </div>
             </CustomerWrapper>
         </CustomerLayout>

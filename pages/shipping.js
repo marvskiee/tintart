@@ -5,7 +5,7 @@ import { useAppContext } from '../context/AppContext'
 import { Button, Label, Modal } from 'flowbite-react'
 import { AiFillPlusCircle, AiOutlineEdit } from 'react-icons/ai'
 import DATA from '../utils/DATA'
-import { hasBlankValue } from '../services/tools'
+import { hasBlankValue, isValidPhoneNumber } from '../services/tools'
 import toast from 'react-hot-toast'
 import { toastOptions } from '../styles/modalOption'
 import { RiDeleteBin6Line } from 'react-icons/ri'
@@ -44,7 +44,7 @@ const Shipping = () => {
             },
         },
         {
-            label: "Region/City/District", name: "region",
+            label: "Region/City/Barangay", name: "region",
             value: formData?.region,
             setValue: e => setFormData({ ...formData, region: e.target.value }),
         },
@@ -77,8 +77,10 @@ const Shipping = () => {
     const requestHandler = async ({ requestName }) => {
         if (requestName != 'deleted') {
             let { information, ...rest } = formData
-            const hasBlank = hasBlankValue(Object.values(rest).slice(0, -1))
-            if (hasBlank) return toast.error('Please enter valid values!', toastOptions)
+            const hasBlank = hasBlankValue(Object.values(rest))
+            if (hasBlank) return toast.error('Please fill up the form!', toastOptions)
+            if (!isValidPhoneNumber(formData?.contact_no))
+                return toast.error('Invalid Contact Number!', toastOptions)
         }
         setIsLoading({ ...isLoading, crud: true })
 

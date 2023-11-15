@@ -6,7 +6,7 @@ dbConnect()
 
 export default async (req, res) => {
     switch (req.method) {
-        case 'GET':
+        case 'POST':
             try {
                 const all_user = await User.findOne(req.body)
                 response({ res, status_code: 200, success: true, data: all_user })

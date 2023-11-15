@@ -3,7 +3,13 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { addUser, deleteUser, getOneUser, updateUser } from '../../services/user.services'
 import DropdownInput from '../input-components/dropdown-input'
-import { filterObjectWithEmptyProperties, hasBlankValue, imageUploader } from '../../services/tools'
+import {
+  filterObjectWithEmptyProperties,
+  hasBlankValue,
+  imageUploader,
+  isValidEmail,
+  isValidPhoneNumber,
+} from '../../services/tools'
 import toast from 'react-hot-toast'
 import { toastOptions } from '../../styles/modalOption'
 import DeleteModalLayout from './delete-modal-layout'
@@ -112,12 +118,16 @@ const UserFormLayout = ({ title, oldData }) => {
     const hasBlank = hasBlankValue(
       oldData ? Object.values(data).slice(0, -3) : Object.values(data).slice(0, -1)
     )
+    if (!isValidEmail(data?.email)) return toast.error('Invalid Email!', toastOptions)
+
+    if (!isValidPhoneNumber(data?.contact_no))
+      return toast.error('Invalid Contact Number!', toastOptions)
     const passwordMatch = data?.password == data?.confirm_password
     if (oldData) {
-      if (hasBlank || !passwordMatch) return toast.error('Please enter valid values!', toastOptions)
+      if (hasBlank || !passwordMatch) return toast.error('Please fill up the form!', toastOptions)
     } else {
       if (hasBlank || !passwordMatch || !imageUpload)
-        return toast.error('Please enter valid values!', toastOptions)
+        return toast.error('Please fill up the form!', toastOptions)
     }
     setIsLoading(true)
     if (imageUpload) {

@@ -276,11 +276,17 @@ const LiveProductLayout = props => {
                   )}
                 </Button>
               </div>
-              <Button className='w-full text-zinc-900 uppercase font-semibold' color='warning'>
-                <Link href='https://tintartcustomize.vercel.app/' target='_blank'>
+              {state?.user ? (
+                <Button className='w-full text-zinc-900 uppercase font-semibold' color='warning'>
+                  <Link href={'https://tintartcustomize.vercel.app/'} target='_blank'>
+                    Create your own design
+                  </Link>
+                </Button>
+              ) : (
+                <Button disabled className='w-full text-zinc-900 uppercase font-semibold' color='warning'>
                   Create your own design
-                </Link>
-              </Button>
+                </Button>
+              )}
             </div>
           </div>
         </CustomerWrapper>

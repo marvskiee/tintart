@@ -4,13 +4,12 @@ import { Button, FileInput, Label } from 'flowbite-react'
 import { addShop, getAllShop, updateShop } from '../../../services/shop.services'
 import toast from 'react-hot-toast'
 import { toastOptions } from '../../../styles/modalOption'
-import { hasBlankValue, imageUploader } from '../../../services/tools'
+import { hasBlankValue, imageUploader, isValidEmail, isValidPhoneNumber } from '../../../services/tools'
 
 const Shop = () => {
   const [logo, setLogo] = useState(null)
   const initialData = {
     name: "",
-    description: "",
     terms: "",
     shopee: "",
     email: "",
@@ -40,11 +39,6 @@ const Shop = () => {
       label: "Shop Name", span: "col-span-2",
       value: data?.name,
       setValue: e => setData({ ...data, name: e.target.value }),
-    },
-    {
-      label: "Shop Description", span: "col-span-2",
-      value: data?.description,
-      setValue: e => setData({ ...data, description: e.target.value }),
     },
     {
       label: "Terms and Conditions", span: "col-span-2", isTextArea: true,
@@ -81,22 +75,25 @@ const Shop = () => {
       setValue: e => setData({ ...data, email: e.target.value }),
     },
     {
-      label: "Contact No.", span: "col-span-1",
+      label: 'Contact No. (11 digits)',
+      span: "col-span-1",
       value: data?.contact_no,
-      setValue: e => setData({ ...data, contact_no: e.target.value }),
+      setValue: e => setData({ ...data, contact_no: e.target.value.replace(/[^0-9]/g, '').slice(0, 11) }),
     },
   ]
 
   const validationHandler = async () => {
     const list = [
       data?.name,
-      data?.description,
       data?.terms,
       data?.email,
       data?.contact_no]
     const hasBlank = hasBlankValue(list)
+    if (!isValidPhoneNumber(data?.contact_no))
+      return toast.error('Invalid Contact Number!', toastOptions)
+    if (!isValidEmail(data?.email)) return toast.error('Invalid Email!', toastOptions)
 
-    if (hasBlank) return toast.error('Please enter valid values!', toastOptions)
+    if (hasBlank) return toast.error('Please fill up the form!', toastOptions)
     setIsLoading(true)
     if (logo) {
       await imageUploader([logo], async postImage => {

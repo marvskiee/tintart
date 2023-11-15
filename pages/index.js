@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react'
-import { CustomerHeader, CustomerWrapper, LoadingLayout } from '../components'
+import { CustomerWrapper, LoadingLayout, ViewGalleryModal } from '../components'
 import { Button } from 'flowbite-react'
-import { BiShoppingBag } from 'react-icons/bi'
-import Image from 'next/image'
 import CustomerLayout from '../components/layout-components/customer-layout'
-import DATA from '../utils/DATA'
-import { FaArrowRight } from 'react-icons/fa'
+import { FaArrowRight, FaEye, FaFacebook, FaInstagram } from 'react-icons/fa'
 import { getAllGallery } from '../services/gallery.services'
 import { getAllProduct } from '../services/product.services'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { useAppContext } from '../context/AppContext'
 
 const Home = () => {
+  const { state } = useAppContext()
   const [galleryData, setGalleryData] = useState([])
   const [productData, setProductData] = useState([])
+  const [imageModal, setImageModal] = useState(null)
 
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
@@ -30,11 +30,24 @@ const Home = () => {
     setIsLoading(false)
 
   }
+
+
+
+  const [hoverActive, setHoverActive] = useState();
+  const getLinks = (id) => {
+    setHoverActive(id);
+  };
   useEffect(() => {
     loadHandler()
   }, [])
   return (
     <CustomerLayout>
+      {
+        imageModal &&
+        <ViewGalleryModal
+          modal={imageModal}
+          setModal={setImageModal} />
+      }
       <CustomerWrapper containerClass="p-6 lg:p-16 bg-zinc-100">
         <div className='flex flex-col-reverse lg:flex-row gap-10 items-center my-4'>
           <div className='flex flex-col gap-4 w-full'>
@@ -42,9 +55,12 @@ const Home = () => {
             <h3 className=' text-lg'>Have you ever wanted to create and wear your own designs on your shirts? Be able to show your feelings through your art? Try our very own customization and print your own designs now!</h3>
             <div>
               <Button color="failure" size="lg" className='font-bold'>
-                <Link href="https://tintartcustomize.vercel.app/" target="_blank">
-                  Start Customizing
-                </Link>
+                {state?.user ?
+                  <Link href="https://tintartcustomize.vercel.app/" target="_blank">
+                    Start Customizing
+                  </Link> :
+                  "Start Customizing"
+                }
                 <FaArrowRight color='white' className='ml-2 text-xl' />
               </Button>
             </div>
@@ -89,21 +105,50 @@ const Home = () => {
         <div className='flex flex-col gap-8 my-4 items-center justify-center'>
           <h2 className='font-semibold text-3xl'>BULK ORDERS?</h2>
           <p className='lg:text-xl'>Streamline Your Wholesale Shopping Experience - Hassle-Free Bulk Orders Await!</p>
-          <Link href={"/about"}>
+          <Link href={"/about#contact"}>
             <Button color="failure" className=' mx-auto border border-white' size="lg">Contact Us</Button>
           </Link>
         </div>
       </CustomerWrapper>
       <CustomerWrapper containerClass="p-6 lg:p-16">
         <LoadingLayout message="Gallery is Empty." loadingState={isLoading} hasContent={galleryData?.slice(0, 5)?.length > 0}>
-          <div className='my-16 flex items-center md:flex-row flex-col justify-center gap-4 lg:gap-10'>
+          <div className='p-4 grid grid-cols-2  lg:grid-cols-5 gap-4'>
+
             {
-              galleryData?.slice(0, 5).map((item) => (
-                <div key={item?._id} className="max-w-[20rem] w-full">
-                  <img src={item.image} className='max-w-[20rem] shadow-md w-full aspect-square rounded-xl object-cover' />
+              galleryData?.slice(0, 5).map((item, key) => (
+                <div
+                  key={"gallery-item-" + key}
+                  className='relative overflow-hidden flex flex-col gap-4 aspect-square'
+                  onClick={() => getLinks(item?._id)}
+                  onMouseEnter={() => getLinks(item?._id)}
+                  onMouseLeave={() => getLinks(false)}>
+
+                  <img src={item?.image} className={` aspect-square w-full object-cover h-full ${hoverActive === item?._id ? "scale-150" : ""
+                    } transition-transform overflow-hidden`} />
+                  <div
+                    className={`
+                ${hoverActive === item?._id
+                        ? -"translate-y-1000"
+                        : "-translate-y-full "
+                      }
+                  flex items-center justify-center p-4 gap-2 z-0 h-full absolute w-full object-cover flex-col -top-0 left-0 bg-black/70 transition-transform
+                    }`}
+                  >
+                    <p className=' left-0 bottom-10 truncate w-full text-center text-xl font-semibold text-white'>{item?.artwork_title}</p>
+                    <div className='flex gap-4 my-4'>
+                      {item?.instagram_link &&
+                        <Link target='_blank' className='p-2 rounded-full bg-zinc-500 text-white' href={item?.instagram_link}><FaInstagram /></Link>
+                      }
+                      {item?.facebook_link &&
+                        <Link target='_blank' className='p-2 rounded-full bg-zinc-500 text-white' href={item?.facebook_link}><FaFacebook /></Link>
+                      }
+                      <p className='cursor-pointer p-2 rounded-full bg-zinc-500 text-white' onClick={() => setImageModal(item?.image)}><FaEye /></p>
+
+                    </div>
+                    <p className=' left-0 bottom-10 truncate w-full text-center text-white'>Artist: {item?.name}</p>
+                  </div>
                 </div>
-              ))
-            }
+              ))}
           </div>
         </LoadingLayout>
         <div className='mx-auto'>

@@ -44,7 +44,7 @@ const ChangePassword = () => {
       Object.values(passwordData).slice(0, -1)
     )
     if (hasBlank)
-      return toast.error('Please enter valid values!', toastOptions)
+      return toast.error('Please fill up the form!', toastOptions)
 
     setIsLoading(true)
     const result = await changePassword(passwordData, state?.user?._id)

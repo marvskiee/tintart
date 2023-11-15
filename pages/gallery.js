@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { CustomerLayout, CustomerWrapper, DeleteModalLayout, DynamicFetchLayout, LoadingLayout, ModalLayout, TextInput } from '../components'
+import { CustomerLayout, CustomerWrapper, DeleteModalLayout, DynamicFetchLayout, LoadingLayout, ModalLayout, TextInput, ViewGalleryModal } from '../components'
 import { Button, FileInput, Label, Modal } from 'flowbite-react'
 import { addGallery, deleteGallery, getAllGallery } from '../services/gallery.services'
 import { useAppContext } from '../context/AppContext'
@@ -7,7 +7,7 @@ import toast from 'react-hot-toast'
 import { toastOptions } from '../styles/modalOption'
 import { hasBlankValue, imageUploader } from '../services/tools'
 import Link from 'next/link'
-import { FaFacebook, FaInstagram, FaTiktok, FaTwitter } from 'react-icons/fa'
+import { FaEye, FaFacebook, FaInstagram, FaTwitter } from 'react-icons/fa'
 import { RiDeleteBin6Line } from 'react-icons/ri'
 
 const Gallery = () => {
@@ -18,13 +18,12 @@ const Gallery = () => {
     artwork_title: "",
     facebook_link: "",
     instagram_link: "",
-    tiktok_link: ""
   }
   const [formData, setFormData] = useState(initialData)
   const [data, setData] = useState([])
   const [modal, setModal] = useState(null)
   const [deleteModal, setDeleteModal] = useState(null)
-
+  const [imageModal, setImageModal] = useState(null)
   const targetRef = useRef()
 
   const [hoverActive, setHoverActive] = useState();
@@ -70,12 +69,7 @@ const Gallery = () => {
       value: formData?.instagram_link,
       setValue: e => setFormData({ ...formData, instagram_link: e.target.value }),
     },
-    {
-      label: 'Tiktok Link',
-      name: 'tiktok_link',
-      value: formData?.tiktok_link,
-      setValue: e => setFormData({ ...formData, tiktok_link: e.target.value }),
-    },
+
   ]
   const addHandler = async () => {
     const hasBlank = hasBlankValue(Object.values(formData).slice(0, -3))
@@ -110,6 +104,11 @@ const Gallery = () => {
 
   return (
     <>
+      {imageModal &&
+        <ViewGalleryModal
+          modal={imageModal}
+          setModal={setImageModal} />
+      }
       <DeleteModalLayout
         title='Image'
         modal={deleteModal}
@@ -222,12 +221,11 @@ const Gallery = () => {
                       {item?.instagram_link &&
                         <Link target='_blank' className='p-2 rounded-full bg-zinc-500 text-white' href={item?.instagram_link}><FaInstagram /></Link>
                       }
-                      {item?.tiktok_link &&
-                        <Link target='_blank' className='p-2 rounded-full bg-zinc-500 text-white' href={item?.tiktok_link}><FaTiktok /></Link>
-                      }
+
                       {item?.facebook_link &&
                         <Link target='_blank' className='p-2 rounded-full bg-zinc-500 text-white' href={item?.facebook_link}><FaFacebook /></Link>
                       }
+                      <p className='cursor-pointer p-2 rounded-full bg-zinc-500 text-white' onClick={() => setImageModal(item?.image)}><FaEye /></p>
                     </div>
                     <p className=' left-0 bottom-10 truncate w-full text-center text-white'>Artist: {item?.name}</p>
                   </div>

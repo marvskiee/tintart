@@ -177,9 +177,9 @@ const Cart = () => {
                             <h3 className='text-xl font-semibold text-gray-900 dark:text-white'>Terms and Conditions</h3>
                         </div>
                         <div className='p-6 space-y-6'>
-                            <p>
-                                {content?.terms}
-                            </p>
+                            <p
+                                dangerouslySetInnerHTML={{ __html: content?.terms.replace(/\n/g, '<br>') }}
+                            ></p>
                         </div>
                         <div className="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
                             <Button color='gray' onClick={() => setModal(false)}>

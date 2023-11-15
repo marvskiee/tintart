@@ -14,10 +14,10 @@ let mailTransporter = nodemailer.createTransport({
 export default async (req, res) => {
     switch (req.method) {
         case 'POST':
-            const { email, subject, text } = req.body
+            const { email, subject, text, is_contact } = req.body
             let details = {
-                from: sender,
-                to: email,
+                from: !is_contact ? sender : email,
+                to: is_contact ? sender : email,
                 subject,
                 text,
             }

@@ -28,4 +28,4 @@ export const recoveryPassword = async (newData, id) =>
   updateHTTPFormat({ newData, url: '/user/recover_password/' + id })
 
   export const validateCode = async (newData) =>
-  getHTTPFormat({ newData, url: '/user/send_code'})
+  postHTTPFormat({ newData, url: '/user/send_code'})

@@ -13,15 +13,28 @@ export default async function middleware(req) {
   try {
     const res = await verify(jwt?.value, secret)
     if (res) {
-      switch (pathname) {
+
+      switch (pathname.split("/").slice(0, 4).join("/")) {
         case '/profile':
+        case '/wishlist':
+        case '/order-history':
+        case '/password':
         case '/profile/edit':
         case '/shipping':
         case '/cart':
           if (res.role == 0 || res.role == 1) {
             return NextResponse.next();
-          } else {
+          }
+          else {
             return NextResponse.redirect(`${domain}`);
+          }
+        case '/':
+        case '/shop':
+        case '/gallery':
+          if (res.role == 2 || res.role == 3) {
+            return NextResponse.redirect(`${domain}admin/dashboard`);
+          } else {
+            return NextResponse.next();
           }
         case '/admin/dashboard':
         case '/admin/properties':
@@ -69,6 +82,9 @@ export default async function middleware(req) {
 
         // ARTIST AND CUSTOMER ROUTES
         case '/profile':
+        case '/wishlist':
+        case '/order-history':
+        case '/password':
         case '/profile/edit':
         case '/shipping':
         case '/cart':

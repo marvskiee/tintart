@@ -8,7 +8,7 @@ export default async (req, res) => {
   switch (req.method) {
     case 'GET':
       try {
-        const all_category = await Category.find()
+        const all_category = await Category.find().sort({ created_at: -1 })
         response({ res, status_code: 200, success: true, data: all_category })
       } catch (error) {
         response({ res, status_code: 400, success: false, error })

@@ -9,10 +9,6 @@ const ShopSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Name must not be empty'],
     },
-    description: {
-        type: String,
-        required: [true, 'Description must not be empty'],
-    },
     terms: {
         type: String,
         required: [true, 'Terms must not be empty'],

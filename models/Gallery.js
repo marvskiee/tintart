@@ -23,9 +23,6 @@ const GallerySchema = new mongoose.Schema({
   instagram_link: {
     type: String,
   },
-  tiktok_link: {
-    type: String,
-  },
   created_at: {
     type: Date,
     default: Date.now,

@@ -379,8 +379,13 @@ const DATA = {
         "PREPARING ORDER",
         "OUT OF DELIVERY",
         "COMPLETED",
-        "DELIVERED",
         "CANCELLED"
+    ],
+    PROFILE_LINKS: [
+        { name: 'Account Details', link: '/profile' },
+        { name: 'Wishlist', link: '/wishlist' },
+        { name: 'Order Transactions', link: '/order-history' },
+        { name: 'Change password', link: '/password' },
     ]
 
 

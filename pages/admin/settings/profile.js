@@ -62,7 +62,7 @@ const Profile = () => {
   }
   const validationHandler = async () => {
     const hasBlank = hasBlankValue(Object.values(data))
-    if (hasBlank || data?.contact_no.length != 11) return toast.error('Please enter valid values!', toastOptions)
+    if (hasBlank || data?.contact_no.length != 11) return toast.error('Please fill up the form!', toastOptions)
 
     setIsLoading(true)
 

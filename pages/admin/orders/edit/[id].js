@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AdminLayout, DropdownInput, LoadingLayout, ModalLayout } from '../../../../components';
 import { getOneOrderDetails, updateOrderDetails } from '../../../../services/order_details.services';
 import { useRouter } from 'next/router';
@@ -9,6 +9,7 @@ import moment from 'moment';
 import { getOneUser } from '../../../../services/user.services';
 import { toastOptions } from '../../../../styles/modalOption';
 import toast from 'react-hot-toast';
+import { AiFillCloseCircle } from 'react-icons/ai';
 
 const ViewOrders = () => {
   const [data, setData] = useState(null);
@@ -18,13 +19,15 @@ const ViewOrders = () => {
   const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false);
   const id = router.query.id;
   const [modalMode, setModalMode] = useState(null)
-  const [imageUpload, setImageUpload] = useState(null)
+  const [imageUpload, setImageUpload] = useState([])
 
 
   const refetchHandler = async () => {
     const result1 = await getOneOrderDetails(id);
     if (result1.success) {
       setData(result1.data);
+      setImageUpload(result1.data.proof_image)
+
       const result2 = await getOneUser(result1?.data?.user_id);
       if (result2.success) {
         setCustomer(result2?.data);
@@ -50,7 +53,6 @@ const ViewOrders = () => {
 
   }
   const table_headers = ["Products", "Price", "Quantity", "Subtotal"];
-
   useEffect(() => {
     if (id) {
       loadHandler();
@@ -71,17 +73,21 @@ const ViewOrders = () => {
       window.removeEventListener('afterprint', afterPrint);
     };
   }, [id]);
-
+  const uploadRef = useRef()
   const validationHandler = async () => {
-    if (imageUpload) {
-      await imageUploader([imageUpload], async postImage => {
-        await updateHandler({ proof_image: postImage[0] })
-        setImageUpload(null)
+    if (imageUpload.length) {
+      setIsLoading({ ...isLoading, update: true });
+
+      await imageUploader(imageUpload, async postImage => {
+        await updateHandler({ proof_image: postImage })
+        setImageUpload([])
         setModalMode(null)
       })
     } else {
       toast.error("Please select image file type!", toastOptions)
     }
+    setIsLoading({ ...isLoading, update: false });
+
   }
 
 
@@ -104,40 +110,63 @@ const ViewOrders = () => {
             <h3 className='text-xl font-semibold text-gray-900 dark:text-white'>{modalMode != "view" && "Upload"} Payment Proof</h3>
           </div>
           <div className='p-6'>
-            <Label className='capitalize mb-2 block'>Preview:</Label>
-            <div className=''>
-              <img
-                src=
-                {modalMode != "view" ?
-                  imageUpload?.url || '/images/camera.png' :
-                  data?.proof_image
-                }
-                className='mx-auto object-cover aspect-square sm:w-72 w-auto border rounded-md'
-              />
-            </div>
-            {modalMode != "view" &&
-              <>
+            <>
+              {modalMode != "view" &&
                 <Label className='capitalize mb-2 block'>Upload Image:</Label>
-                <div className='flex items-center gap-4'>
-                  <FileInput
-                    className='w-full'
-                    disabled={isLoading?.update}
-                    onChange={e => {
-                      try {
-                        if (e.target?.files[0].size > 2000000)
-                          return toast.error('File must be less than 2mb.', toastOptions)
-                        setImageUpload({
+              }
+              <div className='flex items-center gap-4'>
+                <input
+                  ref={uploadRef}
+                  type='file'
+                  onChange={e => {
+                    try {
+                      if (e.target?.files[0].size > 2000000)
+                        return toast.error('File must be less than 2mb.', toastOptions)
+                      setImageUpload([
+                        ...imageUpload,
+                        {
                           url: URL?.createObjectURL(e.target?.files[0]),
                           file: e.target?.files[0],
                           size: e.target?.files[0].size,
-                        })
-                      } catch (e) { }
-                    }}
-                    accept='image/*'
-                  />
-                </div>
-              </>
-            }
+                        },
+                      ])
+                    } catch (e) { }
+                  }}
+                  accept='image/*'
+                  className='hidden my-2 rounded-md border border-zinc-300 px-4 py-3'
+                />
+              </div>
+              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4'>
+                {imageUpload.map((item, key) => (
+                  <div className='relative cursor-pointer' key={key + 'image-upload'}>
+                    <img
+                      src={item?.url || item}
+                      key={key + 'product-image'}
+                      className='border w-full aspect-square object-cover'
+                    />
+                    {modalMode != "view" &&
+                      <span
+                        onClick={() => {
+                          setImageUpload([...imageUpload.filter((sup, i) => i != key)])
+                        }}
+                        className='cursor-pointer absolute  rounded-full  top-2 right-2 bg-white z-10'
+                      >
+                        <AiFillCloseCircle size={20} className='text-red-600' />
+                      </span>
+                    }
+                  </div>
+                ))}
+                {modalMode != "view" &&
+                  imageUpload.length < 4 && (
+                    <img
+                      onClick={() => uploadRef.current.click()}
+                      src='/images/camera.png'
+                      className='cursor-pointer border w-full aspect-square'
+                    />
+                  )}
+              </div>
+
+            </>
             <div className='flex gap-4 justify-end mt-4 sm:flex-row flex-col'>
               {modalMode != "view" &&
                 <Button
@@ -152,7 +181,7 @@ const ViewOrders = () => {
                 disabled={isLoading?.update}
                 color="light"
                 onClick={() => {
-                  setImageUpload(null)
+                  setImageUpload(data?.proof_image)
                   setModalMode(null)
                 }}
               >
@@ -168,11 +197,11 @@ const ViewOrders = () => {
             {!isPrintDialogOpen &&
               <div className='flex items-center flex-col md:flex-row gap-4 justify-between'>
                 <div className='flex gap-4 flex-col md:flex-row w-full'>
-                  <DropdownInput name="order-status" item={DATA.ORDER_STATUS} handler={(e) => { updateHandler({ status: e }) }} selected={data?.status?.replaceAll("_", " ").toUpperCase()} disabled={isLoading?.fetch || isLoading?.update} className="w-full md:w-auto" />
+                  <DropdownInput name="order-status" item={DATA.ORDER_STATUS} handler={(e) => { updateHandler({ is_paid: e == "COMPLETED", status: e }) }} selected={data?.status?.replaceAll("_", " ").toUpperCase()} disabled={isLoading?.fetch || isLoading?.update} className="w-full md:w-auto" />
                   <Button color="dark" onClick={() => {
                     document.getElementById('header').style.display = 'none';
                     document.getElementById('footer').style.display = 'none';
-                    
+
                     setIsPrintDialogOpen(true)
                     setTimeout(() => {
                       window.print()
@@ -198,7 +227,7 @@ const ViewOrders = () => {
               </Card>
               <Card title={"Mode of Payment:"}>
                 <p className='text-center'>{data?.mop == "credit" ? "Credit/Debit Card" : data?.mop == "gcash" ? "Gcash" : data?.mop == "cod" && "Cash on Delivery"}</p>
-                {data?.proof_image &&
+                {data?.proof_image.length > 0 &&
                   <p className='cursor-pointer underline text-blue-500 font-semibold' onClick={() => setModalMode("view")}>View Payment Proof</p>
                 }
               </Card>

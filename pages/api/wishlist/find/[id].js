@@ -1,6 +1,7 @@
 import dbConnect from '../../../../utils/dbConnect'
 import WishList from '../../../../models/WishList'
 import { response } from '../../../../services/response'
+import Product from '../../../../models/Product'
 
 dbConnect()
 
@@ -8,7 +9,7 @@ export default async (req, res) => {
 switch (req.method) {
         case 'GET':
             try {
-                const wishlist = await WishList.find({ user_id: req.query.id })
+                const wishlist = await WishList.find({ user_id: req.query.id }).populate("product_id")
                 return response({
                     res,
                     status_code: 200,

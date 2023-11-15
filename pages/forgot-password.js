@@ -15,6 +15,7 @@ const ForgotPassword = () => {
         console.log('Countdown reached zero!');
 
     });
+    const [isLoading, setIsLoading] = useState(false)
     const [disabled, setDisabled] = useState(false)
     const [nextPage, setNextPage] = useState(false)
     const [formData, setFormData] = useState({
@@ -47,6 +48,7 @@ const ForgotPassword = () => {
         }
     }
     const submitHandler = async () => {
+
         let { recovery_code,
             email } = formData
         const hasBlank = hasBlankValue(Object.values({
@@ -54,10 +56,13 @@ const ForgotPassword = () => {
             email
         }))
         if (hasBlank)
-            return toast.error('Please enter valid values!', toastOptions)
-
+            return toast.error('Please fill up the form!', toastOptions)
+        setIsLoading(true)
+        console.log({ recovery_code: formData?.recovery_code, email: formData?.email })
         const result = await validateCode({ recovery_code: formData?.recovery_code, email: formData?.email })
-        if (!result?.success) {
+        setIsLoading(false)
+        console.log(result)
+        if (!result?.data) {
             return toast.error('Invalid Code!', toastOptions)
         }
         const user = result?.data
@@ -73,7 +78,7 @@ const ForgotPassword = () => {
             confirm_password
         }))
         if (hasBlank)
-            return toast.error('Please enter valid values!', toastOptions)
+            return toast.error('Please fill up the form!', toastOptions)
         if (password != confirm_password)
             return toast.error('Password mismatch!', toastOptions)
 
@@ -88,7 +93,7 @@ const ForgotPassword = () => {
         if (result?.success) {
             // generate again the code so it cannot be reused
             let newCode = generateCode()
-             updateUserByEmail({
+            updateUserByEmail({
                 recovery_code: newCode,
             }, formData?.email)
 
@@ -127,7 +132,7 @@ const ForgotPassword = () => {
                             type="text"
                         />
                     </div>
-                    <Button className='w-full' onClick={submitHandler}>Submit</Button>
+                    <Button className='w-full' disabled={isLoading} onClick={submitHandler}>Submit</Button>
                 </div> :
                 <div className='border shadow-md min-w-full sm:min-w-[30rem] p-6 rounded-md flex flex-col gap-4'>
                     <p className=' text-center text-xl font-semibold'>Forgot Password</p>

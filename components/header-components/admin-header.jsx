@@ -8,6 +8,7 @@ import DATA from '../../utils/DATA'
 import { useAppContext } from '../../context/AppContext'
 import { authLogout, getUser } from '../../services/auth.services'
 import toast from 'react-hot-toast'
+import Head from 'next/head'
 const AdminHeader = props => {
   const [menuBar, setMenuBar] = useState(false)
 
@@ -38,8 +39,14 @@ const AdminHeader = props => {
       router.push('/login')
     }
   }
+  let pathname = router.pathname?.split('/')[2]
+  const capitalizedPathname = pathname
+    ? `${pathname.charAt(0).toUpperCase()}${pathname.slice(1)}`
+    : ''
+
   return (
     <>
+      <Head>{pathname && <title>{`${capitalizedPathname} | TintArt`}</title>}</Head>
       <div className='z-50 sticky top-0' id='header'>
         <div
           className={`px-4 lg:py-2 py-4 bg-white -z-10 border-b sticky lg:static flex-row flex items-center justify-between`}

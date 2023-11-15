@@ -87,7 +87,7 @@ const ProductFormLayout = ({ title, oldData }) => {
   const validationHandler = async () => {
     const hasBlank = hasBlankValue(Object.values(data).filter(item => typeof item === 'string'))
     if (hasBlank || imageUpload.length == 0)
-      return toast.error('Please enter valid values!', toastOptions)
+      return toast.error('Please fill up the form!', toastOptions)
     setIsLoading(true)
 
     await imageUploader(imageUpload, async postImage => {
@@ -101,7 +101,7 @@ const ProductFormLayout = ({ title, oldData }) => {
       const result = await updateProduct(newData, oldData?._id)
       if (await result?.success) {
         toast.success(`Product has been updated successfuly!`, toastOptions)
-        router?.push("/admin/products")
+        router?.push('/admin/products')
         // setImageUpload(postImage)
       } else {
         toast.error('Something went wrong!', toastOptions)
@@ -217,7 +217,17 @@ const ProductFormLayout = ({ title, oldData }) => {
           <TextInput
             disabled={isLoading}
             value={data?.price}
-            onChange={e => setData({ ...data, price: e.target.value })}
+            onChange={e => {
+              const inputPrice = e.target.value
+
+              // Regular expression to allow only numbers and optionally one decimal point
+              const regex = /^[0-9]+(\.[0-9]*)?$/
+
+              // If the input matches the pattern or it's an empty string (allowing deletion)
+              if (inputPrice === '' || regex.test(inputPrice)) {
+                setData({ ...data, price: inputPrice })
+              }
+            }}
             type='text'
           />
         </div>

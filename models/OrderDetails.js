@@ -39,7 +39,9 @@ const OrderDetailsSchema = new mongoose.Schema({
     type: String,
   },
   proof_image: {
-    type: String,
+    type: [{
+      type: String,
+  }],
   },
   user_id:{
     type: String,

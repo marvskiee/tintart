@@ -65,12 +65,12 @@ const Properties = () => {
     const hasBlank = hasBlankValue(Object.values(data));
     const hexColorRegex = /^#([0-9A-Fa-f]{3}){1,2}$/;
     let is_valid = !hasBlank && hexColorRegex.test(data?.values)
-    return { success: is_valid, message: "Please enter valid values!" };
+    return { success: is_valid, message: "Please fill up the form!" };
   }
 
   const sizeValidationHandler = (data) => {
     const hasBlank = hasBlankValue(Object.values(data));
-    return { success: !hasBlank, message: "Please enter valid values!" };
+    return { success: !hasBlank, message: "Please fill up the form!" };
   }
 
   return (

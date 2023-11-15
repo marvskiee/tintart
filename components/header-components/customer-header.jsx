@@ -12,6 +12,7 @@ import { useAppContext } from '../../context/AppContext'
 import { getUser } from '../../services/auth.services'
 import { getAllProduct } from '../../services/product.services'
 import { FiLogIn } from 'react-icons/fi'
+import Head from 'next/head'
 
 const CustomerHeader = props => {
   const [search, setSearch] = useState('')
@@ -44,10 +45,15 @@ const CustomerHeader = props => {
     load()
     loadHandler()
   }, [state.isAuth, search])
-
+  let pathname = router.pathname?.split('/')[2]
+  const capitalizedPathname = pathname
+    ? `${pathname.charAt(0).toUpperCase()}${pathname.slice(1)}`
+    : ''
   const SearchComponents = ({ search, filteredData }) => {
     return (
       <>
+        <Head>{pathname && <title>{`${capitalizedPathname || 'Home'} | TintArt`}</title>}</Head>
+
         {search?.trim().length > 0 && (
           <div className='w-full bg-white absolute top-[3rem] z-20 rounded-md border max-h-[50vh] overflow-y-auto'>
             {filteredData?.length > 0 ? (
@@ -139,8 +145,8 @@ const CustomerHeader = props => {
                 </>
               ) : (
                 <Link href='/login'>
-                  <Button size='large' color='dark' className='p-2 bg-zinc-900'>
-                    Login
+                  <Button size='sm' color='dark' className='p-2 bg-zinc-900'>
+                    Login/Register
                   </Button>
                 </Link>
               )}

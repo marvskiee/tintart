@@ -1,6 +1,8 @@
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage"
 import { storage } from "./firebase"
 import { v4 } from "uuid"
+import { toastOptions } from "../styles/modalOption"
+import toast from "react-hot-toast"
 
 export const getHTTPFormat = async ({ url }) => {
   const res = await fetch(`/api${url}`, {
@@ -97,3 +99,14 @@ export const filterObjectWithEmptyProperties = obj =>
         [key, typeof value === 'object' ? filterObjectWithEmptyProperties(value) : value]
       )
   );
+
+export const isValidEmail = (email) => {
+  // Regular expression for basic email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+export const isValidPhoneNumber = (number) => {
+  // Regular expression for Philippine phone numbers in the format '0912345689'
+  const phoneRegex = /^09\d{9}$/;
+  return phoneRegex.test(number);
+}

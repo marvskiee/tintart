@@ -13,22 +13,15 @@ import { toastOptions } from '../../styles/modalOption';
 import { getUserOrderDetails } from '../../services/order_details.services';
 import DATA from '../../utils/DATA';
 import { formatNumberWithCommas } from '../../services/tools';
+import ProfileLayout from '../../components/layout-components/profile-layout';
 
 const Profile = () => {
     const { state, dispatch } = useAppContext();
     const router = useRouter()
 
     const [shippingData, setShippingData] = useState([])
-    const [wishlistData, setWishlistData] = useState([])
-    const [orderData, setOrderData] = useState([])
 
 
-    const refreshWishList = async (id) => {
-        const result_wishlist = await getUserWishList(id)
-        if (result_wishlist?.success) {
-            setWishlistData(result_wishlist?.data)
-        }
-    }
     const loadHandler = async () => {
         let id = state?.user?._id
         // get shipping
@@ -38,11 +31,7 @@ const Profile = () => {
             if (defaultData.length > 0)
                 setShippingData(defaultData)
         }
-        refreshWishList(id)
-        const result_order = await getUserOrderDetails(id)
-        if (result_order?.success) {
-            setOrderData(result_order?.data)
-        }
+       
         setIsLoading(false)
     }
 
@@ -53,151 +42,52 @@ const Profile = () => {
 
     const [isLoading, setIsLoading] = useState(true)
 
-    const heartHandler = async (item) => {
-        const { _id } = item
-        const result = await deleteWishList(_id)
-        if (result?.success) {
-            refreshWishList(item?.user_id)
-            return toast.success(`Removed to Wishlist`, toastOptions)
-        }
-    }
-
-
-    const logoutHandler = async () => {
-        toast.dismiss();
-
-        dispatch({ type: "LOGIN_REQUEST" });
-
-        const { success, message } = await authLogout();
-
-        if (!success) {
-            dispatch({ type: "LOGIN_ERROR", value: { error: message } });
-            toast.error(message, {
-                duration: 1500,
-            });
-        } else {
-            await dispatch({ type: "LOGOUT" });
-            router.push("/login");
-        }
-    };
-
     return (
         <CustomerLayout hasFetch={true}>
             <CustomerWrapper>
-                <div className='grid grid-cols-1 gap-4 lg:grid-cols-2 lg:px-10 p-4'>
-                    <div className='w-full flex flex-col gap-4'>
-                        <div className='flex items-center justify-between'>
-                            <p className='underline cursor-pointer' onClick={logoutHandler}>LOGOUT</p>
+                <ProfileLayout>
+                    <div className='grid grid-cols-1 gap-4'>
+                        <div className='w-full flex flex-col lg:flex-row gap-4 items-start justify-between'>
+                            <div className='flex gap-4 items-center'>
+                                <img
+                                    src={state?.user?.profile_image || '/images/no-profile.png'}
+                                    className='object-cover rounded-full w-32 aspect-square border'
+                                />
+                                <div>
+                                    <p className='text-lg font-semibold'>{state?.user?.first_name} {state?.user?.last_name}</p>
+                                    <p className=''>{state?.user?.contact_no}</p>
+                                    <p className=''>{state?.user?.email}</p>
+                                </div>
+                            </div>
                             <Button color='dark' onClick={() => router.push("/profile/edit")}>Edit Profile</Button>
                         </div>
-                        <p className='text-xl'>My Account</p>
-                        <div className='lg:col-span-2'>
-                            <img
-                                src={state?.user?.profile_image || '/images/no-profile.png'}
-                                className='object-cover w-32 aspect-square border rounded-md'
-                            />
-                        </div>
-                        <p className='text-2xl font-semibold'>Welcome Back, {state?.user?.first_name} {state?.user?.last_name}</p>
-                    </div>
 
-                    <div className='w-full flex flex-col gap-4'>
-                        {/* shipping section  */}
-                        <div className='border-b'>
+                        <div className='w-full flex flex-col mt-4 gap-4'>
+                            {/* shipping section  */}
                             <p className='text-2xl py-2 font-semibold uppercase'>Shipping Address</p>
-                        </div>
-                        {/* selected address  */}
-                        <LoadingLayout message="You have no address listed." loadingState={isLoading} hasContent={shippingData.length > 0}>
-                            <div className='flex items-center justify-between border-y p-4 text-zinc-500'>
-                                <div>
-                                    <div className='flex gap-2 lg:flex-row flex-col'>
-                                        <p className='text-black'>{shippingData[0]?.receiver_name}</p>
-                                        <p className=''>{shippingData[0]?.contact_no}</p>
-                                    </div>
-                                    <p className=''>{shippingData[0]?.unit} {shippingData[0]?.street} {shippingData[0]?.region}</p>
-                                    <p className=''>{shippingData[0]?.information}</p>
-                                    <p className='py-2'>
-                                        {
-                                            shippingData[0]?._id == state?.user?.shipping_id &&
-                                            <span className='border border-red-600 text-red-600 p-1 px-4 text-xs'>Default</span>
-                                        }
-                                    </p>
-                                </div>
-                            </div>
-                        </LoadingLayout>
-                        <Button color="failure" className='w-full' onClick={() => router.push("/shipping")}>Edit Shipping Address</Button>
-                    </div>
-
-                    <div className='w-full flex flex-col gap-4'>
-                        {/* order section  */}
-                        <div className='border-b'>
-                            <p className='text-2xl py-2 font-semibold uppercase'>My Orders</p>
-                        </div>
-                        {/* list of orders  */}
-                        <LoadingLayout message="You have no order listed." loadingState={isLoading} hasContent={orderData?.length}>
-                            <div className='flex items-center flex-col justify-between gap-4'>
-                                {orderData?.map((item) => (
-                                    <div key={item?._id} className='w-full flex-col flex gap-4  p-4 border'>
-                                        <div className='flex items-center justify-between'>
-                                            <p className='font-semibold text-lg'>Order Status:</p>
-                                            <p className='font-semibold text-lg uppercase'>{item?.status}</p>
+                            {/* selected address  */}
+                            <LoadingLayout message="You have no address listed." loadingState={isLoading} hasContent={shippingData.length > 0}>
+                                <div className='flex items-center justify-between border-y p-4 text-zinc-500'>
+                                    <div>
+                                        <div className='flex gap-2 lg:flex-row flex-col'>
+                                            <p className='text-black'>{shippingData[0]?.receiver_name}</p>
+                                            <p className=''>{shippingData[0]?.contact_no}</p>
                                         </div>
-                                        {item?.products.map((product) => (
-                                            <div key={product?._id} className='flex items-center justify-between'>
-                                                <div className='flex gap-4 items-center'>
-                                                    <img src={product?.image} className='aspect-square h-20 w-20' />
-                                                    <div className="flex flex-col gap-2">
-                                                        <p className='font-semibold'>{product?.name}</p>
-                                                        <p className='font-semibold'>{product?.size}</p>
-                                                        <p className='font-semibold'>{product?.color}</p>
-
-                                                    </div>
-
-                                                </div>
-                                                <div className='flex gap-4 flex-col'>
-                                                    <p className='font-semibold text-right'>X{product?.quantity}</p>
-                                                    <p className='font-semibold text-xl'>{`${DATA.PESO} ${formatNumberWithCommas(product?.price)}`}</p>
-                                                </div>
-
-                                            </div>
-                                        ))}
-                                        <div className='flex gap-4 items-center justify-between'>
-                                            <p className='font-semibold'>No. of items: {item?.products?.length}</p>
-                                            <p className='font-semibold'>Order Total Price: {item?.total_price}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </LoadingLayout>
-                    </div>
-
-                    <div className='w-full flex flex-col gap-4'>
-                        {/* wishlist section  */}
-                        <div className='border-b'>
-                            <p className='text-2xl py-2 font-semibold uppercase'>Wishlist</p>
-                        </div>
-                        <LoadingLayout message="You have no wishlist." loadingState={isLoading} hasContent={wishlistData?.length > 0}>
-                            {wishlistData?.map((item, key) => (
-                                <div className='flex items-center justify-between' key={"wishlist" + key}>
-                                    <img src={item?.image} className='object-cover w-14 aspect-square' />
-                                    <div className="flex w-full justify-between items-center">
-                                        <div className='p-2'>
-                                            <p className='font-semibold'>{item?.title}</p>
-                                            <p className='underline'>
-                                                <Link href={"/shop/" + item?.product_id}>
-                                                    Live Preview
-                                                </Link>
-                                            </p>
-                                        </div>
-                                        <Button onClick={() => heartHandler(item)} color="light" size="xs"
-                                            className='border-0 aspect-square'>
-                                            <AiFillHeart className='text-2xl text-red-600' />
-                                        </Button>
+                                        <p className=''>{shippingData[0]?.unit} {shippingData[0]?.street} {shippingData[0]?.region}</p>
+                                        <p className=''>{shippingData[0]?.information}</p>
+                                        <p className='py-2'>
+                                            {
+                                                shippingData[0]?._id == state?.user?.shipping_id &&
+                                                <span className='border border-red-600 text-red-600 p-1 px-4 text-xs'>Default</span>
+                                            }
+                                        </p>
                                     </div>
                                 </div>
-                            ))}
-                        </LoadingLayout>
+                            </LoadingLayout>
+                            <Button color="failure" className='w-full' onClick={() => router.push("/shipping")}>Edit Shipping Address</Button>
+                        </div>
                     </div>
-                </div>
+                </ProfileLayout>
             </CustomerWrapper >
         </CustomerLayout >
     )

@@ -6,8 +6,8 @@ const WishListSchema = new mongoose.Schema({
         required: [true, 'User Id must not be empty'],
     },
     product_id: {
-        type: String,
-        required: [true, 'Product Id must not be empty!'],
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
     },
     image: {
         type: String,

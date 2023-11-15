@@ -83,25 +83,26 @@ const About = () => {
                     <p className='font-bold text-2xl my-4'>Our Mission</p>
                     <p className='py-2'>Our mission at TintArt is to empower individials to unleash their creativity by offering an array of customizable merchandise. We aim to provide a seamless and enjoyable customization experience that allows you to express yourself, create lasting memories, and share your uniqueness with the world.</p>
                     <p className='py-2'>Join us TintArt and let your creativity shine. Create, customize, and make a statement with our personalized merchandise.</p>
-                    <LoadingLayout
-                        message="" loadingState={isLoading} hasContent={data?.length > 0}
-                    >
-                        <div className='flex flex-col lg:flex-row items-center justify-center gap-6 md:gap-10 my-8'>
-                            {data.map((item, key) => (
-                                <div key={"about-" + key} className={`max-w-[20rem] text-zinc-900 font-semibold border bg-zinc-100 shadow-md p-4 rounded-lg ${key == 0 && "order-last"}`}>
-                                    <p>{item?.role}</p>
-                                    <p className='text-xl'>{item?.name}</p>
-                                    <div className='flex gap-4 my-4'>
-                                        <Link target='_blank' className='p-2 rounded-full bg-zinc-500 text-white' href={item?.instagram_link || ""}><FaInstagram /></Link>
-                                        <Link target='_blank' className='p-2 rounded-full bg-zinc-500 text-white' href={item?.tiktok_link || ""}><FaTiktok /></Link>
-                                        <Link target='_blank' className='p-2 rounded-full bg-zinc-500 text-white' href={item?.facebook_link || ""}><FaFacebook /></Link>
+
+                        <LoadingLayout
+                            message="" loadingState={isLoading} hasContent={data?.length > 0}
+                        >
+                            <div className='flex flex-col lg:flex-row items-center justify-center gap-6 md:gap-10 my-8'>
+                                {data.map((item, key) => (
+                                    <div key={"about-" + key} className={`max-w-[20rem] text-zinc-900 font-semibold border bg-zinc-100 shadow-md p-4 rounded-lg ${key == 0 && "order-last"}`}>
+                                        <p>{item?.role}</p>
+                                        <p className='text-xl'>{item?.name}</p>
+                                        <div className='flex gap-4 my-4'>
+                                            <Link target='_blank' className='p-2 rounded-full bg-zinc-500 text-white' href={item?.instagram_link || ""}><FaInstagram /></Link>
+                                            <Link target='_blank' className='p-2 rounded-full bg-zinc-500 text-white' href={item?.tiktok_link || ""}><FaTiktok /></Link>
+                                            <Link target='_blank' className='p-2 rounded-full bg-zinc-500 text-white' href={item?.facebook_link || ""}><FaFacebook /></Link>
+                                        </div>
+                                        <img src={item?.image || item?.logo} className='max-w-[15rem] w-full rounded-md aspect-square object-cover' />
                                     </div>
-                                    <img src={item?.image || item?.logo} className='max-w-[15rem] w-full rounded-md aspect-square object-cover' />
-                                </div>
-                            ))}
-                        </div>
-                    </LoadingLayout>
-                    <ContactLayout title="Contact Us" />
+                                ))}
+                            </div>
+                        </LoadingLayout>
+                        <ContactLayout title="Contact Us" />
 
                 </div>
 

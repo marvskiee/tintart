@@ -27,7 +27,7 @@ const Categories = () => {
 
   const validationHandler = (data) => {
     const hasBlank = hasBlankValue(Object.values(data));
-    return { success: !hasBlank, message: "Please enter valid values!" };
+    return { success: !hasBlank, message: "Please fill up the form!" };
   }
   return (
     <AdminLayout>

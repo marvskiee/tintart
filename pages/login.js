@@ -3,11 +3,12 @@ import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { toastOptions } from '../styles/modalOption'
 import { authLogin } from '../services/auth.services'
-import { hasBlankValue } from '../services/tools'
+import { hasBlankValue, isValidEmail, isValidPhoneNumber } from '../services/tools'
 import { useAppContext } from '../context/AppContext'
 import { addUser } from '../services/user.services'
 import { useRouter } from 'next/router'
 import { TextInput } from '../components'
+import { FaArrowLeftLong } from "react-icons/fa6";
 import DATA from '../utils/DATA'
 import { sendMessage } from '../services/email.services'
 
@@ -31,14 +32,16 @@ const Login = () => {
         const { email, password, confirm_password } = credentials
         const passwordMatch = password === confirm_password
         let hasBlank = hasBlankValue(Object.values({ email, password }))
+        if (!isValidEmail(email)) return toast.error('Invalid Email!', toastOptions)
+
         if (loginMode == "register") {
             if (!passwordMatch)
                 return toast.error('Password Mismatch!', toastOptions)
-            if (credentials?.contact_no.length != 11)
+            if (!isValidPhoneNumber(credentials?.contact_no))
                 return toast.error('Invalid Contact Number!', toastOptions)
         }
 
-        if (hasBlank) return toast.error('Please enter valid values!', toastOptions)
+        if (hasBlank) return toast.error('Please fill up the form!', toastOptions)
 
         setIsLoading(true)
         //do something else
@@ -160,6 +163,8 @@ const Login = () => {
                         : loginMode == "register" &&
                         <p className='text-center ' onClick={() => !isLoading && setLoginMode("login")}>Already have an account? <span className='underline cursor-pointer'>Click here</span></p>
                     }
+                    <Button disabled={isLoading} color="light" className='w-full' onClick={()=>router.push('/')}><FaArrowLeftLong className='mr-4'/>Go back to home page</Button>
+
                 </div>
 
             </div>

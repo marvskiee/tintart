@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { sendMessage } from '../../services/email.services'
 import toast from 'react-hot-toast'
 import { toastOptions } from '../../styles/modalOption'
-import { hasBlankValue } from '../../services/tools'
+import { hasBlankValue, isValidEmail } from '../../services/tools'
 import TextInput from '../input-components/text-input'
 
 const ContactLayout = ({ title }) => {
@@ -19,34 +19,36 @@ const ContactLayout = ({ title }) => {
 
   const inputFields = [
     {
-      label: 'First Name',
-      name: 'first_name',
+      label: 'First Name: ',
       value: data?.first_name,
       setValue: e => setData({ ...data, first_name: e.target.value }),
     },
     {
-      label: 'Last Name',
+      label: 'Last Name (Optional):',
       value: data?.last_name,
       setValue: e => setData({ ...data, last_name: e.target.value }),
     },
     {
-      label: 'Email',
+      label: 'Email:',
       value: data?.email,
       setValue: e => setData({ ...data, email: e.target.value }),
     },
     {
-      label: 'Subject',
+      label: 'Subject:',
       value: data?.subject,
       setValue: e => setData({ ...data, subject: e.target.value }),
     },
   ]
 
   const submitHandler = async () => {
-    const hasBlank = hasBlankValue(Object.values(data))
-    if (hasBlank) return toast.error('Please enter valid values!', toastOptions)
+    let { first_name, email, subject, body } = data
+    const hasBlank = hasBlankValue(Object.values({ first_name, email, subject, body }))
+    if (!isValidEmail(email)) return toast.error('Invalid Email!', toastOptions)
+    if (hasBlank) return toast.error('Please fill up the form!', toastOptions)
     setIsLoading(true)
     const result = await sendMessage({
       ...data,
+      is_contact: true,
       text: `Name: ${data?.first_name} ${data?.last_name}\nMessage: ${data?.body}`,
     })
     if (await result?.success) {
@@ -61,7 +63,9 @@ const ContactLayout = ({ title }) => {
 
   return (
     <>
-      <p className='font-bold text-2xl my-4 text-center'>{title}</p>
+      <p id='contact' className='font-bold text-2xl my-4 text-center'>
+        {title}
+      </p>
       <div className='rounded-md border grid grid-cols-1 gap-4 lg:grid-cols-2 p-4'>
         {inputFields.map((item, key) => (
           <div>
