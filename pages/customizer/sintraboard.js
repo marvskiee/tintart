@@ -46,7 +46,7 @@ const PictureComponent = ({ images, setCanvas, canvas, closeHandler }) => {
       <div className='mt-4 grid lg:grid-cols-3 grid-cols-2 gap-4'>
         <div
           onClick={() => setCanvas("")}
-          className='hover:border-violet-600 cursor-pointer border rounded-md flex items-center justify-center'>
+          className='aspect-square hover:border-violet-600 cursor-pointer border rounded-md flex items-center justify-center'>
           <MdDoNotDisturbAlt size={50} />
         </div>
         {images?.map((item, key) => (
@@ -150,7 +150,7 @@ const Customizer = () => {
     const result = await getUserCanvas(state?.user?._id)
     if (result?.success) {
       const imagelist = result.data.map(item => item.product.logos).flat().filter((r) => r != null || r != undefined);
-      setImages(imagelist)
+      setImages(imagelist.filter(d => d.merchandise == "sintraboard"))
     }
     await refetchArtworkHandler()
   }
