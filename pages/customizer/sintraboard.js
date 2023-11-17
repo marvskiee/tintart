@@ -150,9 +150,7 @@ const Customizer = () => {
     const result = await getUserCanvas(state?.user?._id)
     if (result?.success) {
       const imagelist = result.data.map(item => item.product.logos).flat().filter((r) => r != null || r != undefined);
-      console.log(imagelist)
-      const logoArray = imagelist.map(item => MY_CORS + item).flat();
-      setImages(logoArray)
+      setImages(imagelist)
     }
     await refetchArtworkHandler()
   }
@@ -344,7 +342,7 @@ const Customizer = () => {
                   style={{
                     minHeight: scaledHeight,
                     minWidth: scaledWidth,
-                  }} src={canvasImage} className='h-full w-full object-cover' />
+                  }} src={MY_CORS+canvasImage} className='h-full w-full object-cover' />
               }
               {canvasText.length > 0 &&
                 <div className=' mx-auto absolute bottom-1 w-full'>

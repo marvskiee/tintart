@@ -159,8 +159,8 @@ const LiveProductLayout = props => {
   const createDesignHandler = async () => {
     await addCanvas({ product: id, user_id: state?.user?._id })
     if (data.merchandise == 'T-Shirt') shirtRef.current?.click()
-    if (data.merchandise == 'Photocard') router.push('/customizer')
-    if (data.merchandise == 'Sintra Board') router.push('https://tintartcustomize.vercel.app/')
+    if (data.merchandise == 'Photocard') router.push('/customizer/photocard')
+    if (data.merchandise == 'Sintra Board') router.push('/customizer/sintraboard')
   }
   const refreshWishList = async () => {
     const wishlist_result = await getUserWishList(state?.user?._id)
@@ -284,23 +284,15 @@ const LiveProductLayout = props => {
                   )}
                 </Button>
               </div>
-              {state?.user ? (
                 <Button
+                  disabled={!state?.user}
                   onClick={createDesignHandler}
                   className='w-full text-zinc-900 uppercase font-semibold'
                   color='warning'
                 >
                   Create your own design
                 </Button>
-              ) : (
-                <Button
-                  disabled
-                  className='w-full text-zinc-900 uppercase font-semibold'
-                  color='warning'
-                >
-                  Create your own design
-                </Button>
-              )}
+                <Link href="https://tintartcustomize.vercel.app/" target='_blank' ref={shirtRef}/>
             </div>
           </div>
         </CustomerWrapper>

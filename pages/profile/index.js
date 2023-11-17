@@ -49,7 +49,7 @@ const Profile = () => {
                 <ProfileLayout>
                     <div className='grid grid-cols-1 gap-4'>
                         <div className='w-full flex flex-col lg:flex-row gap-4 items-start justify-between'>
-                            <div className='flex gap-4 items-center'>
+                            <div className='flex flex-col lg:flex-row gap-4 items-center'>
                                 <img
                                     src={state?.user?.profile_image || '/images/no-profile.png'}
                                     className='object-cover rounded-full w-32 aspect-square border'

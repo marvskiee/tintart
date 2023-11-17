@@ -39,7 +39,6 @@ const ContactLayout = ({ title }) => {
       setValue: e => setData({ ...data, subject: e.target.value }),
     },
   ]
-
   const submitHandler = async () => {
     let { first_name, email, subject, body } = data
     const hasBlank = hasBlankValue(Object.values({ first_name, email, subject, body }))
