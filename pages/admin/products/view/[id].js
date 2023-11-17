@@ -115,7 +115,8 @@ const ViewProduct = (props) => {
               <p className='font-semibold text-xl'>{data?.product_name}</p>
               <StarLayout rating={review?.length == 0 ? 0 : (overall_rating) / (review?.length)} />
               <p className='font-semibold text-2xl'>{DATA.PESO} {data?.price}</p>
-              <p className='h-full'>{data?.description}</p>
+              <p dangerouslySetInnerHTML={{ __html: data?.description.replace(/\n/g, '<br>') }}></p>
+
               <p><span className='font-semibold'>Category: </span> {data?.category?.category}</p>
               <p className='font-semibold'>Sizes: </p>
               <div className='flex gap-4'>

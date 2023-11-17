@@ -17,6 +17,7 @@ export default async function middleware(req) {
       switch (pathname.split("/").slice(0, 4).join("/")) {
         case '/profile':
         case '/wishlist':
+        case '/customizer':
         case '/order-history':
         case '/password':
         case '/profile/edit':
@@ -83,6 +84,7 @@ export default async function middleware(req) {
         // ARTIST AND CUSTOMER ROUTES
         case '/profile':
         case '/wishlist':
+        case '/customizer':
         case '/order-history':
         case '/password':
         case '/profile/edit':

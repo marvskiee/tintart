@@ -167,6 +167,7 @@ const Cart = () => {
     }
     // modals
     const [termsModal, setTermsModal] = useState(false)
+    const [privacyModal, setPrivacyModal] = useState(false)
     const [shippingModal, setShippingModal] = useState(false)
     const TermsModal = ({ modal, setModal, content }) => {
         return (
@@ -179,6 +180,29 @@ const Cart = () => {
                         <div className='p-6 space-y-6'>
                             <p
                                 dangerouslySetInnerHTML={{ __html: content?.terms.replace(/\n/g, '<br>') }}
+                            ></p>
+                        </div>
+                        <div className="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+                            <Button color='gray' onClick={() => setModal(false)}>
+                                Close
+                            </Button>
+                        </div>
+                    </ModalLayout>
+                }
+            </>
+        )
+    }
+    const PrivacyModal = ({ modal, setModal, content }) => {
+        return (
+            <>
+                {modal &&
+                    <ModalLayout>
+                        <div className='flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600'>
+                            <h3 className='text-xl font-semibold text-gray-900 dark:text-white'>Terms and Conditions</h3>
+                        </div>
+                        <div className='p-6 space-y-6'>
+                            <p
+                                dangerouslySetInnerHTML={{ __html: DATA.PRIVACY_POLICY.replace(/\n/g, '<br>') }}
                             ></p>
                         </div>
                         <div className="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
@@ -236,6 +260,7 @@ const Cart = () => {
     return (
         <CustomerLayout hasFetch={true}>
             <CustomerWrapper>
+                <PrivacyModal modal={privacyModal} setModal={setPrivacyModal} />
                 <TermsModal content={terms} modal={termsModal} setModal={setTermsModal} />
                 <ShippingModal modal={shippingModal} default_id={shippingData?._id} setModal={setShippingModal} list={shippingList} setShippingData={setShippingData} handler={(item) => {
                     setShippingModal(false)
@@ -369,9 +394,9 @@ const Cart = () => {
                             </div>
                             {isCheckOut &&
                                 <div className='p-4'>
-                                    <input disabled={isLoading} type='checkbox' id="policy" checked={termsChecked} onChange={(e) => setTermsChecked(e.target.checked)} />
+                                    <input disabled={isLoading} type='checkbox' checked={termsChecked} onChange={(e) => setTermsChecked(e.target.checked)} />
                                     <Label htmlFor="policy" className='ml-2'>
-                                        I have read and accepted the <span className='text-red-500 underline cursor-pointer' onClick={() => setTermsModal(true)}>Terms and Conditions</span> and privacy policy.
+                                        I have read and accepted the <span className='text-red-500 underline cursor-pointer' onClick={() => setTermsModal(true)}>Terms and Conditions</span> and <span className='text-red-500 underline cursor-pointer' onClick={() => setPrivacyModal(true)}>Privacy Policy</span>.
                                     </Label>
                                 </div>
                             }

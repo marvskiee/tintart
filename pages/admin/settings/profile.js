@@ -6,7 +6,7 @@ import { toastOptions } from '../../../styles/modalOption'
 import { updateUser } from '../../../services/user.services'
 import { useAppContext } from '../../../context/AppContext'
 import { getUser } from '../../../services/auth.services'
-import { hasBlankValue, imageUploader } from '../../../services/tools'
+import { hasBlankValue, imageUploader, isValidPhoneNumber } from '../../../services/tools'
 
 const Profile = () => {
   const { state, dispatch } = useAppContext()
@@ -62,7 +62,9 @@ const Profile = () => {
   }
   const validationHandler = async () => {
     const hasBlank = hasBlankValue(Object.values(data))
-    if (hasBlank || data?.contact_no.length != 11) return toast.error('Please fill up the form!', toastOptions)
+    if (!isValidPhoneNumber(data?.contact_no))
+      return toast.error('Invalid Contact Number!', toastOptions)
+    if (hasBlank) return toast.error('Please fill up the form!', toastOptions)
 
     setIsLoading(true)
 

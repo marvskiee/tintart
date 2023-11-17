@@ -45,14 +45,15 @@ const CustomerHeader = props => {
     load()
     loadHandler()
   }, [state.isAuth, search])
-  let pathname = router.pathname?.split('/')[2]
-  const capitalizedPathname = pathname
-    ? `${pathname.charAt(0).toUpperCase()}${pathname.slice(1)}`
-    : ''
+  let pathname = router.pathname?.split('/')[1]
+  const capitalizedPathname =
+    pathname.length > 0
+      ? `${pathname.charAt(0).toUpperCase()}${pathname.slice(1).trim()}` || 'Home'
+      : 'Home'
   const SearchComponents = ({ search, filteredData }) => {
     return (
       <>
-        <Head>{pathname && <title>{`${capitalizedPathname || 'Home'} | TintArt`}</title>}</Head>
+        <Head>{capitalizedPathname && <title>{`${capitalizedPathname} | TintArt`}</title>}</Head>
 
         {search?.trim().length > 0 && (
           <div className='w-full bg-white absolute top-[3rem] z-20 rounded-md border max-h-[50vh] overflow-y-auto'>

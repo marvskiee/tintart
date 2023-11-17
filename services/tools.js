@@ -67,7 +67,7 @@ export const imageUploader = async (images, handler) => {
     if (images[i]?.url) {
       const imageRef = ref(
         storage,
-        `images/${images[i].file.name + v4()}`
+        `${images[i].file.name + v4()}`
       );
       await uploadBytes(imageRef, images[i].file).then((snapshot) => {
         getDownloadURL(snapshot.ref)

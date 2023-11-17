@@ -34,8 +34,11 @@ const ProductFormLayout = ({ title, oldData }) => {
   const categoryRef = useRef()
   // image
   const uploadRef = useRef()
+  const uploadRef2 = useRef()
 
   const [imageUpload, setImageUpload] = useState([])
+  const [logoUpload, setLogoUpload] = useState([])
+
   useEffect(() => {
     loadHandler()
   }, [oldData])
@@ -66,6 +69,7 @@ const ProductFormLayout = ({ title, oldData }) => {
         is_archived,
         is_sold_out,
         images,
+        logos,
       } = oldData
       categoryRef.current = category
       setData({
@@ -81,6 +85,7 @@ const ProductFormLayout = ({ title, oldData }) => {
         is_sold_out,
       })
       setImageUpload(images)
+      setLogoUpload(logos)
     }
   }
 
@@ -90,13 +95,15 @@ const ProductFormLayout = ({ title, oldData }) => {
       return toast.error('Please fill up the form!', toastOptions)
     setIsLoading(true)
 
-    await imageUploader(imageUpload, async postImage => {
-      submitHandler(postImage)
+    await imageUploader(imageUpload, async postImage1 => {
+      await imageUploader(logoUpload, async postImage2 => {
+        submitHandler({ images: postImage1, logos: postImage2 })
+      })
     })
   }
 
   const submitHandler = async postImage => {
-    const newData = { ...data, images: postImage, category: categoryRef.current }
+    const newData = { ...data, ...postImage, category: categoryRef.current }
     if (oldData) {
       const result = await updateProduct(newData, oldData?._id)
       if (await result?.success) {
@@ -111,6 +118,7 @@ const ProductFormLayout = ({ title, oldData }) => {
       if (await result?.success) {
         toast.success(`Product has been added successfuly!`, toastOptions)
         setImageUpload([])
+        setLogoUpload([])
       } else {
         toast.error('Something went wrong!', toastOptions)
       }
@@ -191,6 +199,58 @@ const ProductFormLayout = ({ title, oldData }) => {
                   return toast.error('File must be less than 2mb.', toastOptions)
                 setImageUpload([
                   ...imageUpload,
+                  {
+                    url: URL?.createObjectURL(e.target?.files[0]),
+                    file: e.target?.files[0],
+                    size: e.target?.files[0].size,
+                  },
+                ])
+              } catch (e) {}
+            }}
+            accept='image/*'
+            className='hidden my-2 rounded-md border border-zinc-300 px-4 py-3'
+          />
+        </div>
+        <div className='lg:col-span-3'>
+          <Label className='capitalize mb-2 block'>Logo's</Label>
+          <div className='flex gap-4'>
+            {logoUpload.map((item, key) => (
+              <div className='relative' key={key + 'logo-upload'}>
+                <img
+                  src={item?.url || item}
+                  key={key + 'product-image-logo'}
+                  className='border w-20 aspect-square object-cover'
+                />
+                {!isLoading && (
+                  <span
+                    onClick={() => {
+                      setLogoUpload([...logoUpload.filter((sup, i) => i != key)])
+                    }}
+                    className='cursor-pointer absolute  rounded-full  top-2 right-2 bg-white z-10'
+                  >
+                    <AiFillCloseCircle size={20} className='text-red-600' />
+                  </span>
+                )}
+              </div>
+            ))}
+            {!isLoading && logoUpload.length < 5 && (
+              <img
+                onClick={() => uploadRef2.current.click()}
+                src='/images/camera.png'
+                className='cursor-pointer border w-20 aspect-square'
+              />
+            )}
+          </div>
+
+          <input
+            ref={uploadRef2}
+            type='file'
+            onChange={e => {
+              try {
+                if (e.target?.files[0].size > 2000000)
+                  return toast.error('File must be less than 2mb.', toastOptions)
+                setLogoUpload([
+                  ...logoUpload,
                   {
                     url: URL?.createObjectURL(e.target?.files[0]),
                     file: e.target?.files[0],

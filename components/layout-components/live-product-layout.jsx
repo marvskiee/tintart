@@ -20,6 +20,7 @@ import useQuantity from '../../hooks/useQuantity'
 import { addCart, getUserCart, updateCart } from '../../services/cart.services'
 import { addReview, getProductReview } from '../../services/review.services'
 import { hasBlankValue } from '../../services/tools'
+import { addCanvas } from '../../services/canvas.services'
 
 const LiveProductLayout = props => {
   const router = useRouter()
@@ -115,6 +116,7 @@ const LiveProductLayout = props => {
       loadHandler()
     }
   }, [id, state?.isAuth])
+  console.log(state?.user?._id)
 
   const addToCartHandler = async () => {
     if (!state?.user) return toast.error('You must login first!', toastOptions)
@@ -153,7 +155,13 @@ const LiveProductLayout = props => {
       return toast.error('Something went wrong!.', toastOptions)
     }
   }
-
+  const shirtRef = useRef()
+  const createDesignHandler = async () => {
+    await addCanvas({ product: id, user_id: state?.user?._id })
+    if (data.merchandise == 'T-Shirt') shirtRef.current?.click()
+    if (data.merchandise == 'Photocard') router.push('/customizer')
+    if (data.merchandise == 'Sintra Board') router.push('https://tintartcustomize.vercel.app/')
+  }
   const refreshWishList = async () => {
     const wishlist_result = await getUserWishList(state?.user?._id)
     if (wishlist_result.success) setWishListData(wishlist_result?.data)
@@ -198,7 +206,7 @@ const LiveProductLayout = props => {
               <p className='font-semibold text-2xl'>
                 {DATA.PESO} {data?.price}
               </p>
-              <p className='h-full'>{data?.description}</p>
+              <p dangerouslySetInnerHTML={{ __html: data?.description.replace(/\n/g, '<br>') }}></p>
               <p>
                 <span className='font-semibold'>Category: </span> {data?.category?.category}
               </p>
@@ -277,13 +285,19 @@ const LiveProductLayout = props => {
                 </Button>
               </div>
               {state?.user ? (
-                <Button className='w-full text-zinc-900 uppercase font-semibold' color='warning'>
-                  <Link href={'https://tintartcustomize.vercel.app/'} target='_blank'>
-                    Create your own design
-                  </Link>
+                <Button
+                  onClick={createDesignHandler}
+                  className='w-full text-zinc-900 uppercase font-semibold'
+                  color='warning'
+                >
+                  Create your own design
                 </Button>
               ) : (
-                <Button disabled className='w-full text-zinc-900 uppercase font-semibold' color='warning'>
+                <Button
+                  disabled
+                  className='w-full text-zinc-900 uppercase font-semibold'
+                  color='warning'
+                >
                   Create your own design
                 </Button>
               )}

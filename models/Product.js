@@ -6,6 +6,11 @@ const ProductSchema = new mongoose.Schema({
             type: String,
         }],
     },
+    logos: {
+        type: [{
+            type: String,
+        }],
+    },
     description: {
         type: String,
         required: [true, 'Description must not be empty'],

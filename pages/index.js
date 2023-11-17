@@ -112,7 +112,7 @@ const Home = () => {
       </CustomerWrapper>
       <CustomerWrapper containerClass="p-6 lg:p-16">
         <LoadingLayout message="Gallery is Empty." loadingState={isLoading} hasContent={galleryData?.slice(0, 5)?.length > 0}>
-          <div className='p-4 grid grid-cols-2  lg:grid-cols-5 gap-4'>
+          <div className='my-4 grid grid-cols-2  lg:grid-cols-5 gap-4'>
 
             {
               galleryData?.slice(0, 5).map((item, key) => (

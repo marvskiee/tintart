@@ -31,7 +31,7 @@ const Profile = () => {
             if (defaultData.length > 0)
                 setShippingData(defaultData)
         }
-       
+
         setIsLoading(false)
     }
 
@@ -39,6 +39,7 @@ const Profile = () => {
         if (state?.user?._id)
             loadHandler()
     }, [state?.isAuth])
+    console.log(state?.user?._id)
 
     const [isLoading, setIsLoading] = useState(true)
 

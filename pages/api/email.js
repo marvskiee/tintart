@@ -1,12 +1,12 @@
 import { response } from '../../services/response'
 import nodemailer from 'nodemailer'
 
-const sender = "tintart123@gmail.com"
+const admin = "tintart123@gmail.com"
 
 let mailTransporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-        user: sender,
+        user: admin,
         pass: "pcif wyhh ftyu qqrf"
     }
 })
@@ -16,12 +16,11 @@ export default async (req, res) => {
         case 'POST':
             const { email, subject, text, is_contact } = req.body
             let details = {
-                from: !is_contact ? sender : email,
-                to: is_contact ? sender : email,
+                from: is_contact ? email : admin,
+                to: is_contact ? admin : email,
                 subject,
                 text,
             }
-
             mailTransporter.sendMail(details, (err) => {
                 if (err) {
                     return res.json({ success: false, message: err })

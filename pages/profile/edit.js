@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { CustomerLayout, CustomerWrapper, DropdownInput, TextInput } from '../../components'
 import { useAppContext } from '../../context/AppContext'
 import { Button, FileInput, Label } from 'flowbite-react'
-import { filterObjectWithEmptyProperties, hasBlankValue, imageUploader } from '../../services/tools'
+import { filterObjectWithEmptyProperties, hasBlankValue, imageUploader, isValidPhoneNumber } from '../../services/tools'
 import toast from 'react-hot-toast'
 import { toastOptions } from '../../styles/modalOption'
 import { changePassword, updateUser } from '../../services/user.services'
@@ -19,7 +19,7 @@ const ProfileEdit = () => {
         contact_no: '',
         profile_image: '',
     }
-    
+
     const [profileData, setProfileData] = useState(initialProfileData)
 
     const [imageUpload, setImageUpload] = useState(null)
@@ -51,7 +51,7 @@ const ProfileEdit = () => {
             },
         },
     ]
-   
+
     const submitHandler = async postImage => {
         let newData = filterObjectWithEmptyProperties(profileData)
 
@@ -72,8 +72,10 @@ const ProfileEdit = () => {
         const hasBlank = hasBlankValue(
             Object.values(profileData).slice(0, -1)
         )
+        if (!isValidPhoneNumber(profileData?.contact_no))
+            return toast.error('Invalid Contact Number!', toastOptions)
         // const passwordMatch = profileData?.newPassword == profileData?.confirmPassword
-        if (hasBlank || profileData?.contact_no.length != 11)
+        if (hasBlank)
             return toast.error('Please fill up the form!', toastOptions)
         setIsLoading({ ...isLoading, profile: true })
         if (imageUpload) {
@@ -84,7 +86,7 @@ const ProfileEdit = () => {
             submitHandler()
         }
     }
-    
+
     useEffect(() => {
         if (state?.isAuth) {
             const { first_name, last_name, email, profile_image, contact_no } = state?.user
@@ -152,7 +154,7 @@ const ProfileEdit = () => {
 
                         </div>
                     </div>
-                    
+
                 </div>
             </CustomerWrapper>
         </CustomerLayout>
