@@ -145,11 +145,14 @@ const CustomerHeader = props => {
                   </Link>
                 </>
               ) : (
-                <Link href='/login'>
-                  <Button size='sm' color='dark' className='p-2 bg-zinc-900'>
-                    Login/Register
-                  </Button>
-                </Link>
+                <Button
+                  onClick={() => router.push('/login')}
+                  size='sm'
+                  color='dark'
+                  className='p-2 bg-zinc-900'
+                >
+                  Login/Register
+                </Button>
               )}
             </div>
           </div>

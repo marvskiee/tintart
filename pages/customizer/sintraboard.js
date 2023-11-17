@@ -66,7 +66,7 @@ const ArtworkComponent = ({ data, deleteHandler, closeHandler }) => {
     <ModalComponent closeHandler={closeHandler}>
       <div className='mt-4 grid grid-cols-1  gap-4'>
         {data?.map((item, key) => (
-          <>
+          <div key={item?._id} className='mx-auto'>
             <p className='text-center font-semibold'>{item?.title}</p>
             <p className='text-center text-slate-500'>{moment(item?.created_at).format("MMMM DD, YYYY hh:mm A")}</p>
             <div id="contentToCapture" className='mx-auto grid-cols-1 flex gap-4 relative' key={item?._id} >
@@ -102,7 +102,7 @@ const ArtworkComponent = ({ data, deleteHandler, closeHandler }) => {
                   </div>}
               </div>
             </div>
-          </>
+          </div>
         ))}
       </div>
       {data?.length == 0 && <p className='text-center'>There's no artwork saved.</p>}
@@ -146,11 +146,12 @@ const Customizer = () => {
   const ICONSIZE = 25
   const { state, dispatch } = useAppContext()
   const loadHandler = async () => {
-    console.log("fetch")
     const result = await getUserCanvas(state?.user?._id)
     if (result?.success) {
-      const imagelist = result.data.map(item => item.product.logos).flat().filter((r) => r != null || r != undefined);
-      setImages(imagelist.filter(d => d.merchandise == "sintraboard"))
+      const filter_merch = result.data.filter(d => d.product.merchandise == "Sintra Board")
+      console.log(filter_merch)
+      const imagelist = filter_merch.map(item => item.product.logos).flat().filter((r) => r != null || r != undefined);
+      setImages(imagelist)
     }
     await refetchArtworkHandler()
   }
@@ -342,7 +343,7 @@ const Customizer = () => {
                   style={{
                     minHeight: scaledHeight,
                     minWidth: scaledWidth,
-                  }} src={MY_CORS+canvasImage} className='h-full w-full object-cover' />
+                  }} src={MY_CORS + canvasImage} className='h-full w-full object-cover' />
               }
               {canvasText.length > 0 &&
                 <div className=' mx-auto absolute bottom-1 w-full'>
