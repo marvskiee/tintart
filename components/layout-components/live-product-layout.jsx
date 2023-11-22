@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {
+  BackLayout,
   CustomerLayout,
   CustomerWrapper,
   LoadingLayout,
   StarLayout,
   TextInput,
 } from '../../components'
+import { IoArrowBack } from 'react-icons/io5'
 import { getOneProduct } from '../../services/product.services'
 import { useRouter } from 'next/router'
 import DATA from '../../utils/DATA'
@@ -116,7 +118,6 @@ const LiveProductLayout = props => {
       loadHandler()
     }
   }, [id, state?.isAuth])
-  console.log(state?.user?._id)
 
   const addToCartHandler = async () => {
     if (!state?.user) return toast.error('You must login first!', toastOptions)
@@ -127,12 +128,12 @@ const LiveProductLayout = props => {
       user_id: state?.user?._id,
       product_id: data?._id,
     }
-    if (data?.merchandise == 'T-Shirt') {
-      if (!(size && color)) return toast.error('Please select the size and color!', toastOptions)
-      newData.color = color
-    } else {
-      if (!size) return toast.error('Please select the size!', toastOptions)
-    }
+    // if (data?.merchandise == 'T-Shirt') {
+    if (!(size && color)) return toast.error('Please select the size and color!', toastOptions)
+    newData.color = color
+    // } else {
+    // if (!size) return toast.error('Please select the size!', toastOptions)
+    // }
     // update product from cart
     const result2 = await getUserCart(state?.user?._id)
     let cart = result2?.data.filter(
@@ -175,6 +176,7 @@ const LiveProductLayout = props => {
         hasContent={data}
       >
         <CustomerWrapper>
+          <BackLayout href={'/shop'} page='Shop' />
           <div className='flex flex-col lg:flex-row gap-4 p-4'>
             {/* image section  */}
             <div className='lg:max-w-[22rem] lg:min-w-[22rem]'>
@@ -284,15 +286,18 @@ const LiveProductLayout = props => {
                   )}
                 </Button>
               </div>
-                <Button
-                  disabled={!state?.user}
-                  onClick={createDesignHandler}
-                  className='w-full text-zinc-900 uppercase font-semibold'
-                  color='warning'
-                >
-                  Create your own design
-                </Button>
-                <Link href="https://tintartcustomize.vercel.app/" target='_blank' ref={shirtRef}/>
+              <p className='font-semibold'>
+                You may create your own design and sent it to the Merchant:
+              </p>
+              <Button
+                disabled={!state?.user}
+                onClick={createDesignHandler}
+                className='w-full text-zinc-900 uppercase font-semibold'
+                color='warning'
+              >
+                Design now
+              </Button>
+              <Link href='https://tintartcustomize.vercel.app/' target='_blank' ref={shirtRef} />
             </div>
           </div>
         </CustomerWrapper>

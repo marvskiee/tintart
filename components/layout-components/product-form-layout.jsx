@@ -13,6 +13,7 @@ import toast from 'react-hot-toast'
 import { toastOptions } from '../../styles/modalOption'
 import DeleteModalLayout from './delete-modal-layout'
 import TextInput from '../input-components/text-input'
+import BackLayout from './back-layout'
 const ProductFormLayout = ({ title, oldData }) => {
   const [isLoading, setIsLoading] = useState(false)
   const initialData = {
@@ -91,7 +92,7 @@ const ProductFormLayout = ({ title, oldData }) => {
 
   const validationHandler = async () => {
     const hasBlank = hasBlankValue(Object.values(data).filter(item => typeof item === 'string'))
-    if (hasBlank || imageUpload.length == 0)
+    if (hasBlank || imageUpload.length == 0 || logoUpload.length == 0)
       return toast.error('Please fill up the form!', toastOptions)
     setIsLoading(true)
 
@@ -109,7 +110,6 @@ const ProductFormLayout = ({ title, oldData }) => {
       if (await result?.success) {
         toast.success(`Product has been updated successfuly!`, toastOptions)
         router?.push('/admin/products')
-        // setImageUpload(postImage)
       } else {
         toast.error('Something went wrong!', toastOptions)
       }
@@ -117,12 +117,10 @@ const ProductFormLayout = ({ title, oldData }) => {
       const result = await addProduct(newData)
       if (await result?.success) {
         toast.success(`Product has been added successfuly!`, toastOptions)
-        setImageUpload([])
-        setLogoUpload([])
+        router?.push('/admin/products')
       } else {
         toast.error('Something went wrong!', toastOptions)
       }
-      setData(initialData)
     }
     setIsLoading(false)
   }
@@ -134,6 +132,8 @@ const ProductFormLayout = ({ title, oldData }) => {
   const sizeFilter = sizeList.filter(s => s.merchandise == data?.merchandise).map(d => d?.values)
   return (
     <div>
+      <BackLayout href={'/admin/products'} page='Products' />
+
       {oldData && (
         <DeleteModalLayout
           title='Product'
@@ -147,6 +147,12 @@ const ProductFormLayout = ({ title, oldData }) => {
       )}
       <div className='grid grid-cols-1 lg:grid-cols-3 gap-4 lg:p-8 p-4 rounded-md border'>
         <p className='text-xl font-semibold mb-2 col-span-1 lg:col-span-3'>{title}</p>
+        {oldData && (
+          <div className='col-span-1 lg:col-span-3'>
+            <Label className='capitalize mb-2  block'>Product ID</Label>
+            <TextInput disabled value={oldData?._id} type='text' />
+          </div>
+        )}
         <div className='col-span-1 lg:col-span-1'>
           <Label className='capitalize mb-2  block'>Merchandise</Label>
           <DropdownInput
@@ -273,7 +279,7 @@ const ProductFormLayout = ({ title, oldData }) => {
           />
         </div>
         <div>
-          <Label className='capitalize mb-2 block'>Price</Label>
+          <Label className='capitalize mb-2 block'>Selling Price</Label>
           <TextInput
             disabled={isLoading}
             value={data?.price}
@@ -316,7 +322,6 @@ const ProductFormLayout = ({ title, oldData }) => {
               bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 undefined'
           ></textarea>
         </div>
-        {data?.merchandise == 'T-Shirt' && (
           <div>
             <Label className='capitalize mb-2 block'>Color</Label>
             <DropdownInput
@@ -349,7 +354,6 @@ const ProductFormLayout = ({ title, oldData }) => {
               </div>
             )}
           </div>
-        )}
         <div>
           <Label className='capitalize mb-2 block'>Sizes</Label>
           <DropdownInput
@@ -393,7 +397,7 @@ const ProductFormLayout = ({ title, oldData }) => {
           />
         </div>
         <div>
-          <Label className='capitalize mb-2 block'>Archived</Label>
+          <Label className='capitalize mb-2 block'>Deactivated</Label>
           <CheckboxInput
             disabled={isLoading}
             title='archived'

@@ -90,27 +90,38 @@ const Shipping = () => {
                 formData["user_id"] = state?.user?._id
                 result = await addShipping(formData)
                 await updateUser({ shipping_id: result.data?._id }, state?.user?._id)
-                const res1 = await getUser()
-
-                await dispatch({ type: 'SET_USER', value: res1?.data })
                 break
             case 'updated':
                 result = await updateShipping(formData, formData?._id)
                 break
             case 'mark':
                 result = await updateUser({ shipping_id: formData?._id }, state?.user?._id)
-                const res2 = await getUser()
-                await dispatch({ type: 'SET_USER', value: res2?.data })
+
                 break
             case 'deleted':
                 result = await deleteShipping(formData?._id)
+
                 break
             default:
                 result = null
                 break
         }
         if (await result?.success) {
+
+
+            if (requestName == "deleted") {
+                const shipping = await getUserShipping(state?.user?._id)
+                console.log(shipping)
+
+                if (shipping?.data?.length > 0) {
+                    const r = await updateUser({ shipping_id: shipping.data[0]?._id }, state?.user?._id)
+                    console.log(r)
+                }
+            }
+            const res2 = await getUser()
+            await dispatch({ type: 'SET_USER', value: res2?.data })
             setModal(null)
+
             await loadHandler()
             toast.success(
                 `Shipping Address has been ${requestName} successfuly!`,

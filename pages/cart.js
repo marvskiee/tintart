@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { CustomerLayout, CustomerWrapper, LoadingLayout, ModalLayout } from '../components'
+import { CustomerLayout, CustomerWrapper, ModalLayout } from '../components'
 import { Button, Label, Table } from 'flowbite-react'
 import { BsFillCheckCircleFill, BsFillTrash3Fill } from 'react-icons/bs'
 import DATA from '../utils/DATA'
-import { useRouter } from 'next/router'
 import { deleteCart, getUserCart, updateCart, updateItemCart } from '../services/cart.services'
 import { useAppContext } from '../context/AppContext'
 import { toastOptions } from '../styles/modalOption'
@@ -12,16 +11,14 @@ import { formatNumberWithCommas } from '../services/tools'
 import { getUserShipping } from '../services/shipping.services'
 import { BiSolidMap } from 'react-icons/bi'
 import { getAllShop } from '../services/shop.services'
-import { RiDeleteBin6Line } from 'react-icons/ri'
 import { addOrderDetails } from '../services/order_details.services'
 import { addOrderProduct } from '../services/order_product.services'
 import Link from 'next/link'
 import { sendMessage } from '../services/email.services'
-import moment from 'moment'
 const Cart = () => {
     const { state } = useAppContext()
     const [products, setProducts] = useState([])
-    const [terms, setTerms] = useState([])
+    const [shop, setShop] = useState([])
     const [isCheckOut, setIsCheckOut] = useState(false)
     const [shippingData, setShippingData] = useState([])
     const [shippingList, setShippingList] = useState([])
@@ -50,7 +47,8 @@ const Cart = () => {
         const result_shop = await getAllShop()
         if (result_shop?.success) {
             if (result_shop?.data.length > 0)
-                setTerms(result_shop.data[0])
+                setShop(result_shop.data[0])
+
         }
     }
     useEffect(() => {
@@ -65,6 +63,18 @@ const Cart = () => {
         }
         setProducts([...temp])
     }
+    const selectAllRef = useRef(false)
+    const selectAllHandler = () => {
+        let temp = products;
+        for (let p in temp)
+            temp[p] = {
+                ...temp[p],
+                is_selected: !selectAllRef.current
+            }
+        selectAllRef.current = !selectAllRef.current
+        setProducts([...temp])
+    }
+
     const quantityHandler = (key, newValue) => {
         let temp = products;
         temp[key] = {
@@ -126,7 +136,7 @@ const Cart = () => {
                 contact_no,
                 address: `${unit} ${street} ${region}`,
                 information,
-                total_price: total,
+                total_price: total + 25,
                 products: result_order_product?.data?.map(data => data._id),
                 mop: paymentMethod,
                 user_id: state?.user?._id
@@ -179,7 +189,7 @@ const Cart = () => {
                         </div>
                         <div className='p-6 space-y-6'>
                             <p
-                                dangerouslySetInnerHTML={{ __html: content?.terms.replace(/\n/g, '<br>') }}
+                                dangerouslySetInnerHTML={{ __html: content?.terms?.replace(/\n/g, '<br>') }}
                             ></p>
                         </div>
                         <div className="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
@@ -202,7 +212,7 @@ const Cart = () => {
                         </div>
                         <div className='p-6 space-y-6'>
                             <p
-                                dangerouslySetInnerHTML={{ __html: DATA.PRIVACY_POLICY.replace(/\n/g, '<br>') }}
+                                dangerouslySetInnerHTML={{ __html: content?.privacy?.replace(/\n/g, '<br>') }}
                             ></p>
                         </div>
                         <div className="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
@@ -260,8 +270,8 @@ const Cart = () => {
     return (
         <CustomerLayout hasFetch={true}>
             <CustomerWrapper>
-                <PrivacyModal modal={privacyModal} setModal={setPrivacyModal} />
-                <TermsModal content={terms} modal={termsModal} setModal={setTermsModal} />
+                <PrivacyModal content={shop} modal={privacyModal} setModal={setPrivacyModal} />
+                <TermsModal content={shop} modal={termsModal} setModal={setTermsModal} />
                 <ShippingModal modal={shippingModal} default_id={shippingData?._id} setModal={setShippingModal} list={shippingList} setShippingData={setShippingData} handler={(item) => {
                     setShippingModal(false)
                     setShippingData(item)
@@ -297,7 +307,9 @@ const Cart = () => {
                                 {!isCheckOut &&
                                     <Table.Head>
                                         <Table.HeadCell align='center'>
-                                            Select
+                                            <div className=''>
+                                                Select <input className='ml-2' type="checkbox" onChange={selectAllHandler} />
+                                            </div>
                                         </Table.HeadCell>
                                         {
                                             table_header.map((item, key) => (
@@ -386,11 +398,20 @@ const Cart = () => {
                         </div>
                         {/* sidebar  */}
                         <div className='min-w-[20rem] h-full'>
-                            <div className="flex flex-col gap-4 p-4 rounded-md border">
+                            <div className="flex flex-col gap-2 p-4 rounded-md border">
                                 <div className='flex items-center justify-between'>
-                                    <p>Total</p>
+                                    <p>Subtotal</p>
                                     <p className='text-red-700 font-semibold'>{DATA.PESO} {formatNumberWithCommas(total)}</p>
                                 </div>
+                                <div className='flex items-center justify-between'>
+                                    <p>Total</p>
+                                    <p className='text-red-700 font-semibold'>{DATA.PESO} {formatNumberWithCommas(total + (total ? 25 : 0))}</p>
+                                </div>
+                                {total != 0 &&
+                                    <div className='flex items-center justify-between'>
+                                        <p className='text-sm'>(VAT included)</p>
+                                    </div>
+                                }
                             </div>
                             {isCheckOut &&
                                 <div className='p-4'>
@@ -417,7 +438,7 @@ const Cart = () => {
                     <div className='min-h-[60vh] 2xl:min-h-[100vh] justify-center flex items-center gap-4 p-4 flex-col w-full'>
                         <BsFillCheckCircleFill size={30} className='text-emerald-400' />
                         <p className='font-semibold text-2xl'>Checkout Successful!</p>
-                        <p>Please check your email for the invoice and the payment details.</p>
+                        <p>Please check your email for the order and the payment details.</p>
                         <Link href={"/"}>
                             <p className='font-semibold uppercase'>Back to HomePage</p>
                         </Link>

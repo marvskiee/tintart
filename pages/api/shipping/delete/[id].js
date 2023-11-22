@@ -9,6 +9,7 @@ export default async (req, res) => {
         case 'DELETE':
             try {
                 const shipping = await Shipping.findByIdAndDelete(req.query.id)
+                
                 return response({
                     res,
                     status_code: 200,

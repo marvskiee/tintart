@@ -15,6 +15,10 @@ const Properties = () => {
 
   const colorfieldInputs = [
     {
+      label: 'Color ID',
+      name: '_id',
+    },
+    {
       label: 'Merchandise',
       name: 'merchandise',
       value: colorData?.merchandise,
@@ -41,6 +45,10 @@ const Properties = () => {
 
 
   const sizeFieldInputs = [
+    {
+      label: 'Size ID',
+      name: '_id',
+    },
     {
       label: 'Merchandise',
       name: 'merchandise',

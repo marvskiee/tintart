@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { toastOptions } from '../styles/modalOption'
 import { authLogin } from '../services/auth.services'
-import { hasBlankValue, isValidEmail, isValidPhoneNumber } from '../services/tools'
+import { hasBlankValue, isValidEmail, isValidPassword, isValidPhoneNumber } from '../services/tools'
 import { useAppContext } from '../context/AppContext'
 import { addUser } from '../services/user.services'
 import { useRouter } from 'next/router'
-import { TextInput } from '../components'
+import { PasswordInput, TextInput } from '../components'
 import { FaArrowLeftLong } from "react-icons/fa6";
 import DATA from '../utils/DATA'
 import { sendMessage } from '../services/email.services'
@@ -30,11 +30,16 @@ const Login = () => {
     const submitHandler = async (e) => {
         e.preventDefault()
         const { email, password, confirm_password } = credentials
+        // validation
         const passwordMatch = password === confirm_password
-        let hasBlank = hasBlankValue(Object.values({ email, password }))
+        const passwordValidation = isValidPassword(password)
+        const hasBlank = hasBlankValue(Object.values({ email, password }))
+
         if (!isValidEmail(email)) return toast.error('Invalid Email!', toastOptions)
 
         if (loginMode == "register") {
+            if (!passwordValidation)
+                return toast.error('Your password must be at least 16 characters long and contain alphanumeric and special characters.', toastOptions)
             if (!passwordMatch)
                 return toast.error('Password Mismatch!', toastOptions)
             if (!isValidPhoneNumber(credentials?.contact_no))
@@ -54,9 +59,9 @@ const Login = () => {
                 } else {
                     let path = (([0, 1].indexOf(data.role) > -1 && loginMode == "login") ? "/" :
                         (data.role >= 2 && loginMode == "admin-login") && "/admin/dashboard")
+                    dispatch({ type: 'LOGIN_SUCCESS', value: data })
                     router.push(path)
                     toast.success('Login Succesfuly!', toastOptions)
-                    dispatch({ type: 'LOGIN_SUCCESS', value: data })
                 }
 
             } else if (loginMode == "register") {
@@ -145,12 +150,20 @@ const Login = () => {
                         {filterFields.map((item, key) => (
                             <div key={'login-' + key} className='col-span-1'>
                                 <Label className=''>{item.label}</Label>
-                                <TextInput
-                                    disabled={isLoading}
-                                    value={item?.value}
-                                    onChange={e => item?.setValue(e)}
-                                    type={item?.type}
-                                />
+                                {["password", "confirm_password"].indexOf(item.name) > -1 ?
+                                    <PasswordInput
+                                        isLoading={isLoading}
+                                        value={item?.value}
+                                        setValue={item?.setValue}
+                                    />
+                                    :
+                                    <TextInput
+                                        disabled={isLoading}
+                                        value={item?.value}
+                                        onChange={e => item?.setValue(e)}
+                                        type={item?.type}
+                                    />
+                                }
                             </div>
                         ))}
                     </div>
@@ -163,7 +176,7 @@ const Login = () => {
                         : loginMode == "register" &&
                         <p className='text-center ' onClick={() => !isLoading && setLoginMode("login")}>Already have an account? <span className='underline cursor-pointer'>Click here</span></p>
                     }
-                    <Button disabled={isLoading} color="light" className='w-full' onClick={()=>router.push('/')}><FaArrowLeftLong className='mr-4'/>Go back to home page</Button>
+                    <Button disabled={isLoading} color="light" className='w-full' onClick={() => router.push('/')}><FaArrowLeftLong className='mr-4' />Go back to home page</Button>
 
                 </div>
 

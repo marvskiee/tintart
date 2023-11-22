@@ -4,5 +4,5 @@ import { ToastOptions } from "react-hot-toast";
 export const toastOptions: ToastOptions = {
   className: "font-work",
   position: "top-center",
-  duration: 2000,
+  duration: 2200,
 };

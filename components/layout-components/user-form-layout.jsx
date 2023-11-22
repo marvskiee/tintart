@@ -8,6 +8,7 @@ import {
   hasBlankValue,
   imageUploader,
   isValidEmail,
+  isValidPassword,
   isValidPhoneNumber,
 } from '../../services/tools'
 import toast from 'react-hot-toast'
@@ -15,6 +16,10 @@ import { toastOptions } from '../../styles/modalOption'
 import DeleteModalLayout from './delete-modal-layout'
 import TextInput from '../input-components/text-input'
 import { useAppContext } from '../../context/AppContext'
+import PasswordInput from '../input-components/password-input'
+import Link from 'next/link'
+import { IoArrowBack } from 'react-icons/io5'
+import BackLayout from './back-layout'
 
 const UserFormLayout = ({ title, oldData }) => {
   const [isLoading, setIsLoading] = useState(false)
@@ -115,17 +120,23 @@ const UserFormLayout = ({ title, oldData }) => {
     setIsLoading(false)
   }
   const validationHandler = async () => {
+    const passwordValidation = isValidPassword(data?.password)
+
     const hasBlank = hasBlankValue(
       oldData ? Object.values(data).slice(0, -3) : Object.values(data).slice(0, -1)
     )
     if (!isValidEmail(data?.email)) return toast.error('Invalid Email!', toastOptions)
-
     if (!isValidPhoneNumber(data?.contact_no))
       return toast.error('Invalid Contact Number!', toastOptions)
     const passwordMatch = data?.password == data?.confirm_password
     if (oldData) {
       if (hasBlank || !passwordMatch) return toast.error('Please fill up the form!', toastOptions)
     } else {
+      if (!passwordValidation)
+        return toast.error(
+          'Your password must be at least 16 characters long and contain alphanumeric and special characters.',
+          toastOptions
+        )
       if (hasBlank || !passwordMatch || !imageUpload)
         return toast.error('Please fill up the form!', toastOptions)
     }
@@ -144,6 +155,7 @@ const UserFormLayout = ({ title, oldData }) => {
   const [modal, setModal] = useState(false)
   return (
     <div>
+      <BackLayout href={'/admin/users'} page='List of Users' />
       {oldData && (
         <DeleteModalLayout
           title='User'
@@ -187,7 +199,7 @@ const UserFormLayout = ({ title, oldData }) => {
         <div className='w-full'>
           <Label className='capitalize mb-2 block'>User Type</Label>
           <DropdownInput
-            selected={data?.role == 2 ? 'Admin' : 'Artist'}
+            selected={data?.role == 2 ? 'Admin' : data?.role == 1 ? 'Artist' : 'Customer'}
             item={state?.user?.role == 3 ? ['Admin', 'Artist'] : ['Artist']}
             disabled={isLoading}
             handler={value => setData({ ...data, role: value == 'Admin' ? 2 : 1 })}
@@ -196,12 +208,20 @@ const UserFormLayout = ({ title, oldData }) => {
         {finalInputFields.map((input, key) => (
           <div key={'profile-' + key}>
             <Label className='capitalize mb-2 block'>{input.label}</Label>
-            <TextInput
-              disabled={isLoading}
-              value={input?.value}
-              onChange={e => input?.setValue(e)}
-              type='text'
-            />
+            {['password', 'confirm_password'].indexOf(input.name) > -1 ? (
+              <PasswordInput
+                isLoading={isLoading}
+                value={input?.value}
+                setValue={input?.setValue}
+              />
+            ) : (
+              <TextInput
+                disabled={isLoading}
+                value={input?.value}
+                onChange={e => input?.setValue(e)}
+                type='text'
+              />
+            )}
           </div>
         ))}
         <div

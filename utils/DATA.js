@@ -52,33 +52,6 @@ const DATA = {
                 { name: 'TikTok', link: '/about' },
             ]
     },
-    FEATURED_PROJECT: [
-        {
-            title: "Death Bed",
-            image: "./images/featured-products/FP (1).jpg",
-            price: 499
-        },
-        {
-            title: "Blinding Lights",
-            image: "./images/featured-products/FP (2).jpg",
-            price: 599
-        },
-        {
-            title: "Peaches",
-            image: "./images/featured-products/FP (3).jpg",
-            price: 699
-        },
-        {
-            title: "Butter",
-            image: "./images/featured-products/FP (4).jpg",
-            price: 399
-        },
-        {
-            title: "Easy On Me",
-            image: "./images/featured-products/FP (5).jpg",
-            price: 699
-        }
-    ],
     ABOUT: [
         {
             role: "Artist",
@@ -122,21 +95,26 @@ const DATA = {
         USERS: [
             { label: "Name", name: "name" },
             { label: "Email", name: "email" },
+            { label: "Contact no.", name: "contact_no" },
             { label: "Type", name: "role" },
+
             { label: "Date Added", name: "created_at" }],
         CATEGORIES: [
+            { label: "Category ID", name: "_id" },
             { label: "Categories", name: "category" },
             { label: "Date Added", name: "created_at" }],
         ORDERS: [
             { label: "Order ID", name: "_id" },
-            { label: "Name", name: "name" },
+            { label: "Receiver Name", name: "name" },
             { label: "Contact No.", name: "contact_no" },
             { label: "Address", name: "address" },
-            { label: "Total Price", name: "total_price" },
+            { label: "Total Amount Due", name: "total_price" },
             { label: "Paid", name: "is_paid" },
             { label: "Status", name: "status" },
+            { label: "Date Added", name: "created_at" }
         ],
         PRODUCTS: [
+            { label: "Prdouct ID", name: "_id" },
             { label: "Name", name: "product_name" },
             { label: "Featured", name: "is_featured" },
             { label: "Archived", name: "is_archived" },

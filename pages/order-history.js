@@ -58,7 +58,11 @@ const OrderHistory = () => {
                 <LoadingLayout message="You have no order listed." loadingState={isLoading.fetch} hasContent={orderData?.length}>
                     <div className='flex items-center flex-col justify-between gap-4'>
                         {filtered?.map((item) => (
-                            <div key={item?._id} className='w-full flex-col flex gap-4  p-4 border'>
+                            <div key={item?._id} className='w-full flex-col flex gap-2  p-4 border'>
+                                <div className='flex items-center justify-between'>
+                                    <p className='text-slate-400'>Order ID:{item?._id}</p>
+                                    <p className='font-semibold text-lg uppercase'>{item?.is_paid ? "Paid" : "Not Paid"} - {item?.mop == "credit" ? "Credit/Debit Card" : item?.mop == "gcash" ? "Gcash" : item?.mop == "cod" && "Cash on Delivery"}</p>
+                                </div>
                                 <div className='flex items-center justify-between py-2 border-b'>
                                     <p className='text-slate-400'>{moment(item?.created_at).format("MMMM DD, YYYY hh:mm A")}</p>
                                     <p className='font-semibold text-lg uppercase'>{item?.status}</p>
@@ -70,10 +74,8 @@ const OrderHistory = () => {
                                             <div className="flex flex-col gap-2">
                                                 <p className='font-semibold'>{product?.name}</p>
                                                 <p className='text-slate-400'>Variation: {[product?.size, product?.color].join(",")}</p>
-                                                <p className='text-slate-400'>X{product?.quantity}(Qty.)</p>
-
+                                                <p className='text-slate-400'>X{product?.quantity}</p>
                                             </div>
-
                                         </div>
                                         <div className='flex gap-4 flex-col'>
                                             <p className='font-semibold text-xl'>{`${DATA.PESO} ${formatNumberWithCommas(product?.price)}`}</p>
@@ -83,7 +85,7 @@ const OrderHistory = () => {
                                 ))}
                                 {item.status == "PENDING PAYMENT" && <Button disabled={isLoading.update} className="my-2" color={"failure"} onClick={() => cancelOrderHandler(item?._id)}>Cancel Order</Button>}
                                 <div className='flex gap-4 items-center justify-between border-t py-2'>
-                                    <p className=''>No. of items: {item?.products?.length}</p>
+                                    <p className=''>No. of item's: {item?.products?.length}</p>
                                     <p className='font-semibold'>Order Total Price: {item?.total_price}</p>
                                 </div>
                             </div>

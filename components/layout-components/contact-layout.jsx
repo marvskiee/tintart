@@ -50,7 +50,6 @@ const ContactLayout = ({ title }) => {
       is_contact: true,
       text: `Name: ${data?.first_name} ${data?.last_name}\nMessage: ${data?.body}\nEmail: ${data.email}`,
     })
-    console.log(data)
     if (await result?.success) {
       toast.success(`Email has been sent!`, toastOptions)
       setData(initialData)

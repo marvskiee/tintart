@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
-import { CustomerLayout, CustomerWrapper, TextInput } from '../components'
+import { CustomerLayout, CustomerWrapper, PasswordInput, TextInput } from '../components'
 import ProfileLayout from '../components/layout-components/profile-layout'
 import toast from 'react-hot-toast'
 import { toastOptions } from '../styles/modalOption'
 import { useAppContext } from '../context/AppContext'
 import { Button, Label } from 'flowbite-react'
-import { hasBlankValue } from '../services/tools'
+import { hasBlankValue, isValidPassword } from '../services/tools'
 import { changePassword } from '../services/user.services'
 
 const Password = () => {
-    const { state, dispatch } = useAppContext()
+    const { state } = useAppContext()
 
     const initialPasswordData = {
         oldPassword: '',
@@ -21,6 +21,9 @@ const Password = () => {
         const hasBlank = hasBlankValue(
             Object.values(passwordData).slice(0, -1)
         )
+        const passwordValidation = isValidPassword(passwordData?.newPassword)
+        if (!passwordValidation)
+            return toast.error('Your password must be at least 16 characters long and contain alphanumeric and special characters.', toastOptions)
         if (hasBlank)
             return toast.error('Please fill up the form!', toastOptions)
 
@@ -65,11 +68,10 @@ const Password = () => {
                         {inputFieldsPassword.map((input, key) => (
                             <div key={'newPassword-' + key}>
                                 <Label className='capitalize mb-2 block'>{input.label}</Label>
-                                <TextInput
-                                    disabled={isLoading?.newPassword}
+                                <PasswordInput
+                                    isLoading={isLoading?.newPassword}
                                     value={input?.value}
-                                    onChange={e => input?.setValue(e)}
-                                    type='password'
+                                    setValue={input?.setValue}
                                 />
                             </div>
                         ))}

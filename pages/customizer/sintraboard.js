@@ -149,7 +149,6 @@ const Customizer = () => {
     const result = await getUserCanvas(state?.user?._id)
     if (result?.success) {
       const filter_merch = result.data.filter(d => d.product.merchandise == "Sintra Board")
-      console.log(filter_merch)
       const imagelist = filter_merch.map(item => item.product.logos).flat().filter((r) => r != null || r != undefined);
       setImages(imagelist)
     }
@@ -174,12 +173,10 @@ const Customizer = () => {
       loadHandler()
   }, [state?.isAuth])
 
-  console.log(state?.isAuth)
 
 
   const captureDivContent = () => {
     const node = document.getElementById('contentToCapture');
-    console.log(node)
     domtoimage.toPng(node)
       .then((dataUrl) => {
         const link = document.createElement('a');

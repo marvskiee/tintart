@@ -25,7 +25,7 @@ const Gallery = () => {
   const [deleteModal, setDeleteModal] = useState(null)
   const [imageModal, setImageModal] = useState(null)
   const targetRef = useRef()
-
+  const [myGallery, setMyGallery] = useState(false)
   const [hoverActive, setHoverActive] = useState();
   const getLinks = (id) => {
     setHoverActive(id);
@@ -43,7 +43,7 @@ const Gallery = () => {
     loadHandler()
   }, [])
   const [imageUpload, setImageUpload] = useState(null)
-
+  const filteredData = myGallery ? data?.filter(d => d.user_id == state?.user?._id) : data
   const fieldInputs = [
     {
       label: 'Artist Name',
@@ -185,15 +185,21 @@ const Gallery = () => {
         <CustomerWrapper>
           <div className='flex flex-col lg:flex-row p-4 pb-0'>
             <div className='w-full flex items-center justify-between'>
-              <p className='text-2xl font-semibold my-4'>Gallery</p>
+              <p className='text-2xl font-semibold my-4'>TintArt Gallery</p>
               {state?.user?.role == 1 &&
                 <Button color="dark" onClick={() => { setModal("dismissible"); setFormData(initialData) }}>Upload your Artwork</Button>
               }
             </div>
           </div>
-          <LoadingLayout message="Gallery is Empty." loadingState={isLoading} hasContent={data?.length > 0}>
+          <div className="flex items-center gap-4 px-4">
+            <p onClick={() => setMyGallery(false)} className='font-semibold underline cursor-pointer'>TintArt Gallery</p>
+            {state?.user?.role == 1 &&
+              <p onClick={() => setMyGallery(true)} className='font-semibold underline cursor-pointer'>My Gallery</p>
+            }
+          </div>
+          <LoadingLayout message="Gallery is Empty." loadingState={isLoading} hasContent={filteredData?.length > 0}>
             <div className='p-4 grid grid-cols-2  lg:grid-cols-4 gap-4'>
-              {data.map((item, key) => (
+              {filteredData.map((item, key) => (
                 <div
                   key={"gallery-item-" + key}
                   className='relative overflow-hidden flex flex-col gap-4 aspect-square'

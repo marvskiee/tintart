@@ -13,6 +13,10 @@ const ShopSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Terms must not be empty'],
     },
+    privacy: {
+        type: String,
+        required: [true, 'Privacy must not be empty'],
+    },
     facebook_link: {
         type: String,
     },

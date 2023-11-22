@@ -8,6 +8,8 @@ import { getAllProduct } from '../services/product.services'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { useAppContext } from '../context/AppContext'
+import toast from 'react-hot-toast'
+import { toastOptions } from '../styles/modalOption'
 
 const Home = () => {
   const { state } = useAppContext()
@@ -54,7 +56,7 @@ const Home = () => {
             <h2 className='font-bold text-4xl'>Customize your very own merchandise!</h2>
             <h3 className=' text-lg'>Have you ever wanted to create and wear your own designs on your shirts? Be able to show your feelings through your art? Try our very own customization and print your own designs now!</h3>
             <div>
-              <Button color="failure" size="lg" className='font-bold'>
+              <Button onClick={() => !state?.user && toast.error("You must login first!", toastOptions)} color="failure" size="lg" className='font-bold'>
                 {state?.user ?
                   <Link href="https://tintartcustomize.vercel.app/" target="_blank">
                     Start Customizing

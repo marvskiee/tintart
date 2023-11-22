@@ -111,26 +111,29 @@ const TableLayout = ({
             <div className='space-y-6'>
               {modalType == 'Add' || modalType == 'Edit' ? (
                 <>
-                  {fieldInputs?.slice(0, -1).map((item, key) => (
-                    <div key={`${key}-${title}-input`}>
-                      <Label className='capitalize mb-2 block'>{item?.label}</Label>
-                      {item?.label == 'Merchandise' ? (
-                        <DropdownInput
-                          name='merchandise'
-                          selected={item?.value}
-                          item={['T-Shirt', 'Sintra Board', 'Photocard']}
-                          handler={e => item?.setValue(e)}
-                        />
-                      ) : (
-                        <TextInput
-                          disabled={isLoading}
-                          value={item?.value}
-                          onChange={e => item?.setValue(e)}
-                          type='text'
-                        />
-                      )}
-                    </div>
-                  ))}
+                  {fieldInputs
+                    .filter(f => f.name != '_id')
+                    ?.slice(0, -1)
+                    .map((item, key) => (
+                      <div key={`${key}-${title}-input`}>
+                        <Label className='capitalize mb-2 block'>{item?.label}</Label>
+                        {item?.label == 'Merchandise' ? (
+                          <DropdownInput
+                            name='merchandise'
+                            selected={item?.value}
+                            item={['T-Shirt', 'Sintra Board', 'Photocard']}
+                            handler={e => item?.setValue(e)}
+                          />
+                        ) : (
+                          <TextInput
+                            disabled={isLoading}
+                            value={item?.value}
+                            onChange={e => item?.setValue(e)}
+                            type='text'
+                          />
+                        )}
+                      </div>
+                    ))}
                 </>
               ) : (
                 modalType == 'Delete' && (

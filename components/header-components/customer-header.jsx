@@ -128,13 +128,17 @@ const CustomerHeader = props => {
               </div>
               <SearchComponents filteredData={filteredData} search={search}></SearchComponents>
             </div>
-            <div className='order-2 md:order-3 flex gap-3 items-center'>
+            <div className='order-2 md:order-3 flex gap-2 items-center'>
               {state.user ? (
                 <>
                   <Link href='/profile'>
-                    <Button size='large' color='dark' className='p-2'>
-                      <BiSolidUser className='text-white' />
-                    </Button>
+                    {/* <Button size='large' color='dark' className='p-2'> */}
+                      <img
+                        src={state?.user?.profile_image || '/images/no-profile.png'}
+                        className='w-[3rem]  object-cover aspect-square rounded-full'
+                      />
+                      {/* <BiSolidUser className='text-white' /> */}
+                    {/* </Button> */}
                   </Link>
 
                   <span className='bg-white h-5 w-[.1rem]'></span>

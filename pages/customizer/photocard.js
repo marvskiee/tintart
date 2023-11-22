@@ -25,7 +25,7 @@ const TextComponent = ({ setCanvas, canvas, location, setLocation, closeHandler 
         <Button pill onClick={() => setLocation("front")} color={location != "front" ? "white" : "purple"}>Front</Button>
         <Button pill onClick={() => setLocation("back")} color={location != "back" ? "white" : "purple"}>Back</Button>
       </div >
-      <TextInput placeholder='Enter text here...' className="mt-4 w-full" value={canvas[location]} onChange={(e) => { console.log(e.target.value); setCanvas({ ...canvas, [location]: e.target.value }) }} />
+      <TextInput placeholder='Enter text here...' className="mt-4 w-full" value={canvas[location]} onChange={(e) => { setCanvas({ ...canvas, [location]: e.target.value }) }} />
     </ModalComponent >
   )
 }
@@ -184,11 +184,9 @@ const Customizer = () => {
   const ICONSIZE = 25
   const { state, dispatch } = useAppContext()
   const loadHandler = async () => {
-    console.log("fetch")
     const result = await getUserCanvas(state?.user?._id)
     if (result?.success) {
       const filter_merch = result.data.filter(d => d.product.merchandise == "Photocard")
-      console.log(filter_merch)
       const imagelist = filter_merch.map(item => item.product.logos).flat().filter((r) => r != null || r != undefined);
       setImages(imagelist)
     }
@@ -213,12 +211,10 @@ const Customizer = () => {
       loadHandler()
   }, [state?.isAuth])
 
-  console.log(state?.isAuth)
 
 
   const captureDivContent = () => {
     const node = document.getElementById('contentToCapture');
-    console.log(node)
     domtoimage.toPng(node)
       .then((dataUrl) => {
         const link = document.createElement('a');

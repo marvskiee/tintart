@@ -39,7 +39,6 @@ const Profile = () => {
         if (state?.user?._id)
             loadHandler()
     }, [state?.isAuth])
-    console.log(state?.user?._id)
 
     const [isLoading, setIsLoading] = useState(true)
 

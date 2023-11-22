@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react'
-import { generateCode, hasBlankValue } from '../services/tools'
+import { generateCode, hasBlankValue, isValidPassword } from '../services/tools'
 import { toastOptions } from '../styles/modalOption'
 import { Button, Label } from 'flowbite-react'
-import { TextInput } from '../components'
+import { PasswordInput, TextInput } from '../components'
 import useCountdown from '../hooks/useCountdown'
 import { changePassword, recoveryPassword, updateUserByEmail, validateCode } from '../services/user.services'
 import toast from 'react-hot-toast'
@@ -13,7 +13,6 @@ import { useRouter } from 'next/router'
 const ForgotPassword = () => {
     const { seconds, start, isRunning } = useCountdown(2, () => {
         console.log('Countdown reached zero!');
-
     });
     const [isLoading, setIsLoading] = useState(false)
     const [disabled, setDisabled] = useState(false)
@@ -58,10 +57,8 @@ const ForgotPassword = () => {
         if (hasBlank)
             return toast.error('Please fill up the form!', toastOptions)
         setIsLoading(true)
-        console.log({ recovery_code: formData?.recovery_code, email: formData?.email })
         const result = await validateCode({ recovery_code: formData?.recovery_code, email: formData?.email })
         setIsLoading(false)
-        console.log(result)
         if (!result?.data) {
             return toast.error('Invalid Code!', toastOptions)
         }
@@ -73,6 +70,11 @@ const ForgotPassword = () => {
     const saveChangesHandler = async () => {
         let { password,
             confirm_password } = formData
+        const passwordValidation = isValidPassword(password)
+
+        if (!passwordValidation)
+            return toast.error('Your password must be at least 16 characters long and contain alphanumeric and special characters.', toastOptions)
+
         const hasBlank = hasBlankValue(Object.values({
             password,
             confirm_password
@@ -82,13 +84,7 @@ const ForgotPassword = () => {
         if (password != confirm_password)
             return toast.error('Password mismatch!', toastOptions)
 
-        if (
-            password.length < 8 ||
-            password?.trim() == "" ||
-            password == undefined
-        ) {
-            return toast.error("Please enter password and must be atleast 8 characters!", toastOptions)
-        }
+       
         const result = await recoveryPassword({ password: formData.password }, userRef.current?._id)
         if (result?.success) {
             // generate again the code so it cannot be reused
@@ -138,21 +134,19 @@ const ForgotPassword = () => {
                     <p className=' text-center text-xl font-semibold'>Forgot Password</p>
                     <div >
                         <Label>New Password: </Label>
-                        <TextInput
+                        <PasswordInput
                             value={formData.password}
-                            onChange={e => setFormData({ ...formData, password: e.target.value })}
-                            type="password"
-                            disabled={disabled}
+                            setValue={e => setFormData({ ...formData, password: e.target.value })}
+                            isLoading={disabled}
 
                         />
                     </div>
                     <div >
                         <Label>Confirm Password:</Label>
-                        <TextInput
+                        <PasswordInput
                             value={formData.confirm_password}
-                            onChange={e => setFormData({ ...formData, confirm_password: e.target.value })}
-                            type="password"
-                            disabled={disabled}
+                            setValue={e => setFormData({ ...formData, confirm_password: e.target.value })}
+                            isLoading={disabled}
 
                         />
                     </div>

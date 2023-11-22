@@ -11,6 +11,7 @@ const Shop = () => {
   const initialData = {
     name: "",
     terms: "",
+    privacy: "",
     shopee: "",
     email: "",
     contact_no: "",
@@ -44,6 +45,11 @@ const Shop = () => {
       label: "Terms and Conditions", span: "col-span-2", isTextArea: true,
       value: data?.terms,
       setValue: e => setData({ ...data, terms: e.target.value }),
+    },
+    {
+      label: "Privacy and Policy", span: "col-span-2", isTextArea: true,
+      value: data?.privacy,
+      setValue: e => setData({ ...data, privacy: e.target.value }),
     },
   ]
   const middleFields = [

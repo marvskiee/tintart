@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { AdminLayout, CustomerLayout, CustomerWrapper, DeleteModalLayout, LoadingLayout, StarLayout, TextInput } from '../../../../components'
+import { AdminLayout, BackLayout, CustomerLayout, CustomerWrapper, DeleteModalLayout, LoadingLayout, StarLayout, TextInput } from '../../../../components'
 import { deleteProduct, getOneProduct } from '../../../../services/product.services'
 import { useRouter } from 'next/router'
 import DATA from '../../../../utils/DATA'
@@ -60,6 +60,7 @@ const ViewProduct = (props) => {
   }, 0)
   return (
     <AdminLayout>
+      <BackLayout href={"/admin/products"} page={"Products"}/>
       <DeleteModalLayout
         title='Product'
         path='/admin/products'
@@ -72,7 +73,7 @@ const ViewProduct = (props) => {
       <LoadingLayout message="Product does not exist!" loadingState={isLoading?.fetch} hasContent={data}>
         <>
           <div className='flex p-4 items-center justify-between w-full'>
-            <p className='font-semibold text-xl'>Product Detail</p>
+            <p className='font-semibold text-xl'>Product Details</p>
             <div className='flex gap-4'>
               <Button
                 gradientDuoTone={'cyanToBlue'}
