@@ -5,8 +5,8 @@ const DATA = {
     ADMIN: {
         HEADER_LINKS: [
             { name: 'dashboard', link: '/admin/dashboard' },
-            { name: 'properties', link: '/admin/properties' },
-            { name: 'categories', link: '/admin/categories' },
+            // { name: 'properties', link: '/admin/properties' },
+            // { name: 'categories', link: '/admin/categories' },
             { name: 'products', link: '/admin/products' },
             { name: 'orders', link: '/admin/orders' },
             { name: 'users', link: '/admin/users' },

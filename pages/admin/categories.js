@@ -13,7 +13,7 @@ const Categories = () => {
 
   const categoryFieldInputs = [
     {
-      label: 'Id',
+      label: 'Category ID',
       name: '_id',
     },
     {

@@ -46,11 +46,19 @@ const TableLayout = ({
   useEffect(() => {
     loadHandler()
   }, [])
-
+  const pillDataRef = useRef()
   // HANDLERS
   const loadHandler = async () => {
     const result = await loadRequest()
-    setFetchData(result.data || [])
+    let temp_data = result?.data
+    pillDataRef.current = temp_data
+    let filtered = temp_data
+    if (['Colors', 'Sizes'].indexOf(title) > -1) {
+      filtered = temp_data?.filter(t => t.merchandise == selectedMerch)
+    }
+    setNewSlice(filtered?.slice(0, MAX))
+    setFetchData(filtered || [])
+
     setIsLoading(false)
   }
 
@@ -100,6 +108,17 @@ const TableLayout = ({
   const booleanCell = value => {
     return value ? 'YES' : 'NO'
   }
+
+  // pagination
+  const [page, setPage] = useState(1)
+  const [newSlice, setNewSlice] = useState([])
+  const MAX = 10
+  const paginationHandler = item => {
+    setPage(item)
+    setNewSlice(searchFilter.slice(item * MAX - MAX, item * MAX))
+  }
+  const merchandise_list = ['T-Shirt', 'Photocard', 'Sintra Board']
+  const [selectedMerch, setSelectedMerch] = useState(merchandise_list[0])
   return (
     <>
       {modal && (
@@ -162,7 +181,29 @@ const TableLayout = ({
         </Modal>
       )}
       <div className='flex-col gap-4 flex'>
-        <p className='font-semibold text-xl'>{title}</p>
+        <div className='flex justify-between items-center'>
+          <p className='font-semibold text-xl'>{title}</p>
+          {['Colors', 'Sizes'].indexOf(title) > -1 && (
+            <Button.Group>
+              {merchandise_list.map((item, key) => (
+                <Button
+                  onClick={() => {
+                    setSelectedMerch(item)
+                    let filtered = pillDataRef.current?.filter(t => t.merchandise == item)
+                    setNewSlice(filtered?.slice(0, MAX))
+                    setPage(1)
+                    setFetchData(filtered)
+                  }}
+                  color='gray'
+                  key={key + item}
+                  className={item == selectedMerch ? 'text-blue-400' : ''}
+                >
+                  {item}
+                </Button>
+              ))}
+            </Button.Group>
+          )}
+        </div>
         <div className='flex gap-4 flex-col md:flex-row'>
           <TextInput placeholder='Search here...' onChange={e => setSearch(e.target.value)} />
           {title != 'Orders' && (
@@ -204,8 +245,8 @@ const TableLayout = ({
           <Table.Body>
             {isLoading ? (
               <RowTemplate label='Fetching...' />
-            ) : searchFilter.length > 0 ? (
-              searchFilter.map((parentItem, parentKey) => (
+            ) : newSlice.length > 0 ? (
+              newSlice.map((parentItem, parentKey) => (
                 <Table.Row
                   key={`parent-${title.toLowerCase()}-${parentKey}`}
                   className={parentKey % 2 && 'transition-colors bg-zinc-100'}
@@ -293,6 +334,22 @@ const TableLayout = ({
             )}
           </Table.Body>
         </Table>
+
+        <div className='flex gap-1 my-5'>
+          {Array.from({ length: Math.ceil(searchFilter?.length / MAX) }, (_, i) => i + 1).map(
+            (item, index) => (
+              <button
+                onClick={() => paginationHandler(item)}
+                className={`border p-1 px-4 rounded-md ${
+                  page == item ? ' text-white bg-zinc-900 ' : ' text-zinc-900 bg-white '
+                } `}
+                key={index}
+              >
+                {item}
+              </button>
+            )
+          )}
+        </div>
       </div>
     </>
   )

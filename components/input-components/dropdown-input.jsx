@@ -1,47 +1,34 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react'
+import { RiArrowDropDownLine } from 'react-icons/ri'
 
-const DropdownInput = ({ name, item, handler, selected, disabled }) => {
-  const dropdownRef = useRef(null);
-  const [toggle, setToggle] = useState(false);
+const DropdownInput = ({ name, item, handler, selected, disabled, customButton }) => {
+  const dropdownRef = useRef(null)
+  const [toggle, setToggle] = useState(false)
 
   useEffect(() => {
-    const handleOutsideClick = (event) => {
+    const handleOutsideClick = event => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setToggle(false);
+        setToggle(false)
       }
-    };
+    }
 
-    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('mousedown', handleOutsideClick)
 
     return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, []);
+      document.removeEventListener('mousedown', handleOutsideClick)
+    }
+  }, [])
 
   return (
     <div className='relative' ref={dropdownRef}>
       <button
         disabled={disabled}
         onClick={() => setToggle(!toggle)}
-        className='w-full flex bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 items-center justify-between'
+        className={`w-full flex bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 items-center justify-between ${customButton}`}
         type='button'
       >
         {selected || '--Select--'}
-        <svg
-          className='w-2.5 h-2.5 ml-2.5'
-          aria-hidden='true'
-          xmlns='http://www.w3.org/2000/svg'
-          fill='none'
-          viewBox='0 0 10 6'
-        >
-          <path
-            stroke='currentColor'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            strokeWidth='2'
-            d='m1 1 4 4 4-4'
-          />
-        </svg>
+        <RiArrowDropDownLine className='text-black' />
       </button>
 
       <div
@@ -57,11 +44,11 @@ const DropdownInput = ({ name, item, handler, selected, disabled }) => {
             <li
               key={`dropdown-item-${name}-${key}`}
               onClick={() => {
-                handler(title);
-                setToggle(false);
+                handler(title)
+                setToggle(false)
               }}
             >
-              <p className='cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
+              <p className='capitalize cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
                 {title?.category || title}
               </p>
             </li>
@@ -69,7 +56,7 @@ const DropdownInput = ({ name, item, handler, selected, disabled }) => {
         </ul>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default DropdownInput;
+export default DropdownInput

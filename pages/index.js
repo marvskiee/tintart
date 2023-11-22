@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { CustomerWrapper, LoadingLayout, ViewGalleryModal } from '../components'
+import React, { useEffect, useRef, useState } from 'react'
+import { CustomerWrapper, LoadingLayout, ModalLayout, ViewGalleryModal } from '../components'
 import { Button } from 'flowbite-react'
 import CustomerLayout from '../components/layout-components/customer-layout'
 import { FaArrowRight, FaEye, FaFacebook, FaInstagram } from 'react-icons/fa'
@@ -10,13 +10,16 @@ import Link from 'next/link'
 import { useAppContext } from '../context/AppContext'
 import toast from 'react-hot-toast'
 import { toastOptions } from '../styles/modalOption'
+import { PiTShirt } from "react-icons/pi";
+import { IoIdCardOutline } from 'react-icons/io5'
+import { FaRectangleAd } from 'react-icons/fa6'
 
 const Home = () => {
   const { state } = useAppContext()
   const [galleryData, setGalleryData] = useState([])
   const [productData, setProductData] = useState([])
   const [imageModal, setImageModal] = useState(null)
-
+  const [merchandiseModal, setMerchandiseModal] = useState(false)
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const loadHandler = async () => {
@@ -39,11 +42,51 @@ const Home = () => {
   const getLinks = (id) => {
     setHoverActive(id);
   };
+  const merchandiseHandler = () => {
+    if (!state?.user)
+      return toast.error("You must login first!", toastOptions)
+    setMerchandiseModal(true)
+  }
   useEffect(() => {
     loadHandler()
   }, [])
+  const shirtRef = useRef()
+
+  const merchandise_list = [
+    { name: "T-Shirt", icon: <PiTShirt size={40} className='text-zinc-500' /> },
+    { name: "Photocard", icon: <IoIdCardOutline size={40} className='text-zinc-500' /> },
+    { name: "Sintra Board", icon: <FaRectangleAd size={40} className='text-zinc-500' /> }
+  ]
+  const createDesignHandler = async (name) => {
+    if (name == 'T-Shirt') shirtRef.current?.click()
+    if (name == 'Photocard') router.push('/customizer/photocard')
+    if (name == 'Sintra Board') router.push('/customizer/sintraboard')
+  }
   return (
     <CustomerLayout>
+      {merchandiseModal &&
+        <ModalLayout>
+          <div className='flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600'>
+            <h3 className='text-xl font-semibold text-gray-900 text-center dark:text-white'>Choose Customizer</h3>
+          </div>
+          <div className='p-6 space-y-6'>
+            <div className='flex items-center flex-col  gap-4 lg:flex-row'>
+              {merchandise_list.map((item, key) => (
+                <div onClick={() => createDesignHandler(item?.name)} className='hover:bg-zinc-900 transition-colors cursor-pointer hover:text-white min-w-[10rem] border rounded-md p-2 flex flex-col justify-center items-center aspect-square h-full' key={key + "merchandise"}>
+                  {item?.icon}
+                  <p className='text-center font-semibold '>{item?.name}</p>
+                </div>
+              ))}
+            </div>
+            <Link href='https://tintartcustomize.vercel.app/' target='_blank' ref={shirtRef} />
+          </div>
+          <div className="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+            <Button color='gray' onClick={() => setMerchandiseModal(false)}>
+              Close
+            </Button>
+          </div>
+        </ModalLayout>
+      }
       {
         imageModal &&
         <ViewGalleryModal
@@ -56,13 +99,8 @@ const Home = () => {
             <h2 className='font-bold text-4xl'>Customize your very own merchandise!</h2>
             <h3 className=' text-lg'>Have you ever wanted to create and wear your own designs on your shirts? Be able to show your feelings through your art? Try our very own customization and print your own designs now!</h3>
             <div>
-              <Button onClick={() => !state?.user && toast.error("You must login first!", toastOptions)} color="failure" size="lg" className='font-bold'>
-                {state?.user ?
-                  <Link href="https://tintartcustomize.vercel.app/" target="_blank">
-                    Start Customizing
-                  </Link> :
-                  "Start Customizing"
-                }
+              <Button onClick={merchandiseHandler} color="failure" size="lg" className='font-bold'>
+                Start Customizing
                 <FaArrowRight color='white' className='ml-2 text-xl' />
               </Button>
             </div>

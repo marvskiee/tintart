@@ -200,8 +200,8 @@ const UserFormLayout = ({ title, oldData }) => {
           <Label className='capitalize mb-2 block'>User Type</Label>
           <DropdownInput
             selected={data?.role == 2 ? 'Admin' : data?.role == 1 ? 'Artist' : 'Customer'}
-            item={state?.user?.role == 3 ? ['Admin', 'Artist'] : ['Artist']}
-            disabled={isLoading}
+            item={state?.user?.role == 3 ? ['Admin', 'Artist','Customer'] : ['Artist','Customer']}
+            disabled={isLoading || data.role == 0}
             handler={value => setData({ ...data, role: value == 'Admin' ? 2 : 1 })}
           />
         </div>

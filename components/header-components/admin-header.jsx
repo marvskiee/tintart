@@ -9,6 +9,7 @@ import { useAppContext } from '../../context/AppContext'
 import { authLogout, getUser } from '../../services/auth.services'
 import toast from 'react-hot-toast'
 import Head from 'next/head'
+import DropdownInput from '../input-components/dropdown-input'
 const AdminHeader = props => {
   const [menuBar, setMenuBar] = useState(false)
 
@@ -43,7 +44,8 @@ const AdminHeader = props => {
   const capitalizedPathname = pathname
     ? `${pathname.charAt(0).toUpperCase()}${pathname.slice(1)}`
     : ''
-
+  console.log(router.pathname?.split('/')[2])
+  const DROPDOWN_ROUTES = ['products', 'colors', 'sizes', 'categories']
   return (
     <>
       <Head>{pathname && <title>{`${capitalizedPathname} | TintArt`}</title>}</Head>
@@ -65,16 +67,32 @@ const AdminHeader = props => {
             } lg:flex`}
           >
             {DATA.ADMIN.HEADER_LINKS.map((item, key) => (
-              <Link href={item?.link} key={key}>
-                <p
-                  className={` whitespace-nowrap h-full block w-full flex-grow-0 lg:text-center text-left gap-4 cursor-pointer transition-colors delay-75 border-transparent text-sm hover:border-white lg:hover:border-zinc-500 p-4 capitalize font-semibold ${
-                    router.pathname.split('/')[2] == item?.link.split('/')[2] &&
-                    'font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600 text-blue-600'
-                  }`}
-                >
-                  {item?.name}
-                </p>
-              </Link>
+              <>
+                {item?.name == 'products' ? (
+                  <DropdownInput
+                    customButton={`w-full focus:ring-blue-500 focus:border-blue-500 p-2.5 border-0 whitespace-nowrap h-full block w-full bg-white flex-grow-0 lg:text-center text-left gap-4 cursor-pointer transition-colors delay-75 border-transparent text-sm hover:border-white lg:hover:border-zinc-500 p-4 capitalize font-semibold ${
+                      DROPDOWN_ROUTES.indexOf(router.pathname.split('/')[2]) > -1 &&
+                      'font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600 text-blue-600'
+                    }
+                  `}
+                    name={router.pathname?.split('/')[2]}
+                    selected={"products"}
+                    item={DROPDOWN_ROUTES}
+                    handler={item => router.push('/admin/' + item)}
+                  />
+                ) : (
+                  <Link href={item?.link} key={key}>
+                    <p
+                      className={` whitespace-nowrap h-full block w-full flex-grow-0 lg:text-center text-left gap-4 cursor-pointer transition-colors delay-75 border-transparent text-sm hover:border-white lg:hover:border-zinc-500 p-4 capitalize font-semibold ${
+                        router.pathname.split('/')[2] == item?.link.split('/')[2] &&
+                        'font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600 text-blue-600'
+                      }`}
+                    >
+                      {item?.name}
+                    </p>
+                  </Link>
+                )}
+              </>
             ))}
           </div>
           <div className='flex flex-row gap-2 items-center'>

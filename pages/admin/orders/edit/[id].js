@@ -10,6 +10,7 @@ import { getOneUser } from '../../../../services/user.services';
 import { toastOptions } from '../../../../styles/modalOption';
 import toast from 'react-hot-toast';
 import { AiFillCloseCircle } from 'react-icons/ai';
+import { getAllShop } from '../../../../services/shop.services';
 
 const ViewOrders = () => {
   const [data, setData] = useState(null);
@@ -34,9 +35,16 @@ const ViewOrders = () => {
       }
     }
   }
+  const [shop, setShop] = useState(null)
   const loadHandler = async () => {
     setIsLoading({ ...isLoading, fetch: true });
     await refetchHandler()
+    const result = await getAllShop();
+    if (result?.success) {
+      dataRowRef.current = result?.data?.length
+      if (result?.data.length > 0)
+        setShop(result?.data[0])
+    }
     setIsLoading({ ...isLoading, fetch: false });
   };
   const updateHandler = async (newData) => {
