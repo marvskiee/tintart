@@ -39,7 +39,7 @@ const Login = () => {
 
         if (loginMode == "register") {
             if (!passwordValidation)
-                return toast.error('Your password must be at least 16 characters long and contain alphanumeric and special characters.', toastOptions)
+                return toast.error('Password must be 8-16 characters, containing at least one letter/number and one special character.', toastOptions)
             if (!passwordMatch)
                 return toast.error('Password Mismatch!', toastOptions)
             if (!isValidPhoneNumber(credentials?.contact_no))

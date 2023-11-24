@@ -134,7 +134,7 @@ const UserFormLayout = ({ title, oldData }) => {
     } else {
       if (!passwordValidation)
         return toast.error(
-          'Your password must be at least 16 characters long and contain alphanumeric and special characters.',
+          'Password must be 8-16 characters, containing at least one letter/number and one special character.',
           toastOptions
         )
       if (hasBlank || !passwordMatch || !imageUpload)

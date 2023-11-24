@@ -5,6 +5,7 @@ import toast from 'react-hot-toast'
 import { toastOptions } from '../../styles/modalOption'
 import { hasBlankValue, isValidEmail } from '../../services/tools'
 import TextInput from '../input-components/text-input'
+import DATA from '../../utils/DATA'
 
 const ContactLayout = ({ title }) => {
   const [isLoading, setIsLoading] = useState(false)
@@ -49,6 +50,12 @@ const ContactLayout = ({ title }) => {
       ...data,
       is_contact: true,
       text: `Name: ${data?.first_name} ${data?.last_name}\nMessage: ${data?.body}\nEmail: ${data.email}`,
+    })
+    await sendMessage({
+      subject: DATA.EMAILS.INQUIRY.SUBJECT,
+      email,
+      text: 
+        DATA.EMAILS.INQUIRY.BODY({ customer_name: `${data?.first_name} ${data?.last_name}` }),
     })
     if (await result?.success) {
       toast.success(`Email has been sent!`, toastOptions)

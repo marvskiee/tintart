@@ -58,7 +58,7 @@ const Home = () => {
     { name: "Sintra Board", icon: <FaRectangleAd size={40} className='text-zinc-500' /> }
   ]
   const createDesignHandler = async (name) => {
-    if (name == 'T-Shirt') shirtRef.current?.click()
+    if (name == 'T-Shirt') router.push('/customizer/tshirt')
     if (name == 'Photocard') router.push('/customizer/photocard')
     if (name == 'Sintra Board') router.push('/customizer/sintraboard')
   }

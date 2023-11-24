@@ -101,7 +101,7 @@ export const filterObjectWithEmptyProperties = obj =>
   );
 
 export const isValidPassword = (password) => {
-  return /^(?=.*[a-zA-Z0-9])(?=.*[$&+,:;=?@#|'<>.^*()%!-]).{16,}$/.test(password);
+  return /^(?=.*[a-zA-Z0-9])(?=.*[$&+,:;=?@#|'<>.^*()%!-]).{8,16}$/.test(password);
 }
 export const isValidEmail = (email) => {
   // Regular expression for basic email validation

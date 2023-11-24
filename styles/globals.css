@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500;1,600;1,700&display=swap'); 
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500;1,600;1,700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,10 +9,64 @@
   -webkit-appearance: none;
   margin: 0;
 }
-*{
+* {
   font-family: 'Poppins', sans-serif;
 }
 /* Firefox */
 #fix {
   -moz-appearance: textfield;
+}
+
+.front-shirt,
+.back-shirt {
+  position: relative;
+  margin: auto;
+  display: flex;
+  background-color: rgb(246, 247, 255);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 26px;
+  /* color: lighten($colthr, 25%) */
+  /* background-color: $coltwo */
+  /* background: radial-gradient(ellipse at bottom, $coltwo 0%, $colone 100%) */
+  clip-path: polygon(
+    16% 20%,
+    35% 13%,
+    40% 20%,
+    60% 20%,
+    65% 13%,
+    86% 20%,
+    100% 31%,
+    85% 44%,
+    80% 40%,
+    80% 80%,
+    20% 80%,
+    20% 40%,
+    15% 44%,
+    0 31%
+  );
+  user-select: none;
+  cursor: pointer;
+  box-shadow: 0 0 0 10px black;
+  /* transition: all 0.3s linear; */
+}
+
+.back-shirt {
+  clip-path: polygon(
+    16% 20%,
+    35% 13%,
+    40% 13%,
+    60% 13%,
+    65% 13%,
+    86% 20%,
+    100% 31%,
+    85% 44%,
+    80% 40%,
+    80% 80%,
+    20% 80%,
+    20% 40%,
+    15% 44%,
+    0 31%
+  );
 }

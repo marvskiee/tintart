@@ -30,7 +30,6 @@ const TableLayout = ({
   const [modalType, setModalType] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [fetchData, setFetchData] = useState([])
-
   const headerArray = fieldInputs?.map(item => item.name)
 
   const searchHandler = array => {
@@ -46,6 +45,7 @@ const TableLayout = ({
   useEffect(() => {
     loadHandler()
   }, [])
+
   const pillDataRef = useRef()
   // HANDLERS
   const loadHandler = async () => {
@@ -58,7 +58,6 @@ const TableLayout = ({
     }
     setNewSlice(filtered?.slice(0, MAX))
     setFetchData(filtered || [])
-
     setIsLoading(false)
   }
 
@@ -183,7 +182,7 @@ const TableLayout = ({
       <div className='flex-col gap-4 flex'>
         <div className='flex justify-between items-center'>
           <p className='font-semibold text-xl'>{title}</p>
-          {['Colors', 'Sizes'].indexOf(title) > -1 && (
+          {['Colors', 'Sizes', 'Products'].indexOf(title) > -1 && (
             <Button.Group>
               {merchandise_list.map((item, key) => (
                 <Button
@@ -230,7 +229,7 @@ const TableLayout = ({
             disabled={!searchFilter?.length}
             className='shrink-0'
           >
-            Export Excel
+            Export CSV
           </Button>
         </div>
         <Table>
@@ -335,7 +334,14 @@ const TableLayout = ({
           </Table.Body>
         </Table>
 
-        <div className='flex gap-1 my-5'>
+        <div className='flex gap-1 my-5 items-end justify-end'>
+          <button
+            disabled={page == 1}
+            onClick={() => paginationHandler(page - 1)}
+            className={`border p-1 px-4 rounded-md `}
+          >
+            Previous
+          </button>
           {Array.from({ length: Math.ceil(searchFilter?.length / MAX) }, (_, i) => i + 1).map(
             (item, index) => (
               <button
@@ -349,6 +355,13 @@ const TableLayout = ({
               </button>
             )
           )}
+          <button
+            onClick={() => paginationHandler(page + 1)}
+            disabled={Math.ceil(searchFilter?.length / MAX) == page}
+            className={`border p-1 px-4 rounded-md `}
+          >
+            Next
+          </button>
         </div>
       </div>
     </>

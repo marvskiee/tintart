@@ -26,5 +26,3 @@ export { default as ModalLayout } from './layout-components/modal-layout'
 export { default as StarLayout } from './layout-components/star-layout'
 export { default as LiveProductLayout } from './layout-components/live-product-layout'
 export { default as ViewGalleryModal } from './modal-components/view-gallery-modal'
-
-

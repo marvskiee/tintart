@@ -1,13 +1,13 @@
 import { response } from '../../services/response'
 import nodemailer from 'nodemailer'
 
-const admin = "tintart123@gmail.com"
+const admin = "tintartofficial@gmail.com"
 
 let mailTransporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
         user: admin,
-        pass: "pcif wyhh ftyu qqrf"
+        pass: "hpps jhvx gynk wyba"
     }
 })
 

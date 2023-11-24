@@ -18,7 +18,7 @@ const Wishlist = () => {
     const refreshWishList = async (id) => {
         const result_wishlist = await getUserWishList(id)
         if (result_wishlist?.success) {
-            setWishlistData(result_wishlist?.data)
+            setWishlistData(result_wishlist?.data.filter(d => d?.product_id != null))
         }
     }
 

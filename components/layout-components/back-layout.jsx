@@ -4,7 +4,7 @@ import { IoArrowBack } from 'react-icons/io5'
 
 const BackLayout = ({ href, page }) => {
   return (
-    <div className='flex'>
+    <div style={{ display: 'flex' }} id='back'>
       <Link href={href}>
         <div className='flex items-center p-2 px-4 underline'>
           <IoArrowBack className='mr-1' />

@@ -50,9 +50,9 @@ const Shop = () => {
     if (!state?.user) return toast.error('You must login first!', toastOptions)
 
     const { product_name, images, _id } = item
-    let filtered = wishListData.filter(d => d.product_id == _id)
+    let filtered = wishListData.filter(d => d.product_id?._id == _id)
     if (filtered.length > 0) {
-      let selected_wishlist = wishListData.filter(d => d.product_id == item?._id)[0]
+      let selected_wishlist = wishListData.filter(d => d.product_id?._id == _id)[0]
       const result = await deleteWishList(selected_wishlist?._id)
       if (result?.success) {
         refreshWishList()
@@ -147,7 +147,7 @@ const Shop = () => {
 
                 <div className='relative flex-col flex gap-2 cursor-pointer' key={key} >
                   <Button onClick={() => heartHandler(item)} color="light" size="xs" className='z-10 bg-black/50 border-0 absolute top-5 right-5 aspect-square'>
-                    {!wishListData.filter(d => d.product_id == item?._id).length > 0 ?
+                    {!wishListData.filter(d => d.product_id?._id == item?._id).length > 0 ?
                       <AiOutlineHeart className='text-2xl text-red-600' />
                       :
                       <AiFillHeart className='text-2xl text-red-600' />

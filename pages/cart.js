@@ -43,7 +43,7 @@ const Cart = () => {
         }
         const result = await getUserCart(state?.user?._id)
         if (result?.success)
-            setProducts(result?.data)
+            setProducts(result?.data.filter(d => d?.product_id != null))
         const result_shop = await getAllShop()
         if (result_shop?.success) {
             if (result_shop?.data.length > 0)
@@ -399,10 +399,11 @@ const Cart = () => {
                         {/* sidebar  */}
                         <div className='min-w-[20rem] h-full'>
                             <div className="flex flex-col gap-2 p-4 rounded-md border">
-                                <div className='flex items-center justify-between'>
-                                    <p>Subtotal</p>
-                                    <p className='text-red-700 font-semibold'>{DATA.PESO} {formatNumberWithCommas(total)}</p>
-                                </div>
+                                {!isCheckOut &&
+                                    <div className='flex items-center justify-between'>
+                                        <p>Subtotal</p>
+                                        <p className='text-red-700 font-semibold'>{DATA.PESO} {formatNumberWithCommas(total)}</p>
+                                    </div>}
                                 <div className='flex items-center justify-between'>
                                     <p>Total</p>
                                     <p className='text-red-700 font-semibold'>{DATA.PESO} {formatNumberWithCommas(total + (total ? 25 : 0))}</p>

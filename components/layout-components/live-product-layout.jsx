@@ -72,9 +72,9 @@ const LiveProductLayout = props => {
     if (!state?.user) return toast.error('You must login first!', toastOptions)
 
     const { product_name, images, _id } = item
-    let filtered = wishListData.filter(d => d.product_id == _id)
+    let filtered = wishListData.filter(d => d.product_id?._id == _id)
     if (filtered.length > 0) {
-      let selected_wishlist = wishListData.filter(d => d.product_id == item?._id)[0]
+      let selected_wishlist = wishListData.filter(d => d.product_id?._id == item?._id)[0]
       const result = await deleteWishList(selected_wishlist?._id)
       if (result?.success) {
         refreshWishList()
@@ -159,7 +159,7 @@ const LiveProductLayout = props => {
   const shirtRef = useRef()
   const createDesignHandler = async () => {
     await addCanvas({ product: id, user_id: state?.user?._id })
-    if (data.merchandise == 'T-Shirt') shirtRef.current?.click()
+    if (data.merchandise == 'T-Shirt') router.push('/customizer/tshirt')
     if (data.merchandise == 'Photocard') router.push('/customizer/photocard')
     if (data.merchandise == 'Sintra Board') router.push('/customizer/sintraboard')
   }
@@ -273,7 +273,7 @@ const LiveProductLayout = props => {
                   color={'light'}
                   onClick={() => heartHandler(data)}
                 >
-                  {!wishListData.filter(d => d.product_id == data?._id).length > 0 ? (
+                  {!wishListData.filter(d => d.product_id?._id == data?._id).length > 0 ? (
                     <>
                       <AiOutlineHeart className='text-2xl text-red-600 mr-1' size={20} />
                       Add to Wishlist

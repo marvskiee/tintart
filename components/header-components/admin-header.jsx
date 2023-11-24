@@ -44,12 +44,11 @@ const AdminHeader = props => {
   const capitalizedPathname = pathname
     ? `${pathname.charAt(0).toUpperCase()}${pathname.slice(1)}`
     : ''
-  console.log(router.pathname?.split('/')[2])
   const DROPDOWN_ROUTES = ['products', 'colors', 'sizes', 'categories']
   return (
     <>
       <Head>{pathname && <title>{`${capitalizedPathname} | TintArt`}</title>}</Head>
-      <div className='z-50 sticky top-0' id='header'>
+      <div className='z-50 sticky top-0' id="header">
         <div
           className={`px-4 lg:py-2 py-4 bg-white -z-10 border-b sticky lg:static flex-row flex items-center justify-between`}
         >
