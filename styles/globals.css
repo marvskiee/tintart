@@ -22,7 +22,7 @@
   position: relative;
   margin: auto;
   display: flex;
-  background-color: rgb(246, 247, 255);
+  background-color: #d1d5db;
   flex-direction: column;
   justify-content: center;
   align-items: center;

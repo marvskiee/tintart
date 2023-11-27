@@ -206,23 +206,30 @@ const Customizer = () => {
 
   const RIGHT_BUTTON = [
     {
-      name: "Artwork",
-      icon: <FiArchive size={ICONSIZE} />,
-      setModal: () => setModal({ ...modal, artwork: !modal.artwork }),
-    },
-    {
       name: "Download ",
       icon: <FiDownload size={ICONSIZE} />,
       setModal: () => captureDivContent(),
-    }
+    },
+    {
+      name: "Save",
+      icon: <LuSave size={ICONSIZE} />,
+      setModal: () => setModal({ ...modal, save: true }),
+    },
+    {
+      name: "Custom Prints",
+      icon: <FiArchive size={ICONSIZE} />,
+      setModal: () => setModal({ ...modal, artwork: !modal.artwork }),
+    },
   ]
 
-  const ButtonComponent = ({ data }) => {
+ const ButtonComponent = ({ data }) => {
     return (
       <>
-        <div onClick={data?.setModal} className='cursor-pointer rounded-full hover:bg-purple-200 p-1'>
+        <div onClick={data?.setModal} className='flex items-center flex-col cursor-pointer rounded-full hover:bg-purple-200 p-1'>
           {data?.icon}
+          <p className='text-center text-xs'>{data?.name}</p>
         </div>
+
         {data?.modalComponent}
       </>
     )
@@ -291,7 +298,7 @@ const Customizer = () => {
       {modal.artwork && <ArtworkComponent
         data={artWorkData}
         deleteHandler={deleteHandler}
-        closeHandler={RIGHT_BUTTON[0].setModal} />}
+        closeHandler={RIGHT_BUTTON[2].setModal} />}
 
 
 
@@ -300,12 +307,14 @@ const Customizer = () => {
 
         <Button size="xs" color="light" className='fixed top-1 left-1 z-10'>
           <Link href="/">
-            <IoChevronBack size={ICONSIZE} />
+          <div className='flex gap-2 items-center'>
+              <IoChevronBack size={ICONSIZE} /> Back to Homepage
+            </div>
           </Link>
         </Button>
-        <Button size="xs" onClick={() => setModal({ ...modal, save: true })} className='bg-violet-600 fixed top-1 right-1 z-10 hover:bg-violet-700'>
+        {/* <Button size="xs" onClick={() => setModal({ ...modal, save: true })} className='bg-violet-600 fixed top-1 right-1 z-10 hover:bg-violet-700'>
           <LuSave size={ICONSIZE} />
-        </Button>
+        </Button> */}
 
         <div className='fixed left-1 top-[40%] z-10 rounded-md p-4 flex flex-col gap-4 bg-white/50 shadow-md'>
           {LEFT_BUTTON.map((item, key) => (

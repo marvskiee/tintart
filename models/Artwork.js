@@ -22,6 +22,9 @@ const ArtworkSchema = new mongoose.Schema({
     front_text: {
         type: String,
     },
+    front_text_size: {
+        type: String,
+    },
     front_text_location: {
         type: String,
     },
@@ -32,6 +35,9 @@ const ArtworkSchema = new mongoose.Schema({
         type: String,
     },
     back_text: {
+        type: String,
+    },
+    back_text_size: {
         type: String,
     },
     back_text_location: {

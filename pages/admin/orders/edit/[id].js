@@ -90,9 +90,11 @@ const ViewOrders = () => {
         setModalMode(null)
       })
     } else {
-      toast.error("Please select image file type!", toastOptions)
+      await updateHandler({ proof_image: [] })
+      setModalMode(null)
+      // toast.error("Please select image file type!", toastOptions)
+      setIsLoading({ ...isLoading, update: false });
     }
-    setIsLoading({ ...isLoading, update: false });
 
   }
 
@@ -132,7 +134,7 @@ const ViewOrders = () => {
       {modalMode &&
         <ModalLayout>
           <div className='flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600'>
-            <h3 className='text-xl font-semibold text-gray-900 dark:text-white'>{modalMode != "view" && "Upload"} Payment Proof</h3>
+            <h3 className='text-xl font-semibold text-gray-900 dark:text-white'>Upload Payment Proof</h3>
           </div>
           <div className='p-6'>
             <>
@@ -169,39 +171,34 @@ const ViewOrders = () => {
                       key={key + 'product-image'}
                       className='border w-full aspect-square object-cover'
                     />
-                    {modalMode != "view" &&
-                      <span
-                        onClick={() => {
-                          setImageUpload([...imageUpload.filter((sup, i) => i != key)])
-                        }}
-                        className='cursor-pointer absolute  rounded-full  top-2 right-2 bg-white z-10'
-                      >
-                        <AiFillCloseCircle size={20} className='text-red-600' />
-                      </span>
-                    }
+                    <span
+                      onClick={() => {
+                        setImageUpload([...imageUpload.filter((sup, i) => i != key)])
+                      }}
+                      className='cursor-pointer absolute  rounded-full  top-2 right-2 bg-white z-10'
+                    >
+                      <AiFillCloseCircle size={20} className='text-red-600' />
+                    </span>
                   </div>
                 ))}
-                {modalMode != "view" &&
-                  imageUpload.length < 4 && (
-                    <img
-                      onClick={() => uploadRef.current.click()}
-                      src='/images/camera.png'
-                      className='cursor-pointer border w-full aspect-square'
-                    />
-                  )}
+                {imageUpload.length < 4 && (
+                  <img
+                    onClick={() => uploadRef.current.click()}
+                    src='/images/camera.png'
+                    className='cursor-pointer border w-full aspect-square'
+                  />
+                )}
               </div>
 
             </>
             <div className='flex gap-4 justify-end mt-4 sm:flex-row flex-col'>
-              {modalMode != "view" &&
-                <Button
-                  disabled={isLoading?.update}
-                  gradientDuoTone={'cyanToBlue'}
-                  onClick={validationHandler}
-                >
-                  Submit
-                </Button>
-              }
+              <Button
+                disabled={isLoading?.update}
+                gradientDuoTone={'cyanToBlue'}
+                onClick={validationHandler}
+              >
+                Submit
+              </Button>
               <Button
                 disabled={isLoading?.update}
                 color="light"
