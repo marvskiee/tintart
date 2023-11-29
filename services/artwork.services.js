@@ -8,5 +8,8 @@ export const getUserArtwork = async (id) =>
 export const addArtwork = async (newData) =>
     postHTTPFormat({ newData, url: '/artwork' })
 
+export const updateArtwork = async (id, newData) =>
+    updateHTTPFormat({ newData, url: '/artwork/update/' + id })
+
 export const deleteArtwork = async (id) =>
     deleteHTTPFormat({ url: '/artwork/delete/' + id })

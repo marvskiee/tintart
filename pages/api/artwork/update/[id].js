@@ -9,13 +9,7 @@ export default async (req, res) => {
         case 'PUT':
             let newError
             try {
-                const { merchandise, values } = req.body
-                
-                const all_artwork = await Artwork.find({ merchandise, values })
-                if (all_artwork?.length > 0)
-                    return response({ res, status_code: 400, success: false, error: "Artwork already exist!" })
-                
-                const artwork = await Artwork.findByIdAndUpdate(req.query.id, { merchandise, values }, {
+                const artwork = await Artwork.findByIdAndUpdate(req.query.id, req.body, {
                     new: true,
                     runValidators: true,
                 })

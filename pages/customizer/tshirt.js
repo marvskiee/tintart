@@ -6,7 +6,7 @@ import { FiArchive, FiDownload, FiType } from "react-icons/fi";
 import { FiImage } from "react-icons/fi";
 import { IoChevronBack } from "react-icons/io5";
 import { LuSave } from "react-icons/lu";
-import { MdDoNotDisturbAlt } from "react-icons/md";
+import { MdDoNotDisturbAlt, MdOutlineColorLens } from "react-icons/md";
 
 
 import domtoimage from 'dom-to-image';
@@ -16,9 +16,11 @@ import { getUser } from '../../services/auth.services';
 import toast from 'react-hot-toast';
 import { toastOptions } from '../../styles/modalOption';
 import { useRouter } from 'next/router';
-import { addArtwork, deleteArtwork, getUserArtwork } from '../../services/artwork.services';
+import { addArtwork, deleteArtwork, getUserArtwork, updateArtwork } from '../../services/artwork.services';
 import moment from 'moment';
-const TextComponent = ({ setCanvas, canvas, location, setLocation, closeHandler, setFontSizes, fontSizes }) => {
+import { ChromePicker } from 'react-color';
+import { translateAliases } from '../../models/Artwork';
+const TextComponent = ({ setCanvas, canvas, location, setLocation, closeHandler, setFontSizes, fontSizes, position, setPosition }) => {
   return (
     <ModalComponent closeHandler={closeHandler}>
       <div className='flex gap-4'>
@@ -28,6 +30,14 @@ const TextComponent = ({ setCanvas, canvas, location, setLocation, closeHandler,
       <Label>Font Size:</Label>
       <TextInput type='number' value={fontSizes[location]} onChange={(e) => setFontSizes({ ...fontSizes, [location]: e.target.value })} />
       <TextInput placeholder='Enter text here...' className="mt-4 w-full" value={canvas[location]} onChange={(e) => { setCanvas({ ...canvas, [location]: e.target.value }) }} />
+      <div className='mx-auto max-w-[10rem]'>
+        <label htmlFor="default-range" className="block mb-2 text-sm font-medium text-center text-gray-900 dark:text-white">X Position</label>
+        <input id="default-range" min={-100} max={100} type="range" onChange={(e) => setPosition({ ...position, [location + "_x"]: e.target.value })} value={position[location + "_x"]} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
+      </div>
+      <div className='mx-auto max-w-[10rem]'>
+        <label htmlFor="default-range" className="block mb-2 text-sm font-medium text-center text-gray-900 dark:text-white">Y Position</label>
+        <input id="default-range" min={-100} max={100} type="range" onChange={(e) => setPosition({ ...position, [location + "_y"]: e.target.value })} value={position[location + "_y"]} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
+      </div>
     </ModalComponent >
   )
 }
@@ -36,7 +46,7 @@ const ModalComponent = ({ children, closeHandler }) => {
   return (
     <div className=' bg-white/10 w-full p-4 overflow-auto h-screen fixed top-0 left-0 z-[200] flex items-center justify-center'>
       <div className='m-auto max-w-[40rem] w-full'>
-        <div className='relative bg-white w-full rounded-lg shadow dark:bg-gray-700 p-4'>
+        <div className='relative bg-white/40 w-full rounded-lg shadow dark:bg-gray-700 p-4'>
           <span onClick={closeHandler} className='absolute top-4 right-4 cursor-pointer'><AiOutlineClose /></span>
 
           {children}</div>
@@ -45,14 +55,26 @@ const ModalComponent = ({ children, closeHandler }) => {
   )
 }
 
-
-const PictureComponent = ({ images, setCanvas, canvas, location, setLocation, closeHandler }) => {
+const PictureComponent = ({ images, setCanvas, canvas, location, setLocation, closeHandler, scale, setScale, position, setPosition }) => {
+  console.log(position)
   return (
     <ModalComponent closeHandler={closeHandler}>
       <div className='flex gap-4'>
         <Button pill onClick={() => setLocation("front")} color={location != "front" ? "white" : "purple"}>Front</Button>
         <Button pill onClick={() => setLocation("back")} color={location != "back" ? "white" : "purple"}>Back</Button>
       </div >
+      <div className='mx-auto max-w-[10rem]'>
+        <label htmlFor="default-range" className="block mb-2 text-sm font-medium text-center text-gray-900 dark:text-white">Image Scale</label>
+        <input id="default-range" min={10} max={100} type="range" onChange={(e) => setScale({ ...scale, [location]: e.target.value })} value={scale[location]} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
+      </div>
+      <div className='mx-auto max-w-[10rem]'>
+        <label htmlFor="default-range" className="block mb-2 text-sm font-medium text-center text-gray-900 dark:text-white">X Position</label>
+        <input id="default-range" min={-100} max={100} type="range" onChange={(e) => setPosition({ ...position, [location + "_x"]: e.target.value })} value={position[location + "_x"]} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
+      </div>
+      <div className='mx-auto max-w-[10rem]'>
+        <label htmlFor="default-range" className="block mb-2 text-sm font-medium text-center text-gray-900 dark:text-white">Y Position</label>
+        <input id="default-range" min={-100} max={100} type="range" onChange={(e) => setPosition({ ...position, [location + "_y"]: e.target.value })} value={position[location + "_y"]} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
+      </div>
       <div className='mt-4 grid lg:grid-cols-3 grid-cols-2 gap-4'>
         <div
           onClick={() => setCanvas({ ...canvas, [location]: "" })}
@@ -60,85 +82,142 @@ const PictureComponent = ({ images, setCanvas, canvas, location, setLocation, cl
           <MdDoNotDisturbAlt size={50} />
         </div>
         {images?.map((item, key) => (
-          <img onClick={() => setCanvas({ ...canvas, [location]: item })} src={item} className='hover:border-violet-600 border cursor-pointer rounded-md aspect-square w-full object-cover' key={key + "images"} />
+          <img onClick={() => setCanvas({ ...canvas, [location]: item })} src={item} className='hover:border-violet-600 border cursor-pointer rounded-md aspect-square w-full object-stretch' key={key + "images"} />
         ))}
       </div>
     </ModalComponent >
   )
 }
 
-const ArtworkComponent = ({ data, deleteHandler, closeHandler }) => {
+const ArtworkComponent = ({ data, deleteHandler, closeHandler, artworkRef, customizerHandler }) => {
   const scale = 50
-  const scaledWidth = 400 * (scale / 100);
-  const scaledHeight = 600 * (scale / 100);
+  const canvasScaledWidth = 400 * (scale / 100);
+  const canvasScaledHeight = 600 * (scale / 100);
   const fs = 20
+  const [deleteSelected, setDeleteSelected] = useState(null)
+
+
+  const calculateTransform = (item, scale) => {
+    if (item?.length > 0) {
+      return `translate(${parseFloat(item.split(",")[0]) * (canvasScaledWidth / 100)}px, ${parseFloat(item.split(",")[1]) * (canvasScaledHeight / 100)}px)`;
+    } else {
+      return "translate(0px,0px)"
+    }
+  };
+
   return (
     <ModalComponent closeHandler={closeHandler}>
-      <div className='mt-4 grid grid-cols-1  gap-4'>
+      <div className='mt-4 grid grid-cols-1  gap-4 bg-white'>
         {data?.map((item, key) => (
-          <div key={item?._id} className='mx-auto'>
+          <div key={item?._id} className='mx-auto '>
             <p className='text-center font-semibold'>{item?.title}</p>
             <p className='text-center text-slate-500'>{moment(item?.created_at).format("MMMM DD, YYYY hh:mm A")}</p>
-            <div id="contentToCapture" className='mx-auto grid-cols-1 flex md:flex-row flex-col gap-4 relative'  >
-              <span
-                onClick={() =>
-                  deleteHandler(item?._id)
-                }
-                className='cursor-pointer absolute  rounded-full  top-2 right-2 bg-white z-10'
-              >
-                <AiFillCloseCircle size={20} className='text-red-600' />
-              </span>
-              <div className={`front-shirt bg-white relative border rounded-xl shadow-lg bg-white-600 overflow-hidden`}
-                style={{
-                  height: scaledHeight,
-                  width: scaledWidth,
-                }}
-              >
-                {item.front_image.length > 0 &&
-                  <img
-                    style={{
-                      height: scaledHeight * .3,
-                      width: scaledWidth * .3,
-                      objectFit: "contain"
-                    }} src={item.front_image} className='h-full w-full object-cover' />
-                }
-                {item.front_text.length > 0 &&
-                  <div className=' mx-auto absolute w-full ' style={{ bottom: 150 * (scale / 100) }}>
-                    <div className='m-4 flex items-center justify-center' >
-                      <p
-                        style={{ fontSize: fs * (scale / 100) }}
-                        className=' py-1 px-2 rounded-md font-semibold z-10'
-                      >{item?.front_text}</p>
-                    </div>
-                  </div>}
+            {deleteSelected?._id == item?._id ?
+              <>
+                <div className='flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600'>
+                  <h3 className='text-xl font-semibold text-gray-900 dark:text-white'>Delete {item?.title}</h3>
+                </div>
+                <div className='p-6 space-y-6'>
+                  <p>
+                    Are you sure you want to delete this ?
+                  </p>
+                </div>
+                <div className="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+                  <Button
+                    gradientDuoTone={'pinkToOrange'}
+                    onClick={async () => {
+                      artworkRef.current = null
+                      deleteHandler(item?._id)
+                    }}
+                  >
+                    Proceed
+                  </Button>
+                  <Button color='gray' onClick={() => setDeleteSelected(null)}>
+                    Cancel
+                  </Button>
+                </div>
+              </> :
+              <div id="contentToCapture" className='mx-auto grid-cols-1 flex md:flex-row flex-col gap-4 relative'  >
+                <span
+                  onClick={() => {
+                    artworkRef.current = item;
+                    customizerHandler(item);
+                  }
+                  }
+                  className='p-2 py-1 text-xs bg-emerald-600 text-white cursor-pointer absolute  rounded-full  top-2 left-2  z-10'
+                >
+                  Update
+                </span>
+                <span
+                  onClick={() =>
+                    setDeleteSelected(item)
+                  }
+                  className='p-2 py-1 text-xs bg-red-600 text-white cursor-pointer absolute  rounded-full  top-2 right-2  z-10'
+                >
+                  Delete
+                </span>
+                <div className={`front-shirt  relative border rounded-xl shadow-lg bg-white-600 overflow-hidden`}
+                  style={{
+                    backgroundColor: item.canvas_color,
+                    height: canvasScaledHeight,
+                    width: canvasScaledWidth,
+                  }}
+                >
+                  {item.front_image.length > 0 &&
+                    <img
+                      style={{
+                        height: canvasScaledHeight * (item.front_image_size / 100),
+                        width: canvasScaledWidth * (item.front_image_size / 100),
+                        transform: calculateTransform(item.front_image_location, scale),
+                        objectFit: "contain"
+                      }} src={item.front_image} className='h-full w-full object-cover' />
+                  }
+                  {item.front_text.length > 0 &&
+                    <div className=' mx-auto absolute w-full ' style={{ bottom: 150 * (scale / 100) }}>
+                      <div className='m-4 flex items-center justify-center' >
+                        <p
+                          style={{
+                            fontSize: item.front_text_size * (scale / 100),
+                            color: item.front_color,
+                            transform: `translate(${item?.front_text_location?.split(",")[0] * (scale / 100)}px, ${item?.front_text_location?.split(",")[1] * (scale / 100)}px)`
+                          }}
+                          className=' py-1 px-2 rounded-md font-semibold z-10'
+                        >{item?.front_text}</p>
+                      </div>
+                    </div>}
+                </div>
+                {/* back canvas  */}
+                < div className={`back-shirt bg-white relative border rounded-xl shadow-lg bg-white-600  overflow-hidden`}
+                  style={{
+                    height: canvasScaledHeight,
+                    backgroundColor: item.canvas_color,
+                    width: canvasScaledWidth,
+                  }}
+                >
+                  {item?.back_image.length > 0 &&
+                    <img src={item.back_image} className='h-full w-full object-cover'
+                      style={{
+                        height: canvasScaledHeight * (item.back_image_size / 100),
+                        width: canvasScaledWidth * (item.back_image_size / 100),
+                        objectFit: "contain",
+                        transform: calculateTransform(item.back_image_location, scale),
+                      }} />
+                  }
+                  {item?.back_text?.length > 0 &&
+                    <div className=' mx-auto absolute w-full ' style={{ bottom: 150 * (scale / 100) }}>
+                      <div className='m-4 flex items-center justify-center' style={{ bottom: 150 * (scale / 100) }}>
+                        <p style={{
+                          fontSize: item.back_text_size * (scale / 100),
+                          color: item.back_color,
+                          transform: `translate(${item?.back_text_location?.split(",")[0] * (scale / 100)}px, ${item?.back_text_location?.split(",")[1] * (scale / 100)}px)`
+                        }}
+                          className=' py-1 px-2 rounded-md font-semibold z-10'
+                        >{item?.back_text}</p>
+                      </div>
+                    </div>}
+                </div>
               </div>
-              {/* back canvas  */}
-              < div className={`back-shirt bg-white relative border rounded-xl shadow-lg bg-white-600  overflow-hidden`}
-                style={{
-                  height: scaledHeight,
-                  width: scaledWidth,
-                }}
-              >
-                {item?.back_image.length > 0 &&
-                  <img src={item.back_image} className='h-full w-full object-cover'
-                    style={{
-                      height: scaledHeight * .3,
-                      width: scaledWidth * .3,
-                      objectFit: "contain"
-                    }} />
-                }
-                {item?.back_text?.length > 0 &&
-                  <div className=' mx-auto absolute w-full ' style={{ bottom: 150 * (scale / 100) }}>
-                    <div className='m-4 flex items-center justify-center' style={{ bottom: 150 * (scale / 100) }}>
-                      <p style={{
-                        fontSize: fs * (scale / 100),
-                      }}
-                        className=' py-1 px-2 rounded-md font-semibold z-10'
-                      >{item?.back_text}</p>
-                    </div>
-                  </div>}
-              </div>
-            </div>
+            }
           </div>
         ))}
       </div>
@@ -162,6 +241,29 @@ const SaveComponent = ({ title, setTitle, submitHandler, closeHandler }) => {
   )
 }
 
+const ColorComponent = ({ colors, setColors, closeHandler }) => {
+  return (
+    <ModalComponent closeHandler={closeHandler}>
+      <div className='grid lg:grid-cols-2 grid-cols-1 gap-4 mt-6'>
+        <div className='w-full'>
+          <Label>Tshirt Color</Label>
+          <ChromePicker color={colors["shirt"]} onChange={(updatedColor) => setColors({ ...colors, ["shirt"]: updatedColor.hex })} />
+        </div>
+        <div className="w-full" />
+        <div className='w-full'>
+          <Label>Front Text Color</Label>
+          <ChromePicker color={colors["front_text"]} onChange={(updatedColor) => setColors({ ...colors, ["front_text"]: updatedColor.hex })} />
+        </div>
+        <div className='w-full'>
+          <Label>Back Text Color</Label>
+          <ChromePicker color={colors["back_text"]} onChange={(updatedColor) => setColors({ ...colors, ["back_text"]: updatedColor.hex })} />
+        </div>
+      </div>
+    </ModalComponent >
+  )
+}
+
+
 
 
 const Customizer = () => {
@@ -175,6 +277,8 @@ const Customizer = () => {
   })
   const [imageLocation, setImageLocation] = useState("front")
   const [textLocation, setTextLocation] = useState("front")
+  const [colorLocation, setColorLocation] = useState("front")
+
   const [canvasText, setCanvasText] = useState({ front: "", back: "" })
 
   const MY_CORS = 'https://marvs-cors.onrender.com/proxy?url='
@@ -185,7 +289,14 @@ const Customizer = () => {
   const [images, setImages] = useState([
   ])
   const ICONSIZE = 25
+  const [imageSize, setImageSize] = useState({ front: 30, back: 30 })
+  //positions
+  const [imagePosition, setImagePosition] = useState({ front_x: 0, back_x: 0, front_y: 0, back_y: 0 })
+  const [textPosition, setTextPosition] = useState({ front_x: 0, back_x: 0, front_y: 0, back_y: 0 })
+  //colors
+  const [colors, setColors] = useState({ shirt: "#D1D5DB", front_text: "#000", back_text: "#000" })
   const { state, dispatch } = useAppContext()
+  const artworkRef = useRef(null)
   const loadHandler = async () => {
     const result = await getUserCanvas(state?.user?._id)
     if (result?.success) {
@@ -234,6 +345,11 @@ const Customizer = () => {
       });
   };
   const LEFT_BUTTON = [
+    {
+      name: "Color",
+      icon: <MdOutlineColorLens size={ICONSIZE} />,
+      setModal: () => setModal({ ...modal, color: !modal.color }),
+    },
     {
       name: "Picture",
       icon: <FiImage size={ICONSIZE} />,
@@ -293,13 +409,36 @@ const Customizer = () => {
       merchandise: router.pathname.split("/")[2],
       user_id: state?.user?._id,
       title: title,
-      front_image: canvasImage.front.replace(MY_CORS, ""),
+      // texts
       front_text: canvasText.front,
-      back_image: canvasImage.back.replace(MY_CORS, ""),
       back_text: canvasText.back,
+      // images
+      front_image: canvasImage.front.replace(MY_CORS, ""),
+      back_image: canvasImage.back.replace(MY_CORS, ""),
+      // colors
+      canvas_color: colors.shirt,
+      front_color: colors.front_text,
+      back_color: colors.back_text,
+      // locations
+      front_image_location: [imagePosition.front_x, imagePosition.front_y].join(","),
+      back_image_location: [imagePosition.back_x, imagePosition.back_y].join(","),
+      front_text_location: [textPosition.front_x, textPosition.front_y].join(","),
+      back_text_location: [textPosition.back_x, textPosition.back_y].join(","),
+      // sizes
+      front_text_size: fontSizes.front,
+      back_text_size: fontSizes.back,
+      front_image_size: imageSize.front,
+      back_image_size: imageSize.back
     }
-    const result = await addArtwork(newData)
+    // return console.log(newData)
+    let result = null
+    if (!artworkRef.current) {
+      result = await addArtwork(newData)
+    } else {
+      result = await updateArtwork(artworkRef.current?._id, newData)
+    }
     if (result.success) {
+      artworkRef.current = null
       setModal({ ...modal, save: false })
       setTitle("")
       await refetchArtworkHandler()
@@ -309,8 +448,60 @@ const Customizer = () => {
 
   }
 
-  const scaledWidth = 400 * (scale / 100);
-  const scaledHeight = 600 * (scale / 100);
+
+  const customizerHandler = (data) => {
+    if (!data) {
+      setCanvasText({ front: "", back: "" })
+      setCanvasImage({ front: "", back: "" })
+      setScale(50)
+      setFontSizes({ front: 20, back: 20 })
+      setImageSize({ front: 30, back: 30 })
+      setImagePosition({ front_x: 0, back_x: 0, front_y: 0, back_y: 0 })
+      setTextPosition({ front_x: 0, back_x: 0, front_y: 0, back_y: 0 })
+      setColors({ shirt: "#D1D5DB", front_text: "#000", back_text: "#000" })
+    } else {
+      setTitle(data?.title)
+      const {
+        front_text, back_text,
+        front_image, back_image,
+        front_text_size, back_text_size,
+        front_image_size, back_image_size,
+        front_image_location, back_image_location,
+        front_text_location, back_text_location
+      } = data
+      setCanvasText({ front: front_text, back: back_text })
+      setCanvasImage({ front: front_image, back: back_image })
+
+      // sizes
+      setFontSizes({ front: front_text_size, back: back_text_size })
+      setImageSize({ front: front_image_size, back: back_image_size })
+
+      //position
+      setImagePosition({
+        front_x: front_image_location.split(",")[0],
+        back_x: back_image_location.split(",")[0],
+        front_y: front_image_location.split(",")[1],
+        back_y: back_image_location.split(",")[1]
+      })
+
+      setTextPosition({
+        front_x: front_text_location.split(",")[0],
+        back_x: back_text_location.split(",")[0],
+        front_y: front_text_location.split(",")[1],
+        back_y: back_text_location.split(",")[1]
+      })
+      setColors({
+        shirt: data.canvas_color,
+        front_text: data.front_color,
+        back_text: data.back_color
+      })
+    }
+  }
+
+  const canvasScaledWidth = 400 * (scale / 100);
+  const canvasScaledHeight = 600 * (scale / 100);
+
+
   // Styles for centering the fixed div
   const centerDivStyle = {
     position: 'fixed',
@@ -318,27 +509,33 @@ const Customizer = () => {
     left: '50%',
     transform: 'translate(-50%, -50%)',
   };
+  console.log(artworkRef)
   return (
     <>
       {/* MODALS  */}
-
       {modal.picture && <PictureComponent
         images={images}
         setCanvas={setCanvasImage}
         canvas={canvasImage}
         location={imageLocation}
+        position={imagePosition}
+        setPosition={setImagePosition}
         setLocation={setImageLocation}
-        closeHandler={LEFT_BUTTON[0].setModal}
+        scale={imageSize}
+        setScale={setImageSize}
+        closeHandler={LEFT_BUTTON[1].setModal}
 
       />}
       {modal.text && <TextComponent
         setCanvas={setCanvasText}
         canvas={canvasText}
         location={textLocation}
+        position={textPosition}
+        setPosition={setTextPosition}
         fontSizes={fontSizes}
         setFontSizes={setFontSizes}
         setLocation={setTextLocation}
-        closeHandler={LEFT_BUTTON[1].setModal} />}
+        closeHandler={LEFT_BUTTON[2].setModal} />}
       {modal.save && <SaveComponent
         title={title}
         setTitle={setTitle}
@@ -347,9 +544,18 @@ const Customizer = () => {
 
       {modal.artwork && <ArtworkComponent
         data={artWorkData}
+        customizerHandler={customizerHandler}
         deleteHandler={deleteHandler}
+        artworkRef={artworkRef}
         closeHandler={RIGHT_BUTTON[2].setModal} />}
 
+      {modal.color && <ColorComponent
+        location={colorLocation}
+        setLocation={setColorLocation}
+        colors={colors}
+        setColors={setColors}
+        closeHandler={LEFT_BUTTON[0].setModal}
+      />}
       {/* END OF MODALS  */}
       <div className='overflow-hidden h-screen relative'>
 
@@ -360,9 +566,8 @@ const Customizer = () => {
             </div>
           </Link>
         </Button>
-        {/* <Button size="xs" onClick={() => setModal({ ...modal, save: true })} className='bg-violet-600 fixed top-1 right-1 z-10 hover:bg-violet-700'>
-          <LuSave size={ICONSIZE} />
-        </Button> */}
+
+
 
         <div className='fixed left-1 top-[40%] z-10 rounded-md p-4 flex flex-col gap-4 bg-white/50 shadow-md'>
           {LEFT_BUTTON.map((item, key) => (
@@ -377,57 +582,77 @@ const Customizer = () => {
         {/* bottom control  */}
         <div className='fixed bottom-5 w-full z-10'>
           <div className='mx-auto max-w-[10rem]'>
+            {artworkRef?.current?.title &&
+              <>
+                <p className=" font-semibold w-full text-center">Edit Artwork Mode{"\n"}Title: {artworkRef?.current?.title}</p>
+                <Button onClick={() => {
+                  artworkRef.current = null
+                  customizerHandler()
+                }} className="mx-auto" color="light" size={"xs"}>Cancel Edit</Button>
+              </>
+            }
             <label htmlFor="default-range" className="block mb-2 text-sm font-medium text-center text-gray-900 dark:text-white">Camera Scale</label>
             <input id="default-range" min={20} max={100} type="range" onChange={(e) => setScale(e.target.value)} value={scale} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
           </div>
         </div>
         {/* end of control */}
         <div style={centerDivStyle} className='mx-auto fixed flex items-center justify-center gap-4'>
+          <p className="absolute -left-14 top-12">Front</p>
+
+          <p className="absolute -right-14 top-12">Back</p>
+
           <div id="contentToCapture" className='relative flex gap-4 ' >
-            <p className="absolute -left-14 top-12">Front</p>
 
             {/* front canvas  */}
             <div
               className='front-shirt'
               // className={`front-shirt relative border rounded-xl shadow-lg bg-white-600 overflow-hidden`}
               style={{
-                height: scaledHeight,
-                width: scaledWidth,
+                height: canvasScaledHeight,
+                width: canvasScaledWidth,
+                backgroundColor: colors["shirt"],
               }}
             >
               {canvasImage.front.length > 0 &&
                 <img
                   style={{
                     objectFit: "contain",
-                    height: scaledHeight * .3,
-                    width: scaledWidth * .3,
+                    height: (canvasScaledHeight * (imageSize.front / 100)),
+                    width: (canvasScaledWidth * (imageSize.front / 100)),
+                    transform: `translate(${imagePosition.front_x * (canvasScaledWidth / 100)}px, ${imagePosition.front_y * (canvasScaledHeight / 100)}px)`
                   }} src={MY_CORS + canvasImage.front} className='h-full w-full object-cover' />
               }
               {canvasText.front.length > 0 &&
                 < div className={` mx-auto absolute  w-full`} style={{ bottom: 150 * (scale / 100) }}>
                   <div className='m-4 flex items-center justify-center'>
                     <p
-                      style={{ fontSize: fontSizes["front"] * (scale / 100) }}
+                      style={{
+                        fontSize: fontSizes["front"] * (scale / 100),
+                        color: colors["front_text"],
+                        transform: `translate(${textPosition.front_x * (canvasScaledWidth / 100)}px, ${textPosition.front_y * (canvasScaledHeight / 100)}px)`
+                      }}
                       className='rounded-md  font-semibold z-10'
                     >{canvasText["front"]}</p>
                   </div>
                 </div>}
             </div>
             {/* back canvas  */}
-            <p className="absolute -right-14 top-12">Back</p>
 
             <div className={`back-shirt bg-white relative rounded-xl shadow-lg bg-white-600  overflow-hidden`}
               style={{
-                height: scaledHeight,
-                width: scaledWidth,
+                height: canvasScaledHeight,
+                width: canvasScaledWidth,
+                backgroundColor: colors["shirt"],
               }}
             >
               {canvasImage?.back.length > 0 &&
                 <img src={MY_CORS + canvasImage.back} className='h-full w-full object-cover'
                   style={{
                     objectFit: "contain",
-                    height: scaledHeight * .3,
-                    width: scaledWidth * .3,
+                    height: (canvasScaledHeight * (imageSize.back / 100)),
+                    width: (canvasScaledWidth * (imageSize.back / 100)),
+                    transform: `translate(${imagePosition.back_x * (canvasScaledWidth / 100)}px, ${imagePosition.back_y * (canvasScaledHeight / 100)}px)`
+
                   }} />
               }
               {canvasText?.back?.length > 0 &&
@@ -435,16 +660,16 @@ const Customizer = () => {
                   <div className='m-4 flex items-center justify-center'>
 
                     <p style={{
+                      color: colors["back_text"],
                       fontSize: fontSizes["back"] * (scale / 100),
+                      transform: `translate(${textPosition.back_x * (canvasScaledWidth / 100)}px, ${textPosition.back_y * (canvasScaledHeight / 100)}px)`
                     }}
                       className='rounded-md font-semibold z-10'
                     >{canvasText["back"]}</p>
                   </div>
                 </div>}
-
             </div>
           </div>
-
         </div>
       </div >
     </>
