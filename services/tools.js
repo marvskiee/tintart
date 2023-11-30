@@ -78,6 +78,7 @@ export const imageUploader = async (images, handler) => {
             }
           })
           .catch((e) => {
+            console.log(e)
             return null;
           });
       });

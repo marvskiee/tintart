@@ -39,9 +39,7 @@ const TableLayout = ({
       )
     )
   }
-
   const searchFilter = searchHandler(fetchData)
-
   useEffect(() => {
     loadHandler()
   }, [])
@@ -50,14 +48,13 @@ const TableLayout = ({
   // HANDLERS
   const loadHandler = async () => {
     const result = await loadRequest()
-    let temp_data = result?.data
-    pillDataRef.current = temp_data
-    let filtered = temp_data
-    if (['Colors', 'Sizes'].indexOf(title) > -1) {
-      filtered = temp_data?.filter(t => t.merchandise == selectedMerch)
-    }
-    setNewSlice(filtered?.slice(0, MAX))
-    setFetchData(filtered || [])
+    setFetchData(result?.data)
+    // pillDataRef.current = temp_data
+    // let filtered = temp_data
+    // if (['Colors', 'Sizes','Products'].indexOf(title) > -1) {
+    //   filtered = temp_data?.filter(t => t.merchandise == selectedMerch)
+    // }
+    // setNewSlice(filtered?.slice(0, MAX))
     setIsLoading(false)
   }
 
@@ -110,14 +107,21 @@ const TableLayout = ({
 
   // pagination
   const [page, setPage] = useState(1)
-  const [newSlice, setNewSlice] = useState([])
+  // const [newSlice, setNewSlice] = useState([])
   const MAX = 10
   const paginationHandler = item => {
     setPage(item)
-    setNewSlice(searchFilter.slice(item * MAX - MAX, item * MAX))
   }
   const merchandise_list = ['T-Shirt', 'Photocard', 'Sintra Board']
   const [selectedMerch, setSelectedMerch] = useState(merchandise_list[0])
+
+  const finalItems =
+    ['Colors', 'Sizes', 'Products'].indexOf(title) > -1
+      ? searchFilter.filter(t => t.merchandise == selectedMerch).slice(page * MAX - MAX, page * MAX)
+      : searchFilter.slice(page * MAX - MAX, page * MAX)
+  const pageCount =  ['Colors', 'Sizes', 'Products'].indexOf(title) > -1
+  ? searchFilter.filter(t => t.merchandise == selectedMerch)
+  : searchFilter
   return (
     <>
       {modal && (
@@ -188,10 +192,10 @@ const TableLayout = ({
                 <Button
                   onClick={() => {
                     setSelectedMerch(item)
-                    let filtered = pillDataRef.current?.filter(t => t.merchandise == item)
-                    setNewSlice(filtered?.slice(0, MAX))
+                    // let filtered = pillDataRef.current?.filter(t => t.merchandise == item)
+                    // setNewSlice(filtered?.slice(0, MAX))
                     setPage(1)
-                    setFetchData(filtered)
+                    // setFetchData(filtered)
                   }}
                   color='gray'
                   key={key + item}
@@ -204,7 +208,12 @@ const TableLayout = ({
           )}
         </div>
         <div className='flex gap-4 flex-col md:flex-row'>
-          <TextInput placeholder='Search here...' onChange={e => setSearch(e.target.value)} />
+          <TextInput
+            placeholder='Search here...'
+            onChange={e => {
+              setSearch(e.target.value)
+            }}
+          />
           {title != 'Orders' && (
             <Button
               gradientDuoTone='cyanToBlue'
@@ -244,8 +253,8 @@ const TableLayout = ({
           <Table.Body>
             {isLoading ? (
               <RowTemplate label='Fetching...' />
-            ) : newSlice.length > 0 ? (
-              newSlice.map((parentItem, parentKey) => (
+            ) : finalItems.length > 0 ? (
+              finalItems.map((parentItem, parentKey) => (
                 <Table.Row
                   key={`parent-${title.toLowerCase()}-${parentKey}`}
                   className={parentKey % 2 && 'transition-colors bg-zinc-100'}
@@ -342,10 +351,12 @@ const TableLayout = ({
           >
             Previous
           </button>
-          {Array.from({ length: Math.ceil(searchFilter?.length / MAX) }, (_, i) => i + 1).map(
+          {Array.from({ length: Math.ceil(pageCount?.length / MAX) }, (_, i) => i + 1).map(
             (item, index) => (
               <button
-                onClick={() => paginationHandler(item)}
+                onClick={() => {
+                  paginationHandler(item)
+                }}
                 className={`border p-1 px-4 rounded-md ${
                   page == item ? ' text-white bg-zinc-900 ' : ' text-zinc-900 bg-white '
                 } `}
@@ -357,7 +368,7 @@ const TableLayout = ({
           )}
           <button
             onClick={() => paginationHandler(page + 1)}
-            disabled={Math.ceil(searchFilter?.length / MAX) == page}
+            disabled={Math.ceil(pageCount?.length / MAX) == page}
             className={`border p-1 px-4 rounded-md `}
           >
             Next

@@ -9,6 +9,12 @@ const CanvasSchema = new mongoose.Schema({
         type: String,
         required: [true, 'User Id must not be empty!'],
     },
+    image: {
+        type: String,
+    },
+    merch: {
+        type: String,
+    },
     created_at: {
         type: Date,
         default: Date.now,

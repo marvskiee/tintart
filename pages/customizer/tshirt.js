@@ -1,4 +1,4 @@
-import { Button, Label, TextInput } from 'flowbite-react'
+import { Button, FileInput, Label, TextInput } from 'flowbite-react'
 import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
 import { AiFillCloseCircle, AiOutlineClose } from 'react-icons/ai'
@@ -10,7 +10,7 @@ import { MdDoNotDisturbAlt, MdOutlineColorLens } from "react-icons/md";
 
 
 import domtoimage from 'dom-to-image';
-import { getUserCanvas } from '../../services/canvas.services';
+import { addCanvas, getUserCanvas } from '../../services/canvas.services';
 import { useAppContext } from '../../context/AppContext';
 import { getUser } from '../../services/auth.services';
 import toast from 'react-hot-toast';
@@ -20,6 +20,7 @@ import { addArtwork, deleteArtwork, getUserArtwork, updateArtwork } from '../../
 import moment from 'moment';
 import { ChromePicker } from 'react-color';
 import { translateAliases } from '../../models/Artwork';
+import { imageUploader } from '../../services/tools';
 const TextComponent = ({ setCanvas, canvas, location, setLocation, closeHandler, setFontSizes, fontSizes, position, setPosition }) => {
   return (
     <ModalComponent closeHandler={closeHandler}>
@@ -55,8 +56,23 @@ const ModalComponent = ({ children, closeHandler }) => {
   )
 }
 
-const PictureComponent = ({ images, setCanvas, canvas, location, setLocation, closeHandler, scale, setScale, position, setPosition }) => {
-  console.log(position)
+const PictureComponent = ({ refetch, state, images, setCanvas, canvas, location, setLocation, closeHandler, scale, setScale, position, setPosition }) => {
+  const addHandler = async (imageUpload) => {
+    await imageUploader([imageUpload], async (postImage) => {
+      if (postImage[0] != null) {
+        const newData = {
+          user_id: state?.user?._id, image: postImage[0], merch: "tshirt"
+        }
+        const result = await addCanvas(newData)
+        if (await result?.success) {
+          refetch()
+          return toast.success(`Uploaded successfuly!`, toastOptions)
+        }
+      }
+      toast.error('Something went wrong!', toastOptions)
+    })
+  }
+
   return (
     <ModalComponent closeHandler={closeHandler}>
       <div className='flex gap-4'>
@@ -75,6 +91,21 @@ const PictureComponent = ({ images, setCanvas, canvas, location, setLocation, cl
         <label htmlFor="default-range" className="block mb-2 text-sm font-medium text-center text-gray-900 dark:text-white">Y Position</label>
         <input id="default-range" min={-100} max={100} type="range" onChange={(e) => setPosition({ ...position, [location + "_y"]: e.target.value })} value={position[location + "_y"]} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
       </div>
+      <Label>Upload Photo</Label>
+      <FileInput className='w-full'
+        onChange={e => {
+          try {
+            if (e.target?.files[0].size > 2000000)
+              return toast.error('File must be less than 2mb.', toastOptions)
+            addHandler({
+              url: URL?.createObjectURL(e.target?.files[0]),
+              file: e.target?.files[0],
+              size: e.target?.files[0].size,
+            })
+          } catch (e) { }
+        }}
+        accept='image/*'
+      />
       <div className='mt-4 grid lg:grid-cols-3 grid-cols-2 gap-4'>
         <div
           onClick={() => setCanvas({ ...canvas, [location]: "" })}
@@ -82,9 +113,12 @@ const PictureComponent = ({ images, setCanvas, canvas, location, setLocation, cl
           <MdDoNotDisturbAlt size={50} />
         </div>
         {images?.map((item, key) => (
-          <img onClick={() => setCanvas({ ...canvas, [location]: item })} src={item} className='hover:border-violet-600 border cursor-pointer rounded-md aspect-square w-full object-stretch' key={key + "images"} />
+          <div className='relative' key={key + "-item"}>
+            <img onClick={() => setCanvas({ ...canvas, [location]: item })} src={item} className='hover:border-violet-600 border cursor-pointer rounded-md aspect-square w-full object-stretch' key={key + "images"} />
+          </div>
         ))}
       </div>
+
     </ModalComponent >
   )
 }
@@ -141,6 +175,7 @@ const ArtworkComponent = ({ data, deleteHandler, closeHandler, artworkRef, custo
                 <span
                   onClick={() => {
                     artworkRef.current = item;
+                    closeHandler()
                     customizerHandler(item);
                   }
                   }
@@ -179,7 +214,7 @@ const ArtworkComponent = ({ data, deleteHandler, closeHandler, artworkRef, custo
                           style={{
                             fontSize: item.front_text_size * (scale / 100),
                             color: item.front_color,
-                            transform: `translate(${item?.front_text_location?.split(",")[0] * (scale / 100)}px, ${item?.front_text_location?.split(",")[1] * (scale / 100)}px)`
+                            transform: `translate(${item?.front_text_location?.split(",")[0] * (canvasScaledWidth / 100)}px, ${item?.front_text_location?.split(",")[1] * (canvasScaledHeight / 100)}px)`
                           }}
                           className=' py-1 px-2 rounded-md font-semibold z-10'
                         >{item?.front_text}</p>
@@ -209,7 +244,8 @@ const ArtworkComponent = ({ data, deleteHandler, closeHandler, artworkRef, custo
                         <p style={{
                           fontSize: item.back_text_size * (scale / 100),
                           color: item.back_color,
-                          transform: `translate(${item?.back_text_location?.split(",")[0] * (scale / 100)}px, ${item?.back_text_location?.split(",")[1] * (scale / 100)}px)`
+                          transform: `translate(${item?.back_text_location?.split(",")[0] * (canvasScaledWidth / 100)}px, ${item?.back_text_location?.split(",")[1] * (canvasScaledHeight / 100)}px)`
+
                         }}
                           className=' py-1 px-2 rounded-md font-semibold z-10'
                         >{item?.back_text}</p>
@@ -267,7 +303,11 @@ const ColorComponent = ({ colors, setColors, closeHandler }) => {
 
 
 const Customizer = () => {
-  const [merchandise, setMerchandise] = useState("T-Shirt")
+  // upload image
+  const [imageUpload, setImageUpload] = useState(null)
+
+
+
   const [modal, setModal] = useState({
     picture: false,
     text: false,
@@ -300,10 +340,17 @@ const Customizer = () => {
   const loadHandler = async () => {
     const result = await getUserCanvas(state?.user?._id)
     if (result?.success) {
-      const filter_merch = result.data.filter(d => d.product?.merchandise == "T-Shirt")
-
-      const imagelist = filter_merch.map(item => item.product.logos).flat().filter((r) => r != null || r != undefined);
-      setImages(imagelist)
+      let image_list = []
+      const filter_merch = result.data.filter(d => d.product?.merchandise == "T-Shirt" || d.merch == "tshirt")
+      for (let i of filter_merch) {
+        if (i.merch?.length > 0)
+          image_list.push(i.image);
+        else {
+          for (let l of i.product?.logos)
+            image_list.push(l);
+        }
+      }
+      setImages(image_list)
     }
     await refetchArtworkHandler()
   }
@@ -501,7 +548,6 @@ const Customizer = () => {
   const canvasScaledWidth = 400 * (scale / 100);
   const canvasScaledHeight = 600 * (scale / 100);
 
-
   // Styles for centering the fixed div
   const centerDivStyle = {
     position: 'fixed',
@@ -514,6 +560,8 @@ const Customizer = () => {
     <>
       {/* MODALS  */}
       {modal.picture && <PictureComponent
+        refetch={loadHandler}
+        state={state}
         images={images}
         setCanvas={setCanvasImage}
         canvas={canvasImage}
