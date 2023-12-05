@@ -27,6 +27,9 @@ const OrderSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Image must not be empty!'],
     },
+    product_id:{
+        type: String,
+    },
     created_at: {
         type: Date,
         default: Date.now,

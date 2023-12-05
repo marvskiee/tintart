@@ -645,9 +645,8 @@ const Customizer = () => {
         </div>
         {/* end of control */}
         <div style={centerDivStyle} className='mx-auto fixed flex items-center justify-center gap-4'>
-          <p className="absolute -left-14 top-12">Front</p>
-
-          <p className="absolute -right-14 top-12">Back</p>
+          <p className="absolute -left-14 top-12 text-slate-500">Front</p>
+          <p className="absolute -right-14 top-12 text-slate-500">Back</p>
 
           <div id="contentToCapture" className='relative flex gap-4 ' >
 

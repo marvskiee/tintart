@@ -15,6 +15,7 @@ import { addOrderDetails } from '../services/order_details.services'
 import { addOrderProduct } from '../services/order_product.services'
 import Link from 'next/link'
 import { sendMessage } from '../services/email.services'
+import { FaBoxOpen, FaHome } from 'react-icons/fa'
 const Cart = () => {
     const { state } = useAppContext()
     const [products, setProducts] = useState([])
@@ -118,6 +119,7 @@ const Cart = () => {
                 quantity: Number(p?.quantity),
                 sub_total: Number(p?.product_id?.price) * Number(p?.quantity),
                 image: p?.product_id?.images[0],
+                product_id: p?.product_id?._id
             })
         }
         const result_order_product = await addOrderProduct({ products: tmp_order_data })
@@ -334,15 +336,15 @@ const Cart = () => {
                                             <Table.Cell className='flex flex-shrink-0 items-center gap-4 flex-row'>
                                                 <div className='relative'>
                                                     <img src={item?.product_id?.images[0]} alt='pic' className='lg:w-20 w-10 aspect-square object-contain' />
-                                                    {isCheckOut &&
-                                                        <span className='px-2 font-semibold absolute -top-2 py-1 -right-2 rounded-full text-white bg-red-500'>{item?.quantity}</span>
-                                                    }
                                                 </div>
                                                 <div className=''>
                                                     <p className=' font-semibold'>{item?.product_id?.product_name}</p>
                                                     <p>Size: {item?.size}</p>
                                                     {item?.color &&
                                                         <p className='flex gap-2'>Color: {item?.color}</p>
+                                                    }
+                                                    {isCheckOut &&
+                                                        <p className=''>x{item?.quantity}</p>
                                                     }
                                                 </div>
                                             </Table.Cell>
@@ -440,9 +442,18 @@ const Cart = () => {
                         <BsFillCheckCircleFill size={30} className='text-emerald-400' />
                         <p className='font-semibold text-2xl'>Checkout Successful!</p>
                         <p>Please check your email for the order and the payment details.</p>
-                        <Link href={"/"}>
-                            <p className='font-semibold uppercase'>Back to HomePage</p>
-                        </Link>
+                        <div className='flex gap-4 items-center '>
+                            <Link href={"/"}>
+                                <Button color="light" className='font-semibold uppercase'>
+                                    <FaHome className="mr-1" />
+                                    Back to HomePage</Button>
+                            </Link>
+                            <Link href={"/order-history"}>
+                                <Button className='font-semibold uppercase'>
+                                    <FaBoxOpen className="mr-1" />
+                                    Back to Orders</Button>
+                            </Link>
+                        </div>
                     </div>
                 }
             </CustomerWrapper>

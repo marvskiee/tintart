@@ -1,18 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CustomerLayout, CustomerWrapper, LoadingLayout } from '../../components'
 import { Button } from 'flowbite-react'
 import { useAppContext } from '../../context/AppContext';
 import { useRouter } from 'next/router';
-import { authLogout } from '../../services/auth.services';
-import toast from 'react-hot-toast';
 import { getUserShipping } from '../../services/shipping.services';
-import { addWishList, deleteWishList, getUserWishList } from '../../services/wishlist.services';
-import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
-import Link from 'next/link';
-import { toastOptions } from '../../styles/modalOption';
-import { getUserOrderDetails } from '../../services/order_details.services';
-import DATA from '../../utils/DATA';
-import { formatNumberWithCommas } from '../../services/tools';
 import ProfileLayout from '../../components/layout-components/profile-layout';
 
 const Profile = () => {

@@ -117,7 +117,7 @@ const Shop = () => {
               />
             </div>
             <div className='col-span-1 lg:col-span-1'>
-              <Label className='capitalize mb-2 block'>Min</Label>
+              <Label className='capitalize mb-2 block'>Min Price</Label>
               <TextInput
                 disabled={isLoading}
                 value={priceRange?.min}
@@ -127,7 +127,7 @@ const Shop = () => {
             </div>
             <div className='col-span-1 lg:col-span-1'>
               <div>
-                <Label className='capitalize mb-2 block'>Max</Label>
+                <Label className='capitalize mb-2 block'>Max Price</Label>
                 <TextInput
                   disabled={isLoading}
                   value={priceRange?.max}

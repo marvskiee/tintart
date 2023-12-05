@@ -192,9 +192,9 @@ const Gallery = () => {
             </div>
           </div>
           <div className="flex items-center gap-4 px-4">
-            <p onClick={() => setMyGallery(false)} className='font-semibold underline cursor-pointer'>TintArt Gallery</p>
+            <p onClick={() => setMyGallery(false)} className={`font-semibold cursor-pointer ${myGallery == false && state?.user?.role == 1  ? "underline": ""}`}>TintArt Gallery</p>
             {state?.user?.role == 1 &&
-              <p onClick={() => setMyGallery(true)} className='font-semibold underline cursor-pointer'>My Gallery</p>
+              <p onClick={() => setMyGallery(true)} className={`font-semibold cursor-pointer ${myGallery == true  ? "underline": ""}`}>My Gallery</p>
             }
           </div>
           <LoadingLayout message="Gallery is Empty." loadingState={isLoading} hasContent={filteredData?.length > 0}>

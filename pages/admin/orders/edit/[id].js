@@ -134,7 +134,7 @@ const ViewOrders = () => {
       {modalMode &&
         <ModalLayout>
           <div className='flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600'>
-            <h3 className='text-xl font-semibold text-gray-900 dark:text-white'>Upload Payment Proof</h3>
+            <h3 className='text-xl font-semibold text-gray-900 dark:text-white'>{data?.status == "COMPLETED" ? "" : "Upload"} Payment Proof</h3>
           </div>
           <div className='p-6'>
             <>
@@ -171,34 +171,39 @@ const ViewOrders = () => {
                       key={key + 'product-image'}
                       className='border w-full aspect-square object-cover'
                     />
-                    <span
-                      onClick={() => {
-                        setImageUpload([...imageUpload.filter((sup, i) => i != key)])
-                      }}
-                      className='cursor-pointer absolute  rounded-full  top-2 right-2 bg-white z-10'
-                    >
-                      <AiFillCloseCircle size={20} className='text-red-600' />
-                    </span>
+                    {data?.status != "COMPLETED" &&
+                      <span
+                        onClick={() => {
+                          setImageUpload([...imageUpload.filter((sup, i) => i != key)])
+                        }}
+                        className='cursor-pointer absolute  rounded-full  top-2 right-2 bg-white z-10'
+                      >
+                        <AiFillCloseCircle size={20} className='text-red-600' />
+                      </span>
+                    }
                   </div>
                 ))}
-                {imageUpload.length < 4 && (
-                  <img
-                    onClick={() => uploadRef.current.click()}
-                    src='/images/camera.png'
-                    className='cursor-pointer border w-full aspect-square'
-                  />
-                )}
+                {(data?.status != "COMPLETED" &&
+                  imageUpload.length < 4) && (
+                    <img
+                      onClick={() => uploadRef.current.click()}
+                      src='/images/camera.png'
+                      className='cursor-pointer border w-full aspect-square'
+                    />
+                  )}
               </div>
 
             </>
             <div className='flex gap-4 justify-end mt-4 sm:flex-row flex-col'>
-              <Button
-                disabled={isLoading?.update}
-                gradientDuoTone={'cyanToBlue'}
-                onClick={validationHandler}
-              >
-                Submit
-              </Button>
+              {data?.status != "COMPLETED" &&
+                <Button
+                  disabled={isLoading?.update}
+                  gradientDuoTone={'cyanToBlue'}
+                  onClick={validationHandler}
+                >
+                  Submit
+                </Button>
+              }
               <Button
                 disabled={isLoading?.update}
                 color="light"
@@ -254,7 +259,7 @@ const ViewOrders = () => {
               </Card>
               <Card title={"Payment Details:"}>
                 <p className='text-center'>Mode of Payment: {data?.mop == "credit" ? "Credit/Debit Card" : data?.mop == "gcash" ? "Gcash" : data?.mop == "cod" && "Cash on Delivery"}</p>
-                {!isPrintDialogOpen &&
+                {(!isPrintDialogOpen && data?.mop != "cod") &&
                   <p id="proof_of_payment" >Proof of Payment:
                     {data?.proof_image.length > 0 ?
                       <span onClick={() => setModalMode("view")} className="undeline cursor-pointer underline text-blue-500 font-semibold">View</span>
@@ -266,7 +271,7 @@ const ViewOrders = () => {
 
                 <p>Payment Status: <span className={`font-semibold  ${data?.is_paid ? "text-emerald-500" : "text-red-500"}`}> {data?.is_paid ? "Paid" : "Not Paid"}</span>
                 </p>
-                {!isPrintDialogOpen &&
+                {(!isPrintDialogOpen && data?.status != "COMPLETED") &&
                   <div id="ispaid" className=' items-center gap-2' style={{ display: "flex" }}>
                     <Label htmlFor='paid'>Paid</Label>
                     <input id="paid" type='checkbox' onChange={() => updateHandler({ is_paid: !data?.is_paid })} checked={data?.is_paid} />

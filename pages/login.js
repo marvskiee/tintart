@@ -2,7 +2,7 @@ import { Button, Label } from 'flowbite-react'
 import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { toastOptions } from '../styles/modalOption'
-import { authLogin } from '../services/auth.services'
+import { authLogin, authLogout } from '../services/auth.services'
 import { hasBlankValue, isValidEmail, isValidPassword, isValidPhoneNumber } from '../services/tools'
 import { useAppContext } from '../context/AppContext'
 import { addUser } from '../services/user.services'
@@ -59,6 +59,11 @@ const Login = () => {
                 } else {
                     let path = (([0, 1].indexOf(data.role) > -1 && loginMode == "login") ? "/" :
                         (data.role >= 2 && loginMode == "admin-login") && "/admin/dashboard")
+                    if (path == false) {
+                        await authLogout()
+                        setIsLoading(false)
+                        return toast.error('Wrong email or password, Please try again!', toastOptions)
+                    }
                     dispatch({ type: 'LOGIN_SUCCESS', value: data })
                     router.push(path)
                     toast.success('Login Succesfuly!', toastOptions)

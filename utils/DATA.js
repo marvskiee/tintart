@@ -126,7 +126,7 @@ const DATA = {
             { label: "Date Added", name: "created_at" }
         ],
     },
-    DROPDOWN_GRAPH: ["Daily", "Weekly", "Monthly"],
+    DROPDOWN_GRAPH: ["Daily", "Weekly", "Yearly"],
     FAQS: [{
         topic: "Orders",
         sub_topic: [

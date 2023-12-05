@@ -23,6 +23,7 @@ import { addCart, getUserCart, updateCart } from '../../services/cart.services'
 import { addReview, getProductReview } from '../../services/review.services'
 import { hasBlankValue } from '../../services/tools'
 import { addCanvas } from '../../services/canvas.services'
+import { getUserOrderDetails } from '../../services/order_details.services'
 
 const LiveProductLayout = props => {
   const router = useRouter()
@@ -45,6 +46,7 @@ const LiveProductLayout = props => {
     comment: '',
     rating: '',
   }
+  const [ratingAllowed, setRatingAllowed] = useState(false)
   const [formData, setFormData] = useState(initialData)
   const submitHandler = async () => {
     if (!state?.user) return toast.error('You must login first!', toastOptions)
@@ -108,7 +110,18 @@ const LiveProductLayout = props => {
     if (result1.success) {
       if (result1.data?.is_archived == false) setData(result1.data)
     }
+    let user_id = state?.user?._id
 
+    const result2 = await getUserOrderDetails(user_id)
+    if (result2.success) {
+      const filteredCompleted = result2.data.filter(item => {
+        return item.status === 'COMPLETED' && item.products.some(product => product?.product_id === id)
+      })
+      console.log(result2.data, id)
+      if (filteredCompleted.length > 0) {
+        setRatingAllowed(true)
+      }
+    }
     await loadReviewHandler()
     setIsLoading({ ...isLoading, fetch: false })
   }
@@ -328,24 +341,30 @@ const LiveProductLayout = props => {
                   </div>
                 ))
               )}
-              <div className='flex flex-col w-full gap-4 p-4 border-2 border-yellow-500'>
-                {review?.length == 0 && (
-                  <p className='font-semibold text-lg'>Be the first to review product</p>
-                )}
-                <p className='font-semibold'>Your rating</p>
-                <StarLayout rating={formData.rating} setRating={setFormData} data={formData} />
-                <p className='font-semibold'>Your review</p>
-                <Textarea
-                  rows='5'
-                  value={formData.comment}
-                  onChange={e => setFormData({ ...formData, comment: e.target.value })}
-                />
-                <div>
-                  <Button className='float-left uppercase' color='failure' onClick={submitHandler}>
-                    Submit
-                  </Button>
+              {ratingAllowed && (
+                <div className='flex flex-col w-full gap-4 p-4 border-2 border-yellow-500'>
+                  {review?.length == 0 && (
+                    <p className='font-semibold text-lg'>Be the first to review product</p>
+                  )}
+                  <p className='font-semibold'>Your rating</p>
+                  <StarLayout rating={formData.rating} setRating={setFormData} data={formData} />
+                  <p className='font-semibold'>Your review</p>
+                  <Textarea
+                    rows='5'
+                    value={formData.comment}
+                    onChange={e => setFormData({ ...formData, comment: e.target.value })}
+                  />
+                  <div>
+                    <Button
+                      className='float-left uppercase'
+                      color='failure'
+                      onClick={submitHandler}
+                    >
+                      Submit
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              )}
             </LoadingLayout>
           </div>
         </CustomerWrapper>

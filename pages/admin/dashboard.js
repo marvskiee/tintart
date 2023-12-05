@@ -9,13 +9,14 @@ import { getAllProduct } from '../../services/product.services'
 import { getDashboardData } from '../../services/order_details.services'
 const Dashboard = () => {
   const [graph, setGraph] = useState({ orders: {}, sales: {} })
-
+  const [isLoading, setIsLoading] = useState(false)
   const [merchandiseData, setMerchandiseData] = useState({
     sintra_board: 0,
     t_shirt: 0,
     photo_card: 0
   })
   const loadHandler = async () => {
+    setIsLoading(true)
     const result1 = await getDashboardData(sort)
     if (result1.success) {
       setGraph(result1.data)
@@ -29,6 +30,8 @@ const Dashboard = () => {
         photo_card: available_products.filter(d => d.merchandise == "Photocard").length
       })
     }
+    setIsLoading(false)
+
   }
   const [sort, setSort] = useState("Daily")
   useEffect(() => {
@@ -42,8 +45,11 @@ const Dashboard = () => {
     },
     {
       label: "Orders",
-      data: graph?.orders,
-      price: Object.values(graph?.orders).reduce((total, value) => total + value, 0),
+      price: Object.values(graph?.orders)
+        .flatMap(Object.values)
+        .filter(val => typeof val === 'number')
+        .reduce((acc, curr) => acc + curr, 0),
+      data: graph?.orders
     },
   ]
   const MERCHANDISE_DATA = [
@@ -63,38 +69,46 @@ const Dashboard = () => {
         </Dropdown>
       </div>
       <div className="flex lg:flex-row flex-col gap-8">
-        {data.length > 0 ? (
-          data.map((d, index) => (
-            <div key={index} className='lg:w-[calc(50vw-48px)] shadow-md rounded-md p-4'>
-              <div className='flex items-center justify-between'>
-                <div>
+        {!isLoading ?
+          <>
 
-                  <p className='text-lg font-semibold'>Total {d?.label}</p>
-                  <p className='text-2xl font-semibold'>{formatNumberWithCommas(d?.price)}</p>
+            {data.length > 0 ? (
+              data.map((d, index) => (
+                <div key={index} className='lg:w-[calc(50vw-48px)] shadow-md rounded-md p-4'>
+                  <div className='flex items-center justify-between'>
+                    <div>
+
+                      <p className='text-lg font-semibold'>Total {d?.label}</p>
+                      <p className='text-2xl font-semibold'>{formatNumberWithCommas(d?.price)}</p>
+                    </div>
+                    {d?.label == "Sales" ?
+                      <FaPesoSign size="50" className='text-violet-300' />
+                      :
+                      <BsFillCartCheckFill size='50' className='text-rose-300' />
+                    }
+                  </div>
+
+
+                  <div className="" >
+                    <GraphLayout
+                      sort={sort}
+                      key={index}
+                      label={d?.label}
+                      data={d?.data}
+                      min={d?.min}
+                      max={d?.max}
+                    />
+                  </div>
                 </div>
-                {d?.label == "Sales" ?
-                  <FaPesoSign size="50" className='text-violet-300' />
-                  :
-                  <BsFillCartCheckFill size='50' className='text-rose-300' />
-                }
-              </div>
 
-
-              <div className="" >
-                <GraphLayout
-                  key={index}
-                  label={d?.label}
-                  data={d?.data}
-                  min={d?.min}
-                  max={d?.max}
-                />
-              </div>
-            </div>
-
-          ))
-        ) : (
-          <p className="error-graphs">Can't Load Graphs</p>
-        )}
+              ))
+            ) : (
+              <p className="error-graphs">Can't Load Graphs</p>
+            )}
+          </>
+          :
+          <p className="error-graphs">Fetching Graphs...</p>
+        }
       </div>
       <div className='my-8'>
         <p className='font-semibold text-xl'>Merchandise</p>

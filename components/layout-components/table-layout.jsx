@@ -10,6 +10,7 @@ import { FiEye, FiMoreHorizontal } from 'react-icons/fi'
 import { useRouter } from 'next/router'
 import DropdownInput from '../input-components/dropdown-input'
 import { downloadFile } from '../../services/excel.services'
+import DATA from '../../utils/DATA'
 
 const TableLayout = ({
   title,
@@ -49,12 +50,6 @@ const TableLayout = ({
   const loadHandler = async () => {
     const result = await loadRequest()
     setFetchData(result?.data)
-    // pillDataRef.current = temp_data
-    // let filtered = temp_data
-    // if (['Colors', 'Sizes','Products'].indexOf(title) > -1) {
-    //   filtered = temp_data?.filter(t => t.merchandise == selectedMerch)
-    // }
-    // setNewSlice(filtered?.slice(0, MAX))
     setIsLoading(false)
   }
 
@@ -113,15 +108,22 @@ const TableLayout = ({
     setPage(item)
   }
   const merchandise_list = ['T-Shirt', 'Photocard', 'Sintra Board']
-  const [selectedMerch, setSelectedMerch] = useState(merchandise_list[0])
+  const [selectedMerch, setSelectedMerch] = useState(
+    title == 'Orders' ? DATA.ORDER_STATUS[0] : merchandise_list[0]
+  )
 
   const finalItems =
     ['Colors', 'Sizes', 'Products'].indexOf(title) > -1
       ? searchFilter.filter(t => t.merchandise == selectedMerch).slice(page * MAX - MAX, page * MAX)
+      : title == 'Orders'
+      ? searchFilter.filter(t => t.status == selectedMerch).slice(page * MAX - MAX, page * MAX)
       : searchFilter.slice(page * MAX - MAX, page * MAX)
-  const pageCount =  ['Colors', 'Sizes', 'Products'].indexOf(title) > -1
-  ? searchFilter.filter(t => t.merchandise == selectedMerch)
-  : searchFilter
+  const pageCount =
+    ['Colors', 'Sizes', 'Products'].indexOf(title) > -1
+      ? searchFilter.filter(t => t.merchandise == selectedMerch)
+      : title == 'Orders'
+      ? searchFilter.filter(t => t.status == selectedMerch)
+      : searchFilter
   return (
     <>
       {modal && (
@@ -197,9 +199,28 @@ const TableLayout = ({
                     setPage(1)
                     // setFetchData(filtered)
                   }}
-                  color='gray'
+                  color={item != selectedMerch ? 'light' : "purple"}
                   key={key + item}
-                  className={item == selectedMerch ? 'text-blue-400' : ''}
+                >
+                  {item}
+                </Button>
+              ))}
+            </Button.Group>
+          )}
+          {title == 'Orders' && (
+            <Button.Group>
+              {DATA.ORDER_STATUS.map((item, key) => (
+                <Button
+                  onClick={() => {
+                    setSelectedMerch(item)
+                    // let filtered = pillDataRef.current?.filter(t => t.merchandise == item)
+                    // setNewSlice(filtered?.slice(0, MAX))
+                    setPage(1)
+                    // setFetchData(filtered)
+                  }}
+                  color={item != selectedMerch ? 'light' : "purple"}
+                  key={key + item}
+                  // className={item == selectedMerch ? 'bg-blue-600 text-white' : '' }
                 >
                   {item}
                 </Button>

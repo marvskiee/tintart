@@ -31,7 +31,7 @@ export default function Home() {
                 </div>
             ))}
 
-            <h1>Monthly Sales</h1>
+            <h1>Yearly Sales</h1>
             {data && data.sortedByMonth.map((sale) => (
                 <div key={sale._id}>
                     <p>Date: {sale.date}</p>
