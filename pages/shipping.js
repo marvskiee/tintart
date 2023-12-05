@@ -111,11 +111,8 @@ const Shipping = () => {
 
             if (requestName == "deleted") {
                 const shipping = await getUserShipping(state?.user?._id)
-                console.log(shipping)
-
                 if (shipping?.data?.length > 0) {
                     const r = await updateUser({ shipping_id: shipping.data[0]?._id }, state?.user?._id)
-                    console.log(r)
                 }
             }
             const res2 = await getUser()

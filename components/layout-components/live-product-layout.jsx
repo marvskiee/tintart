@@ -117,7 +117,6 @@ const LiveProductLayout = props => {
       const filteredCompleted = result2.data.filter(item => {
         return item.status === 'COMPLETED' && item.products.some(product => product?.product_id === id)
       })
-      console.log(result2.data, id)
       if (filteredCompleted.length > 0) {
         setRatingAllowed(true)
       }

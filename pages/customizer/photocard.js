@@ -351,7 +351,6 @@ const Customizer = () => {
             image_list.push(l);
         }
       }
-      // console.log(filter_merch)
       setImages(image_list)
     }
     await refetchArtworkHandler()
@@ -479,7 +478,6 @@ const Customizer = () => {
       front_image_size: imageSize.front,
       back_image_size: imageSize.back
     }
-    // return console.log(newData)
     let result = null
     if (!artworkRef.current) {
       result = await addArtwork(newData)
@@ -557,7 +555,6 @@ const Customizer = () => {
     left: '50%',
     transform: 'translate(-50%, -50%)',
   };
-  console.log(artworkRef)
   return (
     <>
       {/* MODALS  */}

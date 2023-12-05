@@ -107,7 +107,7 @@ const Dashboard = () => {
             )}
           </>
           :
-          <p className="error-graphs">Fetching Graphs...</p>
+          <p className="flex w-full items-center justify-center error-graphs text-center shadow-md text-slate-700 rounded-md min-h-[10rem]">Fetching Graphs...</p>
         }
       </div>
       <div className='my-8'>

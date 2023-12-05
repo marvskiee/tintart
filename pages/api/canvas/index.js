@@ -17,7 +17,6 @@ export default async (req, res) => {
     case 'POST':
       try {
         const all_canvas = await Canvas.find(req.body)
-        console.log(all_canvas)
         if (all_canvas?.length > 0)
           return response({ res, status_code: 400, success: false, error: "Canvas already exist!" })
 

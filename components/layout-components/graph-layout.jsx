@@ -65,7 +65,6 @@ export default function ChartData({ label, data, sort }) {
     }
     return temp
   }
-  // console.log(label,data)
   const formattedOrderData = () => {
     let temp = {}
     switch (sort) {
@@ -104,7 +103,6 @@ export default function ChartData({ label, data, sort }) {
       case 'Yearly':
         temp = Object.fromEntries(Object.entries(data).reverse())
     }
-    console.log(temp)
     return temp
   }
 
