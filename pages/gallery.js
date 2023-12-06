@@ -185,14 +185,14 @@ const Gallery = () => {
         <CustomerWrapper>
           <div className='flex flex-col lg:flex-row p-4 pb-0'>
             <div className='w-full flex items-center justify-between'>
-              <p className='text-2xl font-semibold my-4'>TintArt Gallery</p>
+              <p className='text-2xl font-semibold my-4 cursor-pointer' onClick={() => setMyGallery(false)}>TintArt Gallery</p>
               {state?.user?.role == 1 &&
                 <Button color="dark" onClick={() => { setModal("dismissible"); setFormData(initialData) }}>Upload your Artwork</Button>
               }
             </div>
           </div>
           <div className="flex items-center gap-4 px-4">
-            <p onClick={() => setMyGallery(false)} className={`font-semibold cursor-pointer ${myGallery == false && state?.user?.role == 1  ? "underline": ""}`}>TintArt Gallery</p>
+            {/* <p onClick={() => setMyGallery(false)} className={`font-semibold cursor-pointer ${myGallery == false && state?.user?.role == 1  ? "underline": ""}`}>TintArt Gallery</p> */}
             {state?.user?.role == 1 &&
               <p onClick={() => setMyGallery(true)} className={`font-semibold cursor-pointer ${myGallery == true  ? "underline": ""}`}>My Gallery</p>
             }
