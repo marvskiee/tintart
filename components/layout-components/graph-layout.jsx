@@ -25,14 +25,23 @@ ChartJS.register(
 )
 
 export default function ChartData({ label, data, sort }) {
+  console.log(data)
   const formattedSalesData = () => {
     let temp = {}
     switch (sort) {
       case 'Daily':
-        let sortedKeys1 = Object.keys(data).sort()
-        sortedKeys1.forEach(key => {
-          temp[moment(key).format('ddd (MM-DD)')] = data[key]
-        })
+        const currentDate = moment() // Get the current date
+        const startOfWeek = currentDate.clone().startOf('week').day(0) // Start from Sunday of the current week
+        const endOfWeek = currentDate.clone().endOf('day') // End at the current day
+
+        // Filter the data for the current week
+        for (let i = 0; i <= 6; i++) {
+          const date = startOfWeek.clone().add(i, 'day')
+          if (date.isSameOrBefore(endOfWeek)) {
+            const formattedDate = date.format('ddd (MM-DD)')
+            temp[formattedDate] = data[date.format('YYYY-MM-DD')] || 0
+          }
+        }
         break
       case 'Weekly':
         function weeksInYearToMonthWeeks(yearWeeks) {
@@ -61,7 +70,28 @@ export default function ChartData({ label, data, sort }) {
         })
         break
       case 'Yearly':
-        temp = Object.fromEntries(Object.entries(data).reverse())
+        const currentYear = moment().year()
+        const monthsInYear = 12
+
+        // Initialize sales for each month with a default value of 0
+        for (let month = 0; month < monthsInYear; month++) {
+          const monthLabel = moment().month(month).format('MMMM')
+          temp[monthLabel] = 0
+        }
+
+        // Assign sales values to respective months
+        for (const key in data) {
+          const dataDate = moment(key)
+          const dataYear = dataDate.year()
+          const dataMonth = dataDate.month()
+
+          // Check if the data date belongs to the current year
+          if (dataYear === currentYear) {
+            const monthLabel = dataDate.format('MMMM')
+            temp[monthLabel] += data[key]
+          }
+        }
+        break
     }
     return temp
   }
@@ -69,10 +99,18 @@ export default function ChartData({ label, data, sort }) {
     let temp = {}
     switch (sort) {
       case 'Daily':
-        let sortedKeys1 = Object.keys(data).sort()
-        sortedKeys1.forEach(key => {
-          temp[moment(key).format('ddd (MM-DD)')] = data[key]
-        })
+        const currentDate = moment() // Get the current date
+        const startOfWeek = currentDate.clone().startOf('week').day(0) // Start from Sunday of the current week
+        const endOfWeek = currentDate.clone().endOf('day') // End at the current day
+
+        // Filter the data for the current week
+        for (let i = 0; i <= 6; i++) {
+          const date = startOfWeek.clone().add(i, 'day')
+          if (date.isSameOrBefore(endOfWeek)) {
+            const formattedDate = date.format('ddd (MM-DD)')
+            temp[formattedDate] = data[date.format('YYYY-MM-DD')] || 0
+          }
+        }
         break
       case 'Weekly':
         function weeksInYearToMonthWeeks(yearWeeks) {
@@ -100,8 +138,53 @@ export default function ChartData({ label, data, sort }) {
           temp[weekLabel] = data[key]
         })
         break
+
+        // Populating missing weeks with default values
+        const totalWeeksInMonth = moment().daysInMonth()
+        for (let i = 1; i <= totalWeeksInMonth; i++) {
+          const weekLabel = getWeekLabel(moment().date(i))
+          if (!weeklySummary[weekLabel]) {
+            weeklySummary[weekLabel] = {
+              'PENDING PAYMENT': 0,
+              'PREPARING ORDER': 0,
+              'OUT OF DELIVERY': 0,
+              COMPLETED: 0,
+              CANCELLED: 0,
+            }
+          }
+        }
+
+        temp = weeklySummary
+        break
+
       case 'Yearly':
-        temp = Object.fromEntries(Object.entries(data).reverse())
+        const currentYear = moment().year()
+        const monthsInYear = 12
+
+        // Initialize data for each month with a default value of 0
+        for (let month = 0; month < monthsInYear; month++) {
+          const monthLabel = moment().month(month).format('YYYY MMMM')
+          temp[monthLabel] = {
+            'PENDING PAYMENT': 0,
+            'PREPARING ORDER': 0,
+            'OUT OF DELIVERY': 0,
+            COMPLETED: 0,
+            CANCELLED: 0,
+          }
+        }
+
+        // Assign data values to respective months
+        for (const key in data) {
+          const [year, monthName] = key.split(' ')
+          const dataYear = parseInt(year)
+
+          // Check if the data date belongs to the current year
+          if (dataYear === currentYear) {
+            const monthLabel = moment(monthName, 'MMMM').format('YYYY MMMM')
+            temp[monthLabel] = data[key]
+          }
+        }
+        break
     }
     return temp
   }
