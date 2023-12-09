@@ -19,7 +19,7 @@ const Wishlist = () => {
     const refreshWishList = async (id) => {
         const result_wishlist = await getUserWishList(id)
         if (result_wishlist?.success) {
-            setWishlistData(result_wishlist?.data.filter(d => d?.product_id != null))
+            setWishlistData(result_wishlist?.data)
         }
     }
 
@@ -42,6 +42,11 @@ const Wishlist = () => {
         if (state?.user?._id)
             loadHandler()
     }, [state?.isAuth])
+    const routeHandler = (id) => {
+        if (id != null)
+            router.push("/shop/" + id._id)
+
+    }
     return (
         <CustomerLayout hasFetch={true}>
             <CustomerWrapper>
@@ -49,18 +54,25 @@ const Wishlist = () => {
                     <LoadingLayout message="You have no wishlist." loadingState={isLoading} hasContent={wishlistData?.length > 0}>
                         <div className='grid grid-cols-1 gap-4 lg:grid-cols-3 mb-10'>
                             {wishlistData?.map((item, key) => (
-
                                 <div className='relative flex-col flex gap-2' key={key} >
                                     <Button onClick={() => heartHandler(item)} color="light" size="xs" className='z-10 bg-black/50 border-0 absolute top-5 right-5 aspect-square'>
                                         <AiFillHeart className='text-2xl text-red-600' />
                                     </Button>
-                                    {item?.is_sold_out &&
-                                        <div onClick={() => router.push("/shop/" + item?.product_id._id)} src={item?.image} className='rounded-2xl absolute flex items-center justify-center w-full aspect-square top-0 left-0 bg-black/50'>
+                                    {item?.product_id == null ?
+                                        <div onClick={() => routeHandler(item?.product_id)} src={item?.image} className='rounded-2xl absolute flex items-center justify-center w-full aspect-square top-0 left-0 bg-black/50'>
+                                            <p className='text-white font-semibold uppercase'>Product not available</p>
+                                        </div>
+                                        : item?.is_sold_out &&
+                                        <div onClick={() => routeHandler(item?.product_id)} src={item?.image} className='rounded-2xl absolute flex items-center justify-center w-full aspect-square top-0 left-0 bg-black/50'>
                                             <p className='text-white text-xl font-semibold uppercase'>Sold Out</p>
                                         </div>}
-                                    <img onClick={() => router.push("/shop/" + item?.product_id._id)} src={item?.image} className=' cursor-pointer rounded-2xl w-full aspect-square object-cover' />
-                                    <p onClick={() => router.push("/shop/" + item?.product_id._id)} className=" cursor-pointer px-2 font-semibold text-md">{item?.product_id?.product_name}</p>
-                                    <p onClick={() => router.push("/shop/" + item?.product_id._id)} className=" cursor-pointer px-2 font-semibold text-xl">PHP {item?.product_id?.price}</p>
+
+                                    <img onClick={() => routeHandler(item?.product_id)} src={item?.image} className=' cursor-pointer rounded-2xl w-full aspect-square object-cover' />
+                                    <p onClick={() => routeHandler(item?.product_id)} className=" cursor-pointer px-2 font-semibold text-md">{item?.product_id?.product_name || item?.title}</p>
+                                    {item?.product_id &&
+                                        <p onClick={() => routeHandler(item?.product_id)} className=" cursor-pointer px-2 font-semibold text-xl">PHP {item?.product_id?.price}</p>
+                                    }
+
                                 </div>
                             ))}
                         </div>

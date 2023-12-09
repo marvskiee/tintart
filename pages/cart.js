@@ -31,7 +31,7 @@ const Cart = () => {
         "Quantity",
         "Price"
     ]
-
+    const allProductsRef = useRef()
     const [orderSuccess, setOrderSuccess] = useState(false)
     const loadHandler = async () => {
         const result_shipping = await getUserShipping(state?.user?._id)
@@ -44,7 +44,8 @@ const Cart = () => {
         }
         const result = await getUserCart(state?.user?._id)
         if (result?.success)
-            setProducts(result?.data.filter(d => d?.product_id != null))
+            allProductsRef.current = result?.data
+        setProducts(result?.data)
         const result_shop = await getAllShop()
         if (result_shop?.success) {
             if (result_shop?.data.length > 0)
@@ -64,15 +65,17 @@ const Cart = () => {
         }
         setProducts([...temp])
     }
+    const [selectAll, setSelectAll] = useState(false)
     const selectAllRef = useRef(false)
     const selectAllHandler = () => {
-        let temp = products;
+        let temp = !selectAllRef.current ? products.filter(p => p.product_id != null) : allProductsRef.current
         for (let p in temp)
             temp[p] = {
                 ...temp[p],
                 is_selected: !selectAllRef.current
             }
         selectAllRef.current = !selectAllRef.current
+        setSelectAll(!selectAll)
         setProducts([...temp])
     }
 
@@ -310,7 +313,7 @@ const Cart = () => {
                                     <Table.Head>
                                         <Table.HeadCell align='center'>
                                             <div className=''>
-                                                Select <input className='ml-2' type="checkbox" onChange={selectAllHandler} />
+                                                Select <input className='ml-2' type="checkbox" checked={selectAll} onChange={selectAllHandler} />
                                             </div>
                                         </Table.HeadCell>
                                         {
@@ -330,38 +333,59 @@ const Cart = () => {
                                         <Table.Row key={`row-${item?._id}`}>
                                             {!isCheckOut &&
                                                 <Table.Cell align='center'>
-                                                    <input type='checkbox' checked={item?.is_selected || false} onChange={() => selectHandler(key, !item?.is_selected)} />
+                                                    {item?.product_id != null &&
+                                                        <input type='checkbox' checked={item?.is_selected || false} onChange={() => selectHandler(key, !item?.is_selected)} />
+                                                    }
                                                 </Table.Cell>
                                             }
-                                            <Table.Cell className='flex flex-shrink-0 items-center gap-4 flex-row'>
-                                                <div className='relative'>
-                                                    <img src={item?.product_id?.images[0]} alt='pic' className='lg:w-20 w-10 aspect-square object-contain' />
-                                                </div>
-                                                <div className=''>
-                                                    <p className=' font-semibold'>{item?.product_id?.product_name}</p>
-                                                    <p>Size: {item?.size}</p>
-                                                    {item?.color &&
-                                                        <p className='flex gap-2'>Color: {item?.color}</p>
-                                                    }
-                                                    {isCheckOut &&
-                                                        <p className=''>x{item?.quantity}</p>
-                                                    }
-                                                </div>
-                                            </Table.Cell>
+                                            {item?.product_id == null ?
+                                                <Table.Cell className='flex flex-shrink-0 items-center gap-4 flex-row'>
+                                                    <div className=''>
+                                                        <p className='font-semibold'>Product Not available</p>
+                                                        <p>Size: {item?.size}</p>
+                                                        {item?.color &&
+                                                            <p className='flex gap-2'>Color: {item?.color}</p>
+                                                        }
+                                                        {isCheckOut &&
+                                                            <p className=''>x{item?.quantity}</p>
+                                                        }
+                                                    </div>
+                                                </Table.Cell>
+                                                :
+                                                <Table.Cell className='flex flex-shrink-0 items-center gap-4 flex-row'>
+                                                    <div className='relative'>
+                                                        <img src={item?.product_id?.images[0]} alt='pic' className='lg:w-20 w-10 aspect-square object-contain' />
+                                                    </div>
+                                                    <div className=''>
+                                                        <p className=' font-semibold'>{item?.product_id?.product_name}</p>
+                                                        <p>Size: {item?.size}</p>
+                                                        {item?.color &&
+                                                            <p className='flex gap-2'>Color: {item?.color}</p>
+                                                        }
+                                                        {isCheckOut &&
+                                                            <p className=''>x{item?.quantity}</p>
+                                                        }
+                                                    </div>
+                                                </Table.Cell>
+                                            }
                                             {!isCheckOut &&
                                                 <Table.Cell align='center'>
-                                                    <div className='flex gap-4 justify-center items-center'>
-                                                        <Button size="xs" onClick={() => quantityHandler(key, item?.quantity > 1 ? item.quantity - 1 : 1)} color="light">-</Button>
-                                                        <p className='font-semibold'>
-                                                            {item.quantity}
-                                                        </p>
-                                                        <Button size="xs" onClick={() => quantityHandler(key, item?.quantity < 100 ? Number(item.quantity) + 1 : 100)} color="light">+</Button>
-                                                    </div>
+                                                    {item?.product_id != null &&
+                                                        <div className='flex gap-4 justify-center items-center'>
+                                                            <Button size="xs" onClick={() => quantityHandler(key, item?.quantity > 1 ? item.quantity - 1 : 1)} color="light">-</Button>
+                                                            <p className='font-semibold'>
+                                                                {item.quantity}
+                                                            </p>
+                                                            <Button size="xs" onClick={() => quantityHandler(key, item?.quantity < 100 ? Number(item.quantity) + 1 : 100)} color="light">+</Button>
+                                                        </div>
+                                                    }
                                                 </Table.Cell>
                                             }
                                             <Table.Cell align='center'>
                                                 <p className='font-semibold text-lg whitespace-nowrap'>
-                                                    {DATA.PESO} {formatNumberWithCommas(!isCheckOut ? item?.product_id?.price : item?.product_id?.price * item?.quantity)}
+                                                    {item?.product_id != null &&
+                                                        `${DATA.PESO} ${formatNumberWithCommas(!isCheckOut ? item?.product_id?.price : item?.product_id?.price * item?.quantity)}`
+                                                    }
                                                 </p>
                                             </Table.Cell>
                                             {!isCheckOut &&
